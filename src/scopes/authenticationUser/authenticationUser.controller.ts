@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Put, Param, Logger } from '@nestjs/common';
+import { Controller, Query, Post, Body, Put, Param, Logger, Get } from '@nestjs/common';
 import { UserService } from './authenticationUser.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,6 +9,15 @@ export class UserController {
 
   constructor(private readonly userService: UserService) {}
 
+  @Get()
+  async findByEmail(@Query('email') email: string) {
+    const user = await this.userService.findByEmail({ email });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  }
+  
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.create(createUserDto);
