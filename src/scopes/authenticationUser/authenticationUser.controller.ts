@@ -13,6 +13,7 @@ export class UserController {
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.create(createUserDto);
     this.logger.log(`User created successfully: ${user.email}`);
+
     return user;
   }
 
@@ -23,6 +24,7 @@ export class UserController {
   ) {
     const updatedUser = await this.userService.update(id, updateUserDto);
     this.logger.log(`User updated successfully: ${id}`);
+
     return updatedUser;
   }
 }
