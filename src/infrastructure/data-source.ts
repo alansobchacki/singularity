@@ -10,27 +10,24 @@ export const dataSourceOptions: DataSourceOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  entities: [
-    'dist/**/*.entity.js',
-  ],
-  migrations: [
-    'dist/infrastructure/migrations/*.js'
-  ],
-  logging: false, // used for database query debugging
-  migrationsRun: true
+  entities: ['dist/**/*.entity.js'],
+  migrations: ['dist/infrastructure/migrations/*.js'],
+  logging: false, // set true if needed to debug database queries
+  migrationsRun: true,
 };
 
 export const dataSource = new DataSource(dataSourceOptions);
 
-dataSource.initialize()
+dataSource
+  .initialize()
   .then(() => {
-      console.log("Data Source has been initialized!");
-      console.log("Running migrations");
-      return dataSource.runMigrations();
+    console.log('Data Source has been initialized!');
+    console.log('Running migrations');
+    return dataSource.runMigrations();
   })
   .then(() => {
-      console.log("Migrations successfully run");
+    console.log('Migrations successfully run');
   })
   .catch((err) => {
-      console.error("Error during Data Source initialization", err);
+    console.error('Error during Data Source initialization', err);
   });
