@@ -15,19 +15,18 @@ export class PostService {
     private readonly userRepository: Repository<AuthenticationUsers>,
   ) {}
 
-  async create(createPostDto: CreatePostDto): Promise<Post> {
-    const { content, authorId } = createPostDto;
-
-    const user = await this.userRepository.findOne({ where: { id: authorId } });
-    if (!user) {
-      throw new NotFoundException('User not found');
+  async create(createPostDto: CreatePostDto, userId: string): Promise<Post> {
+    const author = await this.userRepository.findOne({ where: { id: userId } });
+  
+    if (!author) {
+      throw new Error('User not found');
     }
-
+  
     const post = this.postRepository.create({
-      content,
-      author: user,
+      content: createPostDto.content,
+      author,
     });
-
+  
     return this.postRepository.save(post);
   }
 

@@ -1,7 +1,9 @@
-import { Controller, Post, Body, Param, Put, Delete, Get } from '@nestjs/common';
+import { Controller, Post, Body, Param, Put, Delete, Get, UseGuards, Request } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { Post as PostEntity } from './entities/post.entity';
 
 @Controller('posts')
@@ -9,8 +11,20 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
-  create(@Body() createPostDto: CreatePostDto): Promise<PostEntity> {
-    return this.postService.create(createPostDto);
+  @UseGuards(JwtAuthGuard)
+  async createPost(@Body() createPostDto: CreatePostDto, @Request() req) {
+    const userId = req.user?.userId; // `sub` is where the user ID is stored in our token
+    const { authorId } = createPostDto;
+
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+
+    if (userId !== authorId) {
+      throw new UnauthorizedException('You can only create posts for your own account.');
+    }
+
+    return this.postService.create(createPostDto, userId);
   }
 
   @Put(':id')
