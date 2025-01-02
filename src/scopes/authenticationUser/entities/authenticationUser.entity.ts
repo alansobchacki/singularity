@@ -1,10 +1,12 @@
 import {
   Entity,
   PrimaryGeneratedColumn,
+  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
   Column,
 } from 'typeorm';
+import { Post } from '../../post/entities/post.entity';
 
 @Entity()
 export class AuthenticationUsers {
@@ -20,8 +22,23 @@ export class AuthenticationUsers {
   @Column({ name: 'NAME' })
   name: string;
 
-  @Column({ name: 'USER_TYPE' })
-  userType: string;
+  @Column({ name: 'PROFILE_PICTURE', nullable: true })
+  profilePicture?: string;
+
+  @Column({ name: 'BIO', nullable: true })
+  bio?: string;
+
+  @Column({ name: 'LOCATION', nullable: true })
+  location?: string;
+
+  @OneToMany(() => Post, (post) => post.author)
+  posts: Post[]; // building
+
+  @Column({ name: 'USER_TYPE', default: 'regular' })
+  userType: string; // Possible values: 'regular', 'admin'
+
+  @Column({ name: 'ACCOUNT_STATUS', default: 'active' })
+  accountStatus: string;  // Possible values: 'active', 'suspended'
 
   @CreateDateColumn({ name: 'CREATED_AT' })
   createdAt: Date;
