@@ -32,7 +32,7 @@ export class AuthenticationUsers {
   location?: string;
 
   @OneToMany(() => Post, (post) => post.author)
-  posts: Post[]; // building
+  posts: Post[];
 
   @Column({ name: 'USER_TYPE', default: 'regular' })
   userType: string; // Possible values: 'regular', 'admin'

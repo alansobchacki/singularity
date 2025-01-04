@@ -4,7 +4,7 @@ import {
   Column, 
   ManyToOne, 
   CreateDateColumn, 
-  UpdateDateColumn 
+  UpdateDateColumn,
 } from 'typeorm';
 import { AuthenticationUsers } from '../../authenticationUser/entities/authenticationUser.entity';
 
@@ -15,6 +15,9 @@ export class Post {
 
   @Column({ name: 'CONTENT' })
   content: string;
+
+  @Column({ name: "LIKES", default: 0 })
+  likes: number;
 
   @ManyToOne(() => AuthenticationUsers, (user) => user.posts)
   author: AuthenticationUsers;
