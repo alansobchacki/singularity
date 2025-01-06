@@ -13,7 +13,7 @@ export class CreateLikeDto {
   @IsOptional()
   commentId?: string;
 
-  @ValidateIf(o => !o.postId && !o.commentId) // Enforce at least one
+  @ValidateIf(obj => !obj.postId && !obj.commentId)
   @IsNotEmpty({ message: 'Either postId or commentId must be provided.' })
   dummyField?: string; // This is a dummy field to trigger the validation
 }

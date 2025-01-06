@@ -9,4 +9,5 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [LikeController],
   providers: [LikeService],
 })
+
 export class LikeModule {}
