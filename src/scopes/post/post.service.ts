@@ -1,16 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Post } from './entities/post.entity';
+import { Follow } from '../follow/entities/follow.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthenticationUsers } from '../authenticationUser/entities/authenticationUser.entity';
+
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
+    @InjectRepository(Follow)
+    private followRepository: Repository<Follow>,
     @InjectRepository(AuthenticationUsers)
     private readonly userRepository: Repository<AuthenticationUsers>,
   ) {}
@@ -52,5 +56,21 @@ export class PostService {
 
   async findAll(): Promise<Post[]> {
     return this.postRepository.find();
+  }
+
+  async findUserAndFollowedPosts(userId: string): Promise<Post[]> {
+    const followedUsers = await this.followRepository.find({
+      where: { follower: { id: userId } },
+      relations: ['following'],
+    });
+  
+    const followedUserIds = followedUsers.map((follow) => follow.following.id);
+    const userAndFollowedIds = [userId, ...followedUserIds];
+  
+    return this.postRepository.find({
+      where: { author: { id: In(userAndFollowedIds) } },
+      relations: ['author', 'comments'],
+      order: { createdAt: 'DESC' },
+    });
   }
 }

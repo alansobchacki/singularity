@@ -7,6 +7,7 @@ import {
   Column,
 } from 'typeorm';
 import { Post } from '../../post/entities/post.entity';
+import { Follow } from '../../follow/entities/follow.entity';
 
 @Entity()
 export class AuthenticationUsers {
@@ -33,6 +34,12 @@ export class AuthenticationUsers {
 
   @OneToMany(() => Post, (post) => post.author)
   posts: Post[];
+
+  @OneToMany(() => Follow, (follow) => follow.follower)
+  following: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.following)
+  followers: Follow[];
 
   @Column({ name: 'USER_TYPE', default: 'regular' })
   userType: string; // Possible values: 'regular', 'admin'

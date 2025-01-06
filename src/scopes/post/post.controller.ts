@@ -7,13 +7,13 @@ import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { Post as PostEntity } from './entities/post.entity';
 
 @Controller('posts')
+@UseGuards(JwtAuthGuard)
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @Post()
-  @UseGuards(JwtAuthGuard)
+  @Post() // Creates a new post
   async createPost(@Body() createPostDto: CreatePostDto, @Request() req) {
-    const userId = req.user?.userId; // `sub` is where the user ID is stored in our token
+    const userId = req.user?.userId;
     const { authorId } = createPostDto;
 
     if (!userId) {
@@ -27,7 +27,7 @@ export class PostController {
     return this.postService.create(createPostDto, userId);
   }
 
-  @Put(':id')
+  @Put(':id') // Updates a post
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto): Promise<PostEntity> {
     return this.postService.update(id, updatePostDto);
   }
@@ -40,5 +40,16 @@ export class PostController {
   @Get()
   findAll(): Promise<PostEntity[]> {
     return this.postService.findAll();
+  }
+
+  @Get('timeline')
+  async getUserAndFollowedPosts(@Request() req): Promise<PostEntity[]> {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    return this.postService.findUserAndFollowedPosts(userId);
   }
 }

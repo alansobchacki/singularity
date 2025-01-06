@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { AuthenticationUsers } from '../../authenticationUser/entities/authenticationUser.entity';
 import { Comment } from '../../comment/entities/comment.entity';
+import { Like } from '../../like/entities/like.entity';
 
 @Entity()
 export class Post {
@@ -23,6 +24,9 @@ export class Post {
 
   @ManyToOne(() => AuthenticationUsers, (user) => user.posts)
   author: AuthenticationUsers;
+
+  @OneToMany(() => Like, (like) => like.post)
+  likes: Like[];
 
   @CreateDateColumn({ name: 'CREATED_AT' })
   createdAt: Date;
