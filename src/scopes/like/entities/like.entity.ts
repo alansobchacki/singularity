@@ -2,13 +2,15 @@ import {
   Entity, 
   PrimaryGeneratedColumn,
   ManyToOne,
-  CreateDateColumn, 
+  CreateDateColumn,
+  Unique
 } from 'typeorm';
 import { AuthenticationUsers } from '../../authenticationUser/entities/authenticationUser.entity';
 import { Comment } from '../../comment/entities/comment.entity';
 import { Post } from '../../post/entities/post.entity';
 
 @Entity()
+@Unique(["user", "post"])
 export class Like {
   @PrimaryGeneratedColumn('uuid', { name: 'ID' })
   id: string;

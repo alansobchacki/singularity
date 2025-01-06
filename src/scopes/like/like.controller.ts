@@ -1,34 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Delete, Get, Body, UseGuards, Request, Query } from '@nestjs/common';
 import { LikeService } from './like.service';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { CreateLikeDto } from './dto/create-like.dto';
-import { UpdateLikeDto } from './dto/update-like.dto';
+import { RemoveLikeDto } from './dto/remove-like.dto';
+import { CountLikesDto } from './dto/count-likes.dto';
 
-@Controller('like')
+@Controller('likes')
+@UseGuards(JwtAuthGuard)
 export class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
   @Post()
-  create(@Body() createLikeDto: CreateLikeDto) {
-    return this.likeService.create(createLikeDto);
+  async likeResource(@Body() createLikeDto: CreateLikeDto, @Request() req) {
+    createLikeDto.userId = req.user?.userId;
+    return this.likeService.addLike(createLikeDto);
+  }
+
+  @Delete()
+  async removeLike(@Body() removeLikeDto: RemoveLikeDto, @Request() req) {
+    removeLikeDto.userId = req.user?.userId;
+    return this.likeService.removeLike(removeLikeDto);
   }
 
   @Get()
-  findAll() {
-    return this.likeService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.likeService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLikeDto: UpdateLikeDto) {
-    return this.likeService.update(+id, updateLikeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.likeService.remove(+id);
+  async countLikes(@Query() countLikesDto: CountLikesDto) {
+    return this.likeService.countLikes(countLikesDto);
   }
 }

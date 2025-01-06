@@ -1,26 +1,65 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Like } from './entities/like.entity';
 import { CreateLikeDto } from './dto/create-like.dto';
-import { UpdateLikeDto } from './dto/update-like.dto';
+import { RemoveLikeDto } from './dto/remove-like.dto';
+import { CountLikesDto } from './dto/count-likes.dto';
 
 @Injectable()
 export class LikeService {
-  create(createLikeDto: CreateLikeDto) {
-    return 'This action adds a new like';
+  constructor(
+    @InjectRepository(Like)
+    private readonly likeRepository: Repository<Like>,
+  ) {}
+
+  async addLike(createLikeDto: CreateLikeDto): Promise<Like> {
+    const { userId, postId, commentId } = createLikeDto;
+  
+    const existingLike = await this.likeRepository.findOne({
+      where: { 
+        user: { id: userId }, 
+        post: postId ? { id: postId } : undefined, 
+        comment: commentId ? { id: commentId } : undefined 
+      },
+    });
+  
+    if (existingLike) {
+      throw new Error('User already liked this resource.');
+    }
+  
+    const like = this.likeRepository.create({
+      user: { id: userId },
+      post: postId ? { id: postId } : undefined,
+      comment: commentId ? { id: commentId } : undefined,
+    });
+  
+    return this.likeRepository.save(like);
   }
 
-  findAll() {
-    return `This action returns all like`;
+  async removeLike(removeLikeDto: RemoveLikeDto): Promise<void> {
+    const { userId, postId, commentId } = removeLikeDto;
+
+    const like = await this.likeRepository.findOne({
+      where: { user: { id: userId }, post: { id: postId }, comment: { id: commentId } },
+    });
+
+    if (!like) {
+      throw new NotFoundException('Like not found.');
+    }
+
+    await this.likeRepository.remove(like);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} like`;
-  }
+  async countLikes(countLikesDto: CountLikesDto): Promise<number> {
+    const { postId, commentId } = countLikesDto;
 
-  update(id: number, updateLikeDto: UpdateLikeDto) {
-    return `This action updates a #${id} like`;
-  }
+    if (!postId && !commentId) {
+      throw new NotFoundException('Target resource (post or comment) not specified.');
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} like`;
+    return this.likeRepository.count({
+      where: { post: { id: postId }, comment: { id: commentId } },
+    });
   }
 }
