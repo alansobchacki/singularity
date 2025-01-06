@@ -3,26 +3,25 @@ import {
   PrimaryGeneratedColumn, 
   Column, 
   ManyToOne,
-  OneToMany,
   CreateDateColumn, 
   UpdateDateColumn,
 } from 'typeorm';
 import { AuthenticationUsers } from '../../authenticationUser/entities/authenticationUser.entity';
-import { Comment } from '../../comment/entities/comment.entity';
+import { Post } from '../../post/entities/post.entity';
 
 @Entity()
-export class Post {
+export class Comment {
   @PrimaryGeneratedColumn('uuid', { name: 'ID' })
   id: string;
 
   @Column({ name: 'CONTENT' })
   content: string;
 
-  @OneToMany(() => Comment, (comment) => comment.post)
-  comments: Comment[];
-
-  @ManyToOne(() => AuthenticationUsers, (user) => user.posts)
+  @ManyToOne(() => AuthenticationUsers, (user) => user.id)
   author: AuthenticationUsers;
+
+  @ManyToOne(() => Post, (post) => post.comments)
+  post: Post;
 
   @CreateDateColumn({ name: 'CREATED_AT' })
   createdAt: Date;

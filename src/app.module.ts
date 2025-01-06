@@ -5,11 +5,14 @@ import { AuthenticationUserModule } from './scopes/authenticationUser/authentica
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { PostModule } from './scopes/post/post.module';
+import { LikeModule } from './scopes/like/like.module';
+import { CommentModule } from './scopes/comment/comment.module';
+import { FollowModule } from './scopes/follow/follow.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOptions), 
-    AuthenticationUserModule, AuthModule, PostModule
+    AuthenticationUserModule, AuthModule, PostModule, LikeModule, CommentModule, FollowModule
   ],
   controllers: [AppController],
 })

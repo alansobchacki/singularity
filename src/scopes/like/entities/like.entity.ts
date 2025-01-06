@@ -1,32 +1,27 @@
 import { 
   Entity, 
-  PrimaryGeneratedColumn, 
-  Column, 
+  PrimaryGeneratedColumn,
   ManyToOne,
-  OneToMany,
   CreateDateColumn, 
-  UpdateDateColumn,
 } from 'typeorm';
 import { AuthenticationUsers } from '../../authenticationUser/entities/authenticationUser.entity';
 import { Comment } from '../../comment/entities/comment.entity';
+import { Post } from '../../post/entities/post.entity';
 
 @Entity()
-export class Post {
+export class Like {
   @PrimaryGeneratedColumn('uuid', { name: 'ID' })
   id: string;
 
-  @Column({ name: 'CONTENT' })
-  content: string;
+  @ManyToOne(() => AuthenticationUsers, (user) => user.id)
+  user: AuthenticationUsers;
 
-  @OneToMany(() => Comment, (comment) => comment.post)
-  comments: Comment[];
+  @ManyToOne(() => Post, { nullable: true })
+  post?: Post;
 
-  @ManyToOne(() => AuthenticationUsers, (user) => user.posts)
-  author: AuthenticationUsers;
+  @ManyToOne(() => Comment, { nullable: true })
+  comment?: Comment;
 
   @CreateDateColumn({ name: 'CREATED_AT' })
   createdAt: Date;
-
-  @UpdateDateColumn({ name: 'UPDATED_AT' })
-  updatedAt: Date;
 }
