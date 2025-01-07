@@ -15,47 +15,63 @@ export class LikeService {
 
   async addLike(createLikeDto: CreateLikeDto): Promise<Like> {
     const { userId, postId, commentId } = createLikeDto;
-  
+
     const existingLike = await this.likeRepository.findOne({
-      where: { 
-        user: { id: userId }, 
-        post: postId ? { id: postId } : undefined, 
-        comment: commentId ? { id: commentId } : undefined 
+      where: {
+        user: { id: userId },
+        post: postId ? { id: postId } : undefined,
+        comment: commentId ? { id: commentId } : undefined,
       },
     });
-  
+
     if (existingLike) {
       throw new Error('User already liked this resource.');
     }
-  
+
     const like = this.likeRepository.create({
       user: { id: userId },
       post: postId ? { id: postId } : undefined,
       comment: commentId ? { id: commentId } : undefined,
     });
-  
+
     return this.likeRepository.save(like);
   }
 
-  async removeLike(removeLikeDto: RemoveLikeDto): Promise<void> {
+  async removeLike(
+    removeLikeDto: RemoveLikeDto,
+  ): Promise<{ message: string; removedLikeId: string }> {
     const { userId, postId, commentId } = removeLikeDto;
 
-    const like = await this.likeRepository.findOne({
-      where: { user: { id: userId }, post: { id: postId }, comment: { id: commentId } },
+    const existingLike = await this.likeRepository.findOne({
+      where: {
+        user: { id: userId },
+        post: postId ? { id: postId } : undefined,
+        comment: commentId ? { id: commentId } : undefined,
+      },
+      relations: ['user', 'post', 'comment'],
     });
 
-    if (!like) {
-      throw new NotFoundException('Like not found.');
+    if (!existingLike) {
+      throw new Error(
+        'Cannot remove like - no like found for the specified user and resource.',
+      );
     }
 
-    await this.likeRepository.remove(like);
+    await this.likeRepository.remove(existingLike);
+
+    return {
+      message: 'Like removed successfully',
+      removedLikeId: existingLike.id,
+    };
   }
 
   async countLikes(countLikesDto: CountLikesDto): Promise<number> {
     const { postId, commentId } = countLikesDto;
 
     if (!postId && !commentId) {
-      throw new NotFoundException('Target resource (post or comment) not specified.');
+      throw new NotFoundException(
+        'Target resource (post or comment) not specified.',
+      );
     }
 
     return this.likeRepository.count({
