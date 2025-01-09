@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Post } from '../../post/entities/post.entity';
 import { Follow } from '../../follow/entities/follow.entity';
+import { Comment } from '../../comment/entities/comment.entity';
 
 @Entity()
 export class AuthenticationUsers {
@@ -34,6 +35,9 @@ export class AuthenticationUsers {
 
   @OneToMany(() => Post, (post) => post.author)
   posts: Post[];
+
+  @OneToMany(() => Comment, (comment) => comment.author)
+  comments: Comment[];  
 
   @OneToMany(() => Follow, (follow) => follow.follower)
   following: Follow[];

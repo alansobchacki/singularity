@@ -1,0 +1,342 @@
+{
+  "info": {
+    "name": "odin-odinbook",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "bruno",
+      "event": []
+    },
+    {
+      "name": "posts",
+      "item": [
+        {
+          "name": "Create Post",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzYyMDA0OTksImV4cCI6MTczNjIwMTM5OX0.c7-wXx9oTjRiDTTAtk4M9KlyxffX6QhSd9K9VjKDRmk",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/posts",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "posts"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"My first post!\",\n  \"authorId\": \"0e722892-d5f6-48a4-83c1-1c025195f955\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Like (Post)",
+          "event": [],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzYyODg5NzUsImV4cCI6MTczNjI5MjU3NX0.6-ESuvMgE0EIm7Mri6PlXnN0nH-JzCSAm-RB6g6pFys",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/likes",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "likes"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"0e722892-d5f6-48a4-83c1-1c025195f955\",\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get Timeline",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzY0NjE4MDQsImV4cCI6MTczNjQ2NTQwNH0.JjIt8RgVTCe9dhDL5ikNaLvuM0Tdpdup5y2cItZGz-g",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/posts/timeline",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "posts",
+                "timeline"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Like Post",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzYyODg5NzUsImV4cCI6MTczNjI5MjU3NX0.6-ESuvMgE0EIm7Mri6PlXnN0nH-JzCSAm-RB6g6pFys",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/likes",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "likes"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"0e722892-d5f6-48a4-83c1-1c025195f955\",\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "Create User",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": null,
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/user",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "user"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser71@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"John Dude\",\n  \"userType\": \"regular\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get User By Email",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": null,
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/user?email=newuser10@example.com",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "user?email=newuser10@example.com"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "newuser10@example.com"
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Get User By Token",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzYyMDU1OTYsImV4cCI6MTczNjIwNjQ5Nn0.DhJSCBy8sDykD54tcHHWl-icQpuD5Sj22Jm90YhKPK8",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/profile",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "profile"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": null,
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/auth/login",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser71@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "comments",
+      "item": [
+        {
+          "name": "Create Comment",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzY0NjE4MDQsImV4cCI6MTczNjQ2NTQwNH0.JjIt8RgVTCe9dhDL5ikNaLvuM0Tdpdup5y2cItZGz-g",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/comments",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "comments"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\",\n  \"content\": \"my first comment! woohoo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "ADDRESS",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}
