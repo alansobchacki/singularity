@@ -8,11 +8,12 @@ import { PostModule } from './scopes/post/post.module';
 import { LikeModule } from './scopes/like/like.module';
 import { CommentModule } from './scopes/comment/comment.module';
 import { FollowModule } from './scopes/follow/follow.module';
+import { FollowRequestModule } from './scopes/follow-request/follow-request.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOptions), 
-    AuthenticationUserModule, AuthModule, PostModule, LikeModule, CommentModule, FollowModule
+    AuthenticationUserModule, AuthModule, PostModule, LikeModule, CommentModule, FollowModule, FollowRequestModule
   ],
   controllers: [AppController],
 })
