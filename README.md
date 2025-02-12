@@ -1,1 +1,3 @@
 # odin-nest-book
+
+turning this into a back/front end monolith repo, please wait...
