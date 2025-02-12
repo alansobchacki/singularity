@@ -52,10 +52,10 @@ export class AuthenticationUsers {
   @OneToMany(() => Follow, (follow) => follow.following)
   followers: Follow[];
 
-  @Column({ type: 'enum', enum: ['REGULAR', 'ADMIN'], default: 'regular' })
+  @Column({ type: 'enum', enum: ['REGULAR', 'ADMIN'], default: 'REGULAR' })
   userType: 'REGULAR' | 'ADMIN';
 
-  @Column({ type: 'enum', enum: ['ACTIVE', 'SUSPENDED'], default: 'active' })
+  @Column({ type: 'enum', enum: ['ACTIVE', 'SUSPENDED'], default: 'ACTIVE' })
   accountStatus: 'ACTIVE' | 'SUSPENDED';
 
   @CreateDateColumn({ name: 'CREATED_AT' })
