@@ -8,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
   constructor(
     private usersService: UserService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -18,8 +18,8 @@ export class AuthService {
     if (!user) {
       throw new Error('User not found');
     }
-  
-    if (user && await bcrypt.compare(password, user.password)) {
+
+    if (user && (await bcrypt.compare(password, user.password))) {
       return { ...user, password: undefined };
     }
 
@@ -27,7 +27,11 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { useremail: user.email, sub: user.id }
+    const payload = {
+      useremail: user.email,
+      sub: user.id,
+      userType: user.userType,
+    };
 
     return {
       access_token: this.jwtService.sign(payload),

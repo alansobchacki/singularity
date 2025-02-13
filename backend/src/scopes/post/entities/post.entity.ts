@@ -1,10 +1,10 @@
-import { 
-  Entity, 
-  PrimaryGeneratedColumn, 
-  Column, 
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
   ManyToOne,
   OneToMany,
-  CreateDateColumn, 
+  CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { AuthenticationUsers } from '../../authenticationUser/entities/authenticationUser.entity';
@@ -25,7 +25,7 @@ export class Post {
   @ManyToOne(() => AuthenticationUsers, (user) => user.posts)
   author: AuthenticationUsers;
 
-  @OneToMany(() => Like, (like) => like.post)
+  @OneToMany(() => Like, (like) => like.post, { cascade: true })
   likes: Like[];
 
   @CreateDateColumn({ name: 'CREATED_AT' })

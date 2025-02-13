@@ -16,7 +16,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { Post as PostEntity } from './entities/post.entity';
 
-@Controller('posts')
+@Controller('post')
 @UseGuards(JwtAuthGuard)
 export class PostController {
   constructor(private readonly postService: PostService) {}
@@ -26,9 +26,7 @@ export class PostController {
     const userId = req.user?.userId;
     const { authorId } = createPostDto;
 
-    if (!userId) {
-      throw new Error('User not authenticated');
-    }
+    if (!userId) throw new Error('User not authenticated');
 
     if (userId !== authorId) {
       throw new UnauthorizedException(
@@ -43,18 +41,20 @@ export class PostController {
   update(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
+    @Request() req,
   ): Promise<PostEntity> {
-    return this.postService.update(id, updatePostDto);
+    const userId = req.user?.userId;
+    const userType = req.user.userType;
+
+    return this.postService.update(updatePostDto, id, userId, userType);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.postService.remove(id);
-  }
+  remove(@Param('id') id: string, @Request() req): Promise<void> {
+    const userId = req.user?.userId;
+    const userType = req.user.userType;
 
-  @Get()
-  findAll(): Promise<PostEntity[]> {
-    return this.postService.findAll();
+    return this.postService.remove(id, userId, userType);
   }
 
   @Get('timeline')

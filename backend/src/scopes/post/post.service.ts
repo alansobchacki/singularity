@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Post } from './entities/post.entity';
@@ -21,9 +25,7 @@ export class PostService {
   async create(createPostDto: CreatePostDto, userId: string): Promise<Post> {
     const author = await this.userRepository.findOne({ where: { id: userId } });
 
-    if (!author) {
-      throw new Error('User not found');
-    }
+    if (!author) throw new Error('User not found');
 
     const post = this.postRepository.create({
       content: createPostDto.content,
@@ -33,28 +35,41 @@ export class PostService {
     return this.postRepository.save(post);
   }
 
-  async update(id: string, updatePostDto: UpdatePostDto): Promise<Post> {
-    const post = await this.postRepository.findOne({ where: { id } });
-    if (!post) {
-      throw new NotFoundException('Post not found');
-    }
+  async update(
+    updatePostDto: UpdatePostDto,
+    id: string,
+    userId: string,
+    userType: string,
+  ): Promise<Post> {
+    const post = await this.postRepository.findOne({
+      where: { id },
+      relations: ['author'],
+    });
 
-    if (updatePostDto.content) {
-      post.content = updatePostDto.content;
-    }
+    if (!post) throw new NotFoundException('Post not found');
 
-    return this.postRepository.save(post);
+    if (post.author.id === userId || userType === 'ADMIN') {
+      if (updatePostDto.content) post.content = updatePostDto.content;
+
+      return this.postRepository.save(post);
+    } else {
+      throw new UnauthorizedException('You can only edit your own posts');
+    }
   }
 
-  async remove(id: string): Promise<void> {
-    const result = await this.postRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException('Post not found');
-    }
-  }
+  async remove(id: string, userId: string, userType: string): Promise<void> {
+    const post = await this.postRepository.findOne({
+      where: { id },
+      relations: ['author'],
+    });
 
-  async findAll(): Promise<Post[]> {
-    return this.postRepository.find();
+    if (!post) throw new NotFoundException('Post not found');
+
+    if (post.author.id === userId || userType === 'ADMIN') {
+      await this.postRepository.delete(id);
+    } else {
+      throw new UnauthorizedException('You can only delete your own posts');
+    }
   }
 
   async findUserAndFollowedPosts(userId: string): Promise<Post[]> {
