@@ -14,7 +14,7 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
-  userType: 'REGULAR' | 'ADMIN';
+  userType: 'REGULAR' | 'ADMIN' | 'SPECTATOR';
 
   @IsOptional()
   @IsString()

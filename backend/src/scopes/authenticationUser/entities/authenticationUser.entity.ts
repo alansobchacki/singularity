@@ -45,8 +45,12 @@ export class AuthenticationUsers {
   @OneToMany(() => Follow, (follow) => follow.following)
   followers: Follow[];
 
-  @Column({ type: 'enum', enum: ['REGULAR', 'ADMIN'], default: 'REGULAR' })
-  userType: 'REGULAR' | 'ADMIN';
+  @Column({
+    type: 'enum',
+    enum: ['REGULAR', 'ADMIN', 'SPECTATOR'],
+    default: 'REGULAR',
+  })
+  userType: 'REGULAR' | 'ADMIN' | 'SPECTATOR';
 
   @Column({ type: 'enum', enum: ['ACTIVE', 'SUSPENDED'], default: 'ACTIVE' })
   accountStatus: 'ACTIVE' | 'SUSPENDED';
