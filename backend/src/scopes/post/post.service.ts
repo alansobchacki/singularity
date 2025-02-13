@@ -7,7 +7,6 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthenticationUsers } from '../authenticationUser/entities/authenticationUser.entity';
 
-
 @Injectable()
 export class PostService {
   constructor(
@@ -21,16 +20,16 @@ export class PostService {
 
   async create(createPostDto: CreatePostDto, userId: string): Promise<Post> {
     const author = await this.userRepository.findOne({ where: { id: userId } });
-  
+
     if (!author) {
       throw new Error('User not found');
     }
-  
+
     const post = this.postRepository.create({
       content: createPostDto.content,
       author,
     });
-  
+
     return this.postRepository.save(post);
   }
 
@@ -63,13 +62,13 @@ export class PostService {
       where: { follower: { id: userId } },
       relations: ['following'],
     });
-  
+
     const followedUserIds = followedUsers.map((follow) => follow.following.id);
     const userAndFollowedIds = [userId, ...followedUserIds];
-  
+
     return this.postRepository.find({
       where: { author: { id: In(userAndFollowedIds) } },
-      relations: ['author', 'comments'],
+      relations: ['author', 'comments', 'likes'],
       order: { createdAt: 'DESC' },
     });
   }

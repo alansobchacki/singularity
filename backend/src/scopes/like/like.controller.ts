@@ -14,7 +14,7 @@ import { CreateLikeDto } from './dto/create-like.dto';
 import { RemoveLikeDto } from './dto/remove-like.dto';
 import { CountLikesDto } from './dto/count-likes.dto';
 
-@Controller('likes')
+@Controller('like')
 @UseGuards(JwtAuthGuard)
 export class LikeController {
   constructor(private readonly likeService: LikeService) {}
