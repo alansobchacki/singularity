@@ -1,16 +1,16 @@
-import { 
-  Entity, 
+import {
+  Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
   CreateDateColumn,
-  Unique
+  Unique,
 } from 'typeorm';
 import { AuthenticationUsers } from '../../authenticationUser/entities/authenticationUser.entity';
 import { Comment } from '../../comment/entities/comment.entity';
 import { Post } from '../../post/entities/post.entity';
 
 @Entity()
-@Unique(["user", "post"])
+@Unique(['user', 'post', 'comment'])
 export class Like {
   @PrimaryGeneratedColumn('uuid', { name: 'ID' })
   id: string;
