@@ -14,13 +14,20 @@ export class UserService {
     private readonly userRepository: Repository<AuthenticationUsers>,
   ) {}
 
-  async findByEmail(findUserByEmailDto: FindUserByEmailDto): Promise <AuthenticationUsers> {
-    return await this.userRepository.findOneBy({ email: findUserByEmailDto.email });
+  async findByEmail(
+    findUserByEmailDto: FindUserByEmailDto,
+  ): Promise<AuthenticationUsers> {
+    return await this.userRepository.findOneBy({
+      email: findUserByEmailDto.email,
+    });
   }
 
   async create(createUserDto: CreateUserDto): Promise<AuthenticationUsers> {
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
+    const hashedPassword = await bcrypt.hash(
+      createUserDto.password,
+      saltRounds,
+    );
 
     const user = this.userRepository.create({
       ...createUserDto,
@@ -30,14 +37,19 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<AuthenticationUsers> {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<AuthenticationUsers> {
     const user = await this.userRepository.preload({
       id,
       ...updateUserDto,
     });
+
     if (!user) {
       throw new Error('User not found');
     }
+
     return await this.userRepository.save(user);
   }
 }

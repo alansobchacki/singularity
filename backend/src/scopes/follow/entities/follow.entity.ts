@@ -1,12 +1,15 @@
-import { 
-  Entity, 
-  PrimaryGeneratedColumn, 
+import {
+  Entity,
+  Unique,
+  PrimaryGeneratedColumn,
+  Column,
   ManyToOne,
-  CreateDateColumn, 
+  CreateDateColumn,
 } from 'typeorm';
 import { AuthenticationUsers } from '../../authenticationUser/entities/authenticationUser.entity';
 
 @Entity()
+@Unique(['follower', 'following'])
 export class Follow {
   @PrimaryGeneratedColumn('uuid', { name: 'ID' })
   id: string;
@@ -16,6 +19,9 @@ export class Follow {
 
   @ManyToOne(() => AuthenticationUsers, (user) => user.followers)
   following: AuthenticationUsers;
+
+  @Column({ type: 'enum', enum: ['PENDING', 'ACCEPTED'], default: 'PENDING' })
+  status: 'PENDING' | 'ACCEPTED';
 
   @CreateDateColumn({ name: 'CREATED_AT' })
   createdAt: Date;

@@ -14,7 +14,7 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
-  userType: 'REGULAR' | 'ADMIN';  // Restricting to valid types
+  userType: 'REGULAR' | 'ADMIN';
 
   @IsOptional()
   @IsString()
@@ -29,5 +29,5 @@ export class CreateUserDto {
   location?: string;
 
   @IsOptional()
-  accountStatus?: 'ACTIVE' | 'SUSPENDED';  // Default value should be handled in service
+  accountStatus?: 'ACTIVE' | 'SUSPENDED';
 }

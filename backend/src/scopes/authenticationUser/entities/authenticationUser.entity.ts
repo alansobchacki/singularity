@@ -9,7 +9,6 @@ import {
 import { Post } from '../../post/entities/post.entity';
 import { Follow } from '../../follow/entities/follow.entity';
 import { Comment } from '../../comment/entities/comment.entity';
-import { FollowRequest } from '../../follow-request/entities/follow-request.entity';
 
 @Entity()
 export class AuthenticationUsers {
@@ -39,12 +38,6 @@ export class AuthenticationUsers {
 
   @OneToMany(() => Comment, (comment) => comment.author)
   comments: Comment[];
-
-  @OneToMany(() => FollowRequest, (followRequest) => followRequest.requester)
-  sentFollowRequests: FollowRequest[];
-
-  @OneToMany(() => FollowRequest, (followRequest) => followRequest.receiver)
-  receivedFollowRequests: FollowRequest[];
 
   @OneToMany(() => Follow, (follow) => follow.follower)
   following: Follow[];
