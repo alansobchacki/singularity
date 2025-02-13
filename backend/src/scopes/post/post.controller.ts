@@ -26,8 +26,6 @@ export class PostController {
     const userId = req.user?.userId;
     const { authorId } = createPostDto;
 
-    if (!userId) throw new Error('User not authenticated');
-
     if (userId !== authorId) {
       throw new UnauthorizedException(
         'You can only create posts for your own account.',
@@ -38,27 +36,27 @@ export class PostController {
   }
 
   @Put(':id')
-  update(
+  async updatePost(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
     @Request() req,
   ): Promise<PostEntity> {
     const userId = req.user?.userId;
-    const userType = req.user.userType;
+    const userType = req.user?.userType;
 
     return this.postService.update(updatePostDto, id, userId, userType);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Request() req): Promise<void> {
+  async removePost(@Param('id') id: string, @Request() req): Promise<void> {
     const userId = req.user?.userId;
-    const userType = req.user.userType;
+    const userType = req.user?.userType;
 
     return this.postService.remove(id, userId, userType);
   }
 
   @Get('timeline')
-  async getUserAndFollowedPosts(@Request() req): Promise<PostEntity[]> {
+  async getTimeline(@Request() req): Promise<PostEntity[]> {
     const userId = req.user?.userId;
 
     if (!userId) {
