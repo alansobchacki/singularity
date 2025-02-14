@@ -19,6 +19,19 @@ export class Comment {
   @Column({ name: 'CONTENT' })
   content: string;
 
+  @Column({ name: 'IMAGE', nullable: true })
+  image: string;
+
+  @Column({ name: 'EDITED', default: false })
+  edited: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: ['REGULAR', 'ARCHIVED'],
+    default: 'REGULAR',
+  })
+  status: 'REGULAR' | 'ARCHIVED';
+
   @ManyToOne(() => AuthenticationUsers, (user) => user.id)
   author: AuthenticationUsers;
 
