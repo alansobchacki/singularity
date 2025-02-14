@@ -1,12 +1,14 @@
-import { 
-  Entity, 
-  PrimaryGeneratedColumn, 
-  Column, 
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
   ManyToOne,
-  CreateDateColumn, 
+  OneToMany,
+  CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { AuthenticationUsers } from '../../authenticationUser/entities/authenticationUser.entity';
+import { Like } from '../../like/entities/like.entity';
 import { Post } from '../../post/entities/post.entity';
 
 @Entity()
@@ -22,6 +24,9 @@ export class Comment {
 
   @ManyToOne(() => Post, (post) => post.comments)
   post: Post;
+
+  @OneToMany(() => Like, (like) => like.comment, { cascade: true })
+  likes: Like[];
 
   @CreateDateColumn({ name: 'CREATED_AT' })
   createdAt: Date;

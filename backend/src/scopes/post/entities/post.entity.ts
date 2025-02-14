@@ -19,11 +19,11 @@ export class Post {
   @Column({ name: 'CONTENT' })
   content: string;
 
-  @OneToMany(() => Comment, (comment) => comment.post)
-  comments: Comment[];
-
   @ManyToOne(() => AuthenticationUsers, (user) => user.posts)
   author: AuthenticationUsers;
+
+  @OneToMany(() => Comment, (comment) => comment.post, { cascade: true })
+  comments: Comment[];
 
   @OneToMany(() => Like, (like) => like.post, { cascade: true })
   likes: Like[];
