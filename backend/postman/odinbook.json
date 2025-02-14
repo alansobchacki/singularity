@@ -9,155 +9,6 @@
       "event": []
     },
     {
-      "name": "posts",
-      "item": [
-        {
-          "name": "Create Post",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzYyMDA0OTksImV4cCI6MTczNjIwMTM5OX0.c7-wXx9oTjRiDTTAtk4M9KlyxffX6QhSd9K9VjKDRmk",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{ADDRESS}}/posts",
-              "protocol": "",
-              "host": [
-                "{{ADDRESS}}"
-              ],
-              "path": [
-                "posts"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"content\": \"My first post!\",\n  \"authorId\": \"0e722892-d5f6-48a4-83c1-1c025195f955\"\n}\n",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Delete Like (Post)",
-          "event": [],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzYyODg5NzUsImV4cCI6MTczNjI5MjU3NX0.6-ESuvMgE0EIm7Mri6PlXnN0nH-JzCSAm-RB6g6pFys",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{ADDRESS}}/likes",
-              "protocol": "",
-              "host": [
-                "{{ADDRESS}}"
-              ],
-              "path": [
-                "likes"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userId\": \"0e722892-d5f6-48a4-83c1-1c025195f955\",\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Get Timeline",
-          "event": [],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzY0NjE4MDQsImV4cCI6MTczNjQ2NTQwNH0.JjIt8RgVTCe9dhDL5ikNaLvuM0Tdpdup5y2cItZGz-g",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{ADDRESS}}/posts/timeline",
-              "protocol": "",
-              "host": [
-                "{{ADDRESS}}"
-              ],
-              "path": [
-                "posts",
-                "timeline"
-              ],
-              "query": [],
-              "variable": []
-            }
-          }
-        },
-        {
-          "name": "Like Post",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzYyODg5NzUsImV4cCI6MTczNjI5MjU3NX0.6-ESuvMgE0EIm7Mri6PlXnN0nH-JzCSAm-RB6g6pFys",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{ADDRESS}}/likes",
-              "protocol": "",
-              "host": [
-                "{{ADDRESS}}"
-              ],
-              "path": [
-                "likes"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"userId\": \"0e722892-d5f6-48a4-83c1-1c025195f955\",\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
       "name": "auth",
       "item": [
         {
@@ -171,12 +22,8 @@
             "url": {
               "raw": "{{ADDRESS}}/user",
               "protocol": "",
-              "host": [
-                "{{ADDRESS}}"
-              ],
-              "path": [
-                "user"
-              ],
+              "host": ["{{ADDRESS}}"],
+              "path": ["user"],
               "query": [],
               "variable": []
             },
@@ -202,12 +49,8 @@
             "url": {
               "raw": "{{ADDRESS}}/user?email=newuser10@example.com",
               "protocol": "",
-              "host": [
-                "{{ADDRESS}}"
-              ],
-              "path": [
-                "user?email=newuser10@example.com"
-              ],
+              "host": ["{{ADDRESS}}"],
+              "path": ["user?email=newuser10@example.com"],
               "query": [
                 {
                   "key": "email",
@@ -243,12 +86,8 @@
             "url": {
               "raw": "{{ADDRESS}}/profile",
               "protocol": "",
-              "host": [
-                "{{ADDRESS}}"
-              ],
-              "path": [
-                "profile"
-              ],
+              "host": ["{{ADDRESS}}"],
+              "path": ["profile"],
               "query": [],
               "variable": []
             }
@@ -265,13 +104,8 @@
             "url": {
               "raw": "{{ADDRESS}}/auth/login",
               "protocol": "",
-              "host": [
-                "{{ADDRESS}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ],
+              "host": ["{{ADDRESS}}"],
+              "path": ["auth", "login"],
               "query": [],
               "variable": []
             },
@@ -301,26 +135,142 @@
               "type": "bearer",
               "bearer": {
                 "key": "token",
-                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzY0NjE4MDQsImV4cCI6MTczNjQ2NTQwNH0.JjIt8RgVTCe9dhDL5ikNaLvuM0Tdpdup5y2cItZGz-g",
+                "value": "{{TOKEN}}",
                 "type": "string"
               }
             },
             "description": "",
             "url": {
-              "raw": "{{ADDRESS}}/comments",
+              "raw": "{{ADDRESS}}/comment",
               "protocol": "",
-              "host": [
-                "{{ADDRESS}}"
-              ],
-              "path": [
-                "comments"
-              ],
+              "host": ["{{ADDRESS}}"],
+              "path": ["comment"],
               "query": [],
               "variable": []
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\",\n  \"content\": \"my first comment! woohoo\"\n}",
+              "raw": "{\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\",\n  \"content\": \"a brand new comment!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update Content",
+          "event": [],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "auth": null,
+            "description": "",
+            "url": {
+              "raw": ""
+            }
+          }
+        },
+        {
+          "name": "Archive Comment",
+          "event": [],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/comment/archive/:id",
+              "protocol": "",
+              "host": ["{{ADDRESS}}"],
+              "path": ["comment", "archive", ":id"],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "cded58f1-eed6-49c6-adf0-3b508c2422e0"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "follows",
+      "item": []
+    },
+    {
+      "name": "likes",
+      "item": [
+        {
+          "name": "Like (post)",
+          "event": [],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "3971779a-0533-4cbd-b0d8-93fd191d3660",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/likes",
+              "protocol": "",
+              "host": ["{{ADDRESS}}"],
+              "path": ["likes"],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"0e722892-d5f6-48a4-83c1-1c025195f955\",\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Like (posts)",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3Mzk0Nzk0OTQsImV4cCI6MTczOTQ4MzA5NH0.-6-hG-zUh2ov4TcNEyxuqXNz2P4bUa1SbiinuDF1RWM",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/likes",
+              "protocol": "",
+              "host": ["{{ADDRESS}}"],
+              "path": ["likes"],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"0e722892-d5f6-48a4-83c1-1c025195f955\",\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -330,11 +280,80 @@
           }
         }
       ]
+    },
+    {
+      "name": "posts",
+      "item": [
+        {
+          "name": "Post",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzYyMDA0OTksImV4cCI6MTczNjIwMTM5OX0.c7-wXx9oTjRiDTTAtk4M9KlyxffX6QhSd9K9VjKDRmk",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/post",
+              "protocol": "",
+              "host": ["{{ADDRESS}}"],
+              "path": ["post"],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"My first post!\",\n  \"authorId\": \"0e722892-d5f6-48a4-83c1-1c025195f955\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Timeline",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3Mzk0Nzk0OTQsImV4cCI6MTczOTQ4MzA5NH0.-6-hG-zUh2ov4TcNEyxuqXNz2P4bUa1SbiinuDF1RWM",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/post/timeline",
+              "protocol": "",
+              "host": ["{{ADDRESS}}"],
+              "path": ["post", "timeline"],
+              "query": [],
+              "variable": []
+            }
+          }
+        }
+      ]
     }
   ],
   "variable": [
     {
       "key": "ADDRESS",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "TOKEN",
       "value": "",
       "type": "default"
     }
