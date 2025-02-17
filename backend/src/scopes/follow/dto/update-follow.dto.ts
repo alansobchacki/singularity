@@ -1,4 +1,22 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateFollowDto } from './create-follow.dto';
+import { IsNotEmpty, IsUUID, IsEnum } from 'class-validator';
 
-export class UpdateFollowDto extends PartialType(CreateFollowDto) {}
+export enum FollowStatus {
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+}
+
+export class UpdateFollowDto {
+  @IsUUID()
+  @IsNotEmpty()
+  followId: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  userId: string;
+
+  @IsEnum(FollowStatus, {
+    message: 'Status must be ACCEPTED or REJECTED',
+  })
+  @IsNotEmpty()
+  followStatus: FollowStatus;
+}

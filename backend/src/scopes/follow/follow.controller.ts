@@ -1,34 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  UseGuards,
+  Get,
+  Post,
+  Body,
+  Param,
+  Request,
+  Put,
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { FollowService } from './follow.service';
 import { CreateFollowDto } from './dto/create-follow.dto';
 import { UpdateFollowDto } from './dto/update-follow.dto';
 
 @Controller('follow')
+@UseGuards(JwtAuthGuard)
 export class FollowController {
   constructor(private readonly followService: FollowService) {}
 
+  @Get(':userId/followers')
+  getAllFollowers(@Param('userId') userId: string) {
+    return this.followService.getAllFollowers(userId);
+  }
+
+  @Get('requests')
+  getAllFollowRequests(@Request() req) {
+    return this.followService.getAllFollowRequests(req.user.userId);
+  }
+
   @Post()
-  create(@Body() createFollowDto: CreateFollowDto) {
-    return this.followService.create(createFollowDto);
+  create(@Body() createFollowDto: CreateFollowDto, @Request() req) {
+    createFollowDto.followerId = req.user?.userId;
+
+    return this.followService.createFollowRequest(createFollowDto);
   }
 
-  @Get()
-  findAll() {
-    return this.followService.findAll();
-  }
+  @Put('requests/:id')
+  updateFollowRequest(
+    @Param('id') followId: string,
+    @Body() updateFollowDto: UpdateFollowDto,
+    @Request() req,
+  ) {
+    updateFollowDto.userId = req.user.userId;
+    updateFollowDto.followId = followId;
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.followService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFollowDto: UpdateFollowDto) {
-    return this.followService.update(+id, updateFollowDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.followService.remove(+id);
+    return this.followService.updateFollowRequest(updateFollowDto);
   }
 }

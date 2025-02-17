@@ -6,7 +6,7 @@ turning this into a back/front end monolith repo, please wait...
 
 [x] Users must sign in to see anything except the sign-in page.
 [x] Users should be able to sign in using your chosen authentication method.
-[x] Users can send follow requests to other users.
+[ ] Users can send follow requests to other users.
 [x] Users can create posts (begin with text only).
 [x] Users can like posts and comments.
 [x] Users can comment on posts.
@@ -19,6 +19,8 @@ turning this into a back/front end monolith repo, please wait...
 
 // optional stuff
 
+[ ] Google Auth
+[ ] Docker support
 [ ] Live chat between users
 [ ] Real-time notifications
 [ ] Posts can have images/gifs

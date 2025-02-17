@@ -19,9 +19,15 @@ import { CountLikesDto } from './dto/count-likes.dto';
 export class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
+  @Get()
+  async countLikes(@Query() countLikesDto: CountLikesDto) {
+    return this.likeService.countLikes(countLikesDto);
+  }
+
   @Post()
-  async likeResource(@Body() createLikeDto: CreateLikeDto, @Request() req) {
+  async addLike(@Body() createLikeDto: CreateLikeDto, @Request() req) {
     createLikeDto.userId = req.user?.userId;
+
     return this.likeService.addLike(createLikeDto);
   }
 
@@ -32,10 +38,5 @@ export class LikeController {
   ): Promise<{ message: string; removedLikeId: string }> {
     removeLikeDto.userId = req.user?.userId;
     return this.likeService.removeLike(removeLikeDto);
-  }
-
-  @Get()
-  async countLikes(@Query() countLikesDto: CountLikesDto) {
-    return this.likeService.countLikes(countLikesDto);
   }
 }

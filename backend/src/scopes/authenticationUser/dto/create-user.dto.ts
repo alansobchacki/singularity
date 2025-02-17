@@ -1,4 +1,21 @@
-import { IsEmail, IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+} from 'class-validator';
+
+export enum UserType {
+  REGULAR = 'REGULAR',
+  ADMIN = 'ADMIN',
+  SPECTATOR = 'SPECTATOR',
+}
+
+export enum AccountStatus {
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+}
 
 export class CreateUserDto {
   @IsEmail()
@@ -12,9 +29,11 @@ export class CreateUserDto {
   @IsNotEmpty()
   name: string;
 
-  @IsString()
+  @IsEnum(UserType, {
+    message: 'userType must be REGULAR, ADMIN, or SPECTATOR',
+  })
   @IsNotEmpty()
-  userType: 'REGULAR' | 'ADMIN' | 'SPECTATOR';
+  userType: UserType;
 
   @IsOptional()
   @IsString()
@@ -28,6 +47,9 @@ export class CreateUserDto {
   @IsString()
   location?: string;
 
+  @IsEnum(AccountStatus, {
+    message: 'accountStatus must be ACTIVE or SUSPENDED',
+  })
   @IsOptional()
-  accountStatus?: 'ACTIVE' | 'SUSPENDED';
+  accountStatus?: AccountStatus;
 }
