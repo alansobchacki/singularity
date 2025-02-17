@@ -6,12 +6,7 @@ export enum FollowStatus {
 }
 
 export class UpdateFollowDto {
-  @IsUUID()
-  @IsNotEmpty()
   followId: string;
-
-  @IsUUID()
-  @IsNotEmpty()
   userId: string;
 
   @IsEnum(FollowStatus, {

@@ -46,7 +46,7 @@ export class FollowService {
   async getAllFollowRequests(userId: string) {
     const followRequests = await this.followRepository.find({
       where: { following: { id: userId }, status: 'PENDING' },
-      relations: ['follower'],
+      relations: ['follower', 'following'],
     });
 
     return followRequests;
@@ -56,7 +56,8 @@ export class FollowService {
     const { userId, followId, followStatus } = updateFollowDto;
 
     const follow = await this.followRepository.findOne({
-      where: { follower: { id: followId } },
+      where: { id: followId },
+      relations: ['follower', 'following'],
     });
 
     if (!follow) {
