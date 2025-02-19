@@ -1,10 +1,10 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { Formik } from "formik";
+import { useLogin } from "../../hooks/userService/useLogin";
 import * as Yup from "yup";
 
 const LoginPage = () => {
-  const router = useRouter();
+  const { mutate: login } = useLogin();
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -23,10 +23,13 @@ const LoginPage = () => {
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={validationSchema}
-          onSubmit={(values, actions) => {
-            console.log(values);
-            alert("Form submitted!");
-            // implement valid logic here
+          onSubmit={async (values, actions) => {
+            try {
+              const response = await login(values);
+              console.log(response);
+            } catch (err) {
+              alert("login error");
+            }
           }}
         >
           {(props) => (
