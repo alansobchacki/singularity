@@ -1,3 +1,3 @@
 export default interface AuthToken {
-  accessToken: string;
+  access_token: string;
 }

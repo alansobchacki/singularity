@@ -11,7 +11,7 @@ const postLogin = async (data: LoginRequest): Promise<AuthToken> => {
   try {
     const response = await api.post<AuthToken>(`/api/v1/auth/login`, data);
 
-    if (response.status === 200) return response.data;
+    if (response.status === 201) return response.data;
   } catch (err) {
     if (axios.isAxiosError(err) && err.response?.status === 403)
       throw new Error("Wrong email or password. Please try again.");
@@ -26,7 +26,7 @@ export const useLogin = () => {
     mutationFn: postLogin,
     onSuccess: (response) => {
       try {
-        localStorage.setItem("token", response.accessToken);
+        localStorage.setItem("token", response.access_token);
         router.push("/main");
       } catch (err) {
         throw new Error(unexpectedErrorText);

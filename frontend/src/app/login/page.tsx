@@ -1,12 +1,12 @@
 "use client";
-import { Formik } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useLogin } from "../../hooks/userService/useLogin";
 import * as Yup from "yup";
 
 const LoginPage = () => {
   const { mutate: login } = useLogin();
 
-  const validationSchema = Yup.object({
+  const loginSchema = Yup.object({
     email: Yup.string()
       .email("Write a valid email")
       .required("Write your email"),
@@ -22,47 +22,59 @@ const LoginPage = () => {
         <h1 className="text-xl font-bold text-black">Login</h1>
         <Formik
           initialValues={{ email: "", password: "" }}
-          validationSchema={validationSchema}
-          onSubmit={async (values, actions) => {
-            try {
-              const response = await login(values);
-              console.log(response);
-            } catch (err) {
-              alert("login error");
-            }
+          validationSchema={loginSchema}
+          onSubmit={(values, { setSubmitting }) => {
+            login(values, {
+              onSuccess: () => {
+                alert("Login successful!");
+              },
+              onError: () => {
+                alert("Wrong email or password. Please try again.");
+              },
+              onSettled: () => {
+                setSubmitting(false);
+              },
+            });
           }}
         >
-          {(props) => (
-            <form onSubmit={props.handleSubmit} className="flex flex-col gap-4">
-              <input
-                type="text"
-                onChange={props.handleChange}
-                onBlur={props.handleBlur}
-                value={props.values.email}
-                name="email"
-                placeholder="Email"
-                className="text-black border p-2"
-              />
-              {props.errors.email && props.touched.email && (
-                <div className="text-red-500">{props.errors.email}</div>
-              )}
+          {({ isSubmitting }) => (
+            <Form className="flex flex-col gap-4">
+              <>
+                <Field
+                  type="text"
+                  name="email"
+                  placeholder="Email"
+                  className="text-black border p-2"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500"
+                />
+              </>
 
-              <input
-                type="password"
-                onChange={props.handleChange}
-                onBlur={props.handleBlur}
-                value={props.values.password}
-                name="password"
-                placeholder="Password"
-                className="text-black border p-2"
-              />
-              {props.errors.password && props.touched.password && (
-                <div className="text-red-500">{props.errors.password}</div>
-              )}
-              <button className="text-black border p-3" type="submit">
-                Submit
+              <>
+                <Field
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  className="text-black border p-2 w-full"
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500"
+                />
+              </>
+
+              <button
+                type="submit"
+                className="text-black border p-3"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Submit"}
               </button>
-            </form>
+            </Form>
           )}
         </Formik>
       </div>
