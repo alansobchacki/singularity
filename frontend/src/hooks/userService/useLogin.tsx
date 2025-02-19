@@ -1,6 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useAtom } from "jotai";
 import { api } from "../../config/axios";
+import { authStateAtom } from "../../state/authState";
 import axios from "axios";
 import LoginRequest from "../../interfaces/authentication/LoginRequest";
 import AuthToken from "../../interfaces/authentication/AuthToken";
@@ -21,13 +23,16 @@ const postLogin = async (data: LoginRequest): Promise<AuthToken> => {
 };
 
 export const useLogin = () => {
+  const [authState, setAuthState] = useAtom(authStateAtom);
   const router = useRouter();
+
   const mutation = useMutation<AuthToken, Error, LoginRequest>({
     mutationFn: postLogin,
-    onSuccess: (response) => {
+    onSuccess: (data) => {
       try {
-        localStorage.setItem("token", response.access_token);
-        router.push("/main");
+        localStorage.setItem("accessToken", data.access_token);
+        setAuthState({ token: data.access_token, isAuthenticated: true });
+        router.push("/");
       } catch (err) {
         throw new Error(unexpectedErrorText);
       }
