@@ -81,10 +81,33 @@ export class PostService {
     const followedUserIds = followedUsers.map((follow) => follow.following.id);
     const userAndFollowedIds = [userId, ...followedUserIds];
 
-    return this.postRepository.find({
-      where: { author: { id: In(userAndFollowedIds) } },
-      relations: ['author', 'comments', 'likes'],
-      order: { createdAt: 'DESC' },
-    });
+    const posts = await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.author', 'author')
+      .leftJoinAndSelect('post.comments', 'comment')
+      .leftJoinAndSelect('comment.author', 'commentAuthor')
+      .where('post.author.id IN (:...userAndFollowedIds)', {
+        userAndFollowedIds,
+      })
+      .orderBy('post.createdAt', 'DESC')
+      .select([
+        'post.id',
+        'post.content',
+        'post.createdAt',
+        'post.updatedAt',
+        'author.id',
+        'author.name',
+        'author.profilePicture',
+        'comment.id',
+        'comment.content',
+        'comment.createdAt',
+        'comment.updatedAt',
+        'commentAuthor.id',
+        'commentAuthor.name',
+        'commentAuthor.profilePicture',
+      ])
+      .getMany();
+
+    return posts;
   }
 }
