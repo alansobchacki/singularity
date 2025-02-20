@@ -5,7 +5,7 @@ import { useGetTimeline } from "../hooks/postService/useGetTimeline";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 const HomePage = () => {
-  const { data } = useGetTimeline();
+  const { data, isLoading } = useGetTimeline();
 
   useEffect(() => {
     console.log(data);
@@ -14,8 +14,17 @@ const HomePage = () => {
   return (
     <ProtectedRoute>
       <>
-        <h1>It works!</h1>
-        <p>And you shouldn't be viewing this if you're not logged in!</p>
+        {isLoading ? (
+          <p>Loading data...</p>
+        ) : (
+          data.map((post: any, index: number) => (
+            <div key={index}>
+              <p>{post.author.name}</p>
+              <p>{post.content}</p>
+              <p>Likes: {post.likes.length}</p>
+            </div>
+          ))
+        )}
       </>
     </ProtectedRoute>
   );
