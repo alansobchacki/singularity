@@ -1,20 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useAtom } from "jotai";
-import { authStateAtom } from "../state/authState";
-
-const homePage = () => {
-  const router = useRouter();
-  const [authState] = useAtom(authStateAtom);
-
-  useEffect(() => {
-    if (!authState.isAuthenticated) router.push("/login");
-  }, [authState.isAuthenticated, router]);
-
-  if (!authState.isAuthenticated) return null;
-
+const HomePage = () => {
   return (
     <>
       <h1>It works!</h1>
@@ -23,4 +9,4 @@ const homePage = () => {
   );
 };
 
-export default homePage;
+export default HomePage;
