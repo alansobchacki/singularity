@@ -16,7 +16,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { Post as PostEntity } from './entities/post.entity';
 
-@Controller('post')
+@Controller('posts')
 @UseGuards(JwtAuthGuard)
 export class PostController {
   constructor(private readonly postService: PostService) {}

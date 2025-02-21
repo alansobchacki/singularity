@@ -6,7 +6,7 @@ const unexpectedErrorText = "Unexpected error. Please try again.";
 
 const getTimeline = async (): Promise<any> => {
   try {
-    const response = await api.get("/api/v1/post/timeline");
+    const response = await api.get("/api/v1/posts/timeline");
 
     if (response.status === 200) return response.data;
   } catch (err) {

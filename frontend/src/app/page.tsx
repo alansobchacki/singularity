@@ -11,8 +11,8 @@ const HomePage = () => {
   const { data: timelineData, isLoading } = useGetTimeline();
   const { mutate: createComment } = useCreateComment();
   const [commentContent, setCommentContent] = useState<string>("");
+  const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
 
-  // Temporary useEffect for building purposes, remove later
   useEffect(() => {
     console.log(timelineData);
     console.log(usersData);
@@ -21,10 +21,10 @@ const HomePage = () => {
   const handleCommentSubmit = (postId: string) => {
     if (!commentContent.trim()) return;
 
-    const newComment = { postId, content: commentContent };
-    createComment(newComment);
+    createComment({ postId, content: commentContent });
 
     setCommentContent("");
+    setActiveCommentBox(null);
   };
 
   return (
@@ -44,6 +44,16 @@ const HomePage = () => {
                 <p>{post.content}</p>
                 <p>Likes: {post.likes?.length ?? 0}</p>
                 <button className="border p-3 w-1/5">Like this post</button>
+                <button
+                  className="border p-3 w-1/5"
+                  onClick={() =>
+                    setActiveCommentBox(
+                      activeCommentBox === post.id ? null : post.id
+                    )
+                  }
+                >
+                  Reply
+                </button>
 
                 {post.comments?.length > 0 ? (
                   <div className="mt-2 pl-4 border-l">
@@ -66,20 +76,22 @@ const HomePage = () => {
                   </p>
                 )}
 
-                <div className="mt-4 w-1/3">
-                  <textarea
-                    className="w-full p-2 border rounded-md"
-                    placeholder="Write a comment..."
-                    value={commentContent}
-                    onChange={(e) => setCommentContent(e.target.value)}
-                  />
-                  <button
-                    className="mt-2 border p-2 w-full bg-blue-500 text-white"
-                    onClick={() => handleCommentSubmit(post.id)}
-                  >
-                    Add Comment
-                  </button>
-                </div>
+                {activeCommentBox === post.id && (
+                  <div className="mt-4 w-1/3">
+                    <textarea
+                      className="w-full p-2 border rounded-md"
+                      placeholder="Write a comment..."
+                      value={commentContent}
+                      onChange={(e) => setCommentContent(e.target.value)}
+                    />
+                    <button
+                      className="mt-2 border p-2 w-full bg-blue-500 text-white"
+                      onClick={() => handleCommentSubmit(post.id)}
+                    >
+                      Add Comment
+                    </button>
+                  </div>
+                )}
               </div>
             ))
           ) : (
@@ -87,7 +99,7 @@ const HomePage = () => {
           )}
         </div>
 
-        <div className="flex flex-col w-1/2 gap-4">
+        <div className="flex flex-col w-1/5 gap-4">
           <p>Follow more people to see more content!</p>
           {usersData?.length > 0 &&
             usersData.map((user: any, index: number) => (
