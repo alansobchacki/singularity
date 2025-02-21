@@ -31,6 +31,11 @@ export class UserController {
     return user;
   }
 
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user;
+  }
+
   @Get('all')
   @UseGuards(JwtAuthGuard)
   async findAll() {
