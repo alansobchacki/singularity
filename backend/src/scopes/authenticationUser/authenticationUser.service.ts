@@ -22,6 +22,22 @@ export class UserService {
     });
   }
 
+  async findAllUsers() {
+    const users = await this.userRepository
+      .createQueryBuilder('authenticationUser')
+      .orderBy('authenticationUser.createdAt', 'DESC')
+      .select([
+        'authenticationUser.id',
+        'authenticationUser.name',
+        'authenticationUser.email',
+        'authenticationUser.bio',
+        'authenticationUser.profilePicture',
+      ])
+      .getMany();
+
+    return users;
+  }
+
   async create(createUserDto: CreateUserDto): Promise<AuthenticationUsers> {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(

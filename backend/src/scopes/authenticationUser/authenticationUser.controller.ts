@@ -1,9 +1,18 @@
-import { Controller, Query, Post, Body, Put, Param, Logger, Get } from '@nestjs/common';
+import {
+  Controller,
+  Query,
+  Post,
+  Body,
+  Put,
+  Param,
+  Logger,
+  Get,
+} from '@nestjs/common';
 import { UserService } from './authenticationUser.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
 
@@ -17,7 +26,18 @@ export class UserController {
     }
     return user;
   }
-  
+
+  @Get('all')
+  async findAll() {
+    const users = await this.userService.findAllUsers();
+
+    if (!users) {
+      throw new Error('No users in the database!');
+    }
+
+    return users;
+  }
+
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.create(createUserDto);
@@ -27,10 +47,7 @@ export class UserController {
   }
 
   @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const updatedUser = await this.userService.update(id, updateUserDto);
     this.logger.log(`User updated successfully: ${id}`);
 
