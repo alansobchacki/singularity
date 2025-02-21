@@ -1,10 +1,12 @@
 "use client";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useLogin } from "../../hooks/userService/useLogin";
+import { useRouter } from "next/navigation";
 import * as Yup from "yup";
 
 const LoginPage = () => {
   const { mutate: login } = useLogin();
+  const router = useRouter();
 
   const loginSchema = Yup.object({
     email: Yup.string()
@@ -18,7 +20,7 @@ const LoginPage = () => {
   return (
     <div className="flex flex-row h-screen bg-white">
       <div className="w-1/2 bg-blue-200"></div>
-      <div className="w-1/2 flex flex-col justify-center items-center">
+      <div className="w-1/2 flex flex-col justify-center items-center gap-5">
         <h1 className="text-xl font-bold text-black">Login</h1>
         <Formik
           initialValues={{ email: "", password: "" }}
@@ -77,6 +79,16 @@ const LoginPage = () => {
             </Form>
           )}
         </Formik>
+
+        <p className="text-black">
+          Don't have an account?{" "}
+          <span
+            className="cursor-pointer text-blue-500"
+            onClick={() => router.push("/signup")}
+          >
+            Create one.
+          </span>
+        </p>
       </div>
     </div>
   );
