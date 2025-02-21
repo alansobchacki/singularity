@@ -7,10 +7,13 @@ import {
   Param,
   Logger,
   Get,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { UserService } from './authenticationUser.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -19,6 +22,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findByEmail(@Query('email') email: string) {
     const user = await this.userService.findByEmail({ email });
     if (!user) {
@@ -28,6 +32,7 @@ export class UserController {
   }
 
   @Get('all')
+  @UseGuards(JwtAuthGuard)
   async findAll() {
     const users = await this.userService.findAllUsers();
 
@@ -47,6 +52,7 @@ export class UserController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const updatedUser = await this.userService.update(id, updateUserDto);
     this.logger.log(`User updated successfully: ${id}`);
