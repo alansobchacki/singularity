@@ -85,7 +85,9 @@ export class PostService {
       .createQueryBuilder('post')
       .leftJoinAndSelect('post.author', 'author')
       .leftJoinAndSelect('post.comments', 'comment')
+      .leftJoinAndSelect('post.likes', 'postLike')
       .leftJoinAndSelect('comment.author', 'commentAuthor')
+      .leftJoinAndSelect('comment.likes', 'commentLike')
       .where('post.author.id IN (:...userAndFollowedIds)', {
         userAndFollowedIds,
       })
@@ -98,13 +100,19 @@ export class PostService {
         'author.id',
         'author.name',
         'author.profilePicture',
+
+        'postLike.id',
+        'postLike.userId',
+
         'comment.id',
         'comment.content',
         'comment.createdAt',
-        'comment.updatedAt',
         'commentAuthor.id',
         'commentAuthor.name',
         'commentAuthor.profilePicture',
+
+        'commentLike.id',
+        'commentLike.userId',
       ])
       .getMany();
 

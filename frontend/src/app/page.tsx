@@ -64,6 +64,7 @@ const HomePage = () => {
                           {comment.author?.name}
                         </p>
                         <p className="text-sm">{comment.content}</p>
+                        <p>Likes: {comment.likes?.length ?? 0}</p>
                         <button className="border p-3">
                           Like this comment
                         </button>

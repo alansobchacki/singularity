@@ -29,6 +29,7 @@ export const useCreateComment = () => {
         queryClient.invalidateQueries({
           queryKey: ["comments", newComment.postId],
         });
+        queryClient.invalidateQueries({ queryKey: ["timeline"] });
 
         queryClient.setQueryData(
           ["comments", newComment.postId],
