@@ -32,7 +32,7 @@ export const useLogin = () => {
       try {
         localStorage.setItem("accessToken", data.access_token);
         setAuthState({ token: data.access_token, isAuthenticated: true });
-        router.push("/");
+        router.push("/dashboard");
       } catch (err) {
         throw new Error(unexpectedErrorText);
       }
