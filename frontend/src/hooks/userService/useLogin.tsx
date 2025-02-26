@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
@@ -6,6 +7,7 @@ import { authStateAtom } from "../../state/authState";
 import axios from "axios";
 import LoginRequest from "../../interfaces/authentication/LoginRequest";
 import AuthToken from "../../interfaces/authentication/AuthToken";
+import DecodedToken from "../../interfaces/authentication/DecodedToken";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
@@ -30,8 +32,11 @@ export const useLogin = () => {
     mutationFn: postLogin,
     onSuccess: (data) => {
       try {
+        const decodedToken: DecodedToken = jwtDecode(data.access_token);
+        const userId = decodedToken.sub;
+
         localStorage.setItem("accessToken", data.access_token);
-        setAuthState({ token: data.access_token, isAuthenticated: true });
+        setAuthState({ userId, isAuthenticated: true });
         router.push("/dashboard");
       } catch (err) {
         throw new Error(unexpectedErrorText);

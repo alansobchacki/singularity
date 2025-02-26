@@ -23,7 +23,10 @@ const LoginPage = () => {
       <div className="w-1/2 flex flex-col justify-center items-center gap-5">
         <h1 className="text-xl font-bold text-black">Login</h1>
         <Formik
-          initialValues={{ email: "", password: "" }}
+          initialValues={{
+            email: "newuser69@example.com",
+            password: "password123",
+          }}
           validationSchema={loginSchema}
           onSubmit={(values, { setSubmitting }) => {
             login(values, {
