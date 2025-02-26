@@ -10,15 +10,14 @@ import { useUpdateFollowRequest } from "../../../hooks/followService/useUpdateFo
 const FollowsPage = () => {
   const user = useAtomValue(hydratedAuthStateAtom);
   const { data: followRequests } = useGetFollowRequests();
-  // const { data: followers } = useGetAllFollowers();
+  const { data: followers } = useGetAllFollowers(user.id);
   const { mutate: updateFollow } = useUpdateFollowRequest();
-
-  // needs a follower count and a list of all followers
 
   useEffect(() => {
     // temporary useEffect for debugging, remove later
     console.log(followRequests);
-    console.log(user);
+    console.log(followers);
+    console.log(user.id);
   }, [followRequests]);
 
   const handleFollowAction = (id: string, action: "ACCEPTED" | "REJECTED") => {
@@ -37,6 +36,12 @@ const FollowsPage = () => {
 
   return (
     <>
+      {followers?.length > 0 ? (
+        <p>You have {followers.length} followers!</p>
+      ) : (
+        <p>You have no followers</p>
+      )}
+
       {followRequests?.length > 0 ? (
         followRequests.map((followRequest: any, index: number) => (
           <div key={index}>

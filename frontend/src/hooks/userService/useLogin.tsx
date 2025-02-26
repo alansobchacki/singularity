@@ -36,7 +36,7 @@ export const useLogin = () => {
         const userId = decodedToken.sub;
 
         localStorage.setItem("accessToken", data.access_token);
-        setAuthState({ userId, isAuthenticated: true });
+        setAuthState({ id: userId, isAuthenticated: true });
         router.push("/dashboard");
       } catch (err) {
         throw new Error(unexpectedErrorText);

@@ -8,7 +8,8 @@ const getAllFollowers = async (id: string): Promise<any> => {
   try {
     const response = await api.get(`/api/v1/follow/${id}/followers`);
 
-    if (response.status === 200) return response.data;
+    if (response.status === 200 || response.status === 204)
+      return response.data;
   } catch (err) {
     if (axios.isAxiosError(err) && err.response?.status === 403)
       throw new Error("Unable to fetch followers. Please try again.");
