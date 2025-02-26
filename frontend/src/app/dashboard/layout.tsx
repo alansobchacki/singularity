@@ -13,7 +13,7 @@ export default function DashboardLayout({
           <ul>
             <li><a href="/dashboard/">Home</a></li>
             <li><a href="/dashboard/settings">Settings</a></li>
-            <li><a href="/dashboard/follows">Network</a></li>
+            <li><a href="/dashboard/network">Network</a></li>
           </ul>
         </aside>
 
