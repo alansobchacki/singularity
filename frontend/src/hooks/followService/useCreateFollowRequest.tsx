@@ -23,7 +23,7 @@ export const useCreateFollowRequest = () => {
     mutationFn: createFollowRequest,
     onSuccess: () => {
       try {
-        alert('Follow request sent!');
+        alert("Follow request sent!"); // replace with something better later
       } catch (err) {
         throw new Error(unexpectedErrorText);
       }

@@ -1,19 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAtomValue } from "jotai";
+import { hydratedAuthStateAtom } from "../../state/authState";
 import { useGetAllUsers } from "../../hooks/userService/useGetAllUsers";
 import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
 import { useCreateComment } from "../../hooks/commentService/useCreateComment";
+import { useCreateFollowRequest } from "../../hooks/followService/useCreateFollowRequest";
 import ProtectedRoute from "../../components/ProtectedRoute";
 
 const HomePage = () => {
+  const user = useAtomValue(hydratedAuthStateAtom);
   const { data: usersData } = useGetAllUsers();
   const { data: timelineData, isLoading } = useGetTimeline();
+  const { mutate: createFollowRequest } = useCreateFollowRequest();
   const { mutate: createComment } = useCreateComment();
   const [commentContent, setCommentContent] = useState<string>("");
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
 
-  useEffect(() => { // temp use effect for debugging
+  // temp use effect for debugging
+  useEffect(() => {
     console.log(timelineData);
     console.log(usersData);
   }, [timelineData, usersData]);
@@ -25,6 +31,20 @@ const HomePage = () => {
 
     setCommentContent("");
     setActiveCommentBox(null);
+  };
+
+  const handleFollowAction = (followingId: string) => {
+    createFollowRequest(
+      { followerId: user.id, followingId },
+      {
+        onSuccess: () => {
+          console.log("Follow request created successfully.");
+        },
+        onError: (error) => {
+          console.error(error.message);
+        },
+      }
+    );
   };
 
   return (
@@ -110,7 +130,10 @@ const HomePage = () => {
               >
                 <p>{user.name}</p>
                 <p>{user.bio}</p>
-                <button className="px-2 py-1 text-sm rounded-full bg-blue-500 text-white hover:bg-blue-600">
+                <button
+                  className="px-2 py-1 text-sm rounded-full bg-blue-500 text-white hover:bg-blue-600"
+                  onClick={() => handleFollowAction(user.id)}
+                >
                   Follow
                 </button>
               </div>
