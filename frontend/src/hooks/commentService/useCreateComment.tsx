@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../config/axios";
 import axios from "axios";
-import CreateCommentRequest from "../../interfaces/comment/createCommentRequest";
+import CreateCommentRequest from "../../interfaces/comment/CreateCommentRequest";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 

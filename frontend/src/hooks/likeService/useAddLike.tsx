@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../../config/axios";
 import axios from "axios";
 
-// to be rewritten - found a bug on the backend logic
+// note - this query isn't written yet, these values are copypasted and wrong
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 

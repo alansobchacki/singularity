@@ -13,7 +13,7 @@ const HomePage = () => {
   const [commentContent, setCommentContent] = useState<string>("");
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
 
-  useEffect(() => {
+  useEffect(() => { // temp use effect for debugging
     console.log(timelineData);
     console.log(usersData);
   }, [timelineData, usersData]);

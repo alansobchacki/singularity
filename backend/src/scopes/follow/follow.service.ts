@@ -15,6 +15,13 @@ export class FollowService {
   async createFollowRequest(createFollowDto: CreateFollowDto): Promise<Follow> {
     const { followerId, followingId } = createFollowDto;
 
+    if (followerId === followingId) {
+      throw new HttpException(
+        'You cannot follow yourself',
+        HttpStatus.CONFLICT,
+      )
+    }
+
     const existingFollow = await this.followRepository.findOne({
       where: { follower: { id: followerId }, following: { id: followingId } },
     });

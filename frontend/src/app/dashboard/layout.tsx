@@ -12,8 +12,8 @@ export default function DashboardLayout({
           <h2 className="text-lg font-bold">Dashboard</h2>
           <ul>
             <li><a href="/dashboard/">Home</a></li>
-            <li><a href="/dashboard/analytics">Analytics</a></li>
             <li><a href="/dashboard/settings">Settings</a></li>
+            <li><a href="/dashboard/follows">Network</a></li>
           </ul>
         </aside>
 
