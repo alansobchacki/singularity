@@ -9,6 +9,7 @@ import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreateFollowRequest } from "../../hooks/followService/useCreateFollowRequest";
 import { useGetAllFollowers } from "../../hooks/followService/useGetAllFollowers";
 import { useGetFollowingRequests } from "../../hooks/followService/useGetAllFollowingRequests";
+import { useCreatePost } from "../../hooks/postService/useCreatePost";
 import ProtectedRoute from "../../components/ProtectedRoute";
 
 const HomePage = () => {
@@ -19,6 +20,7 @@ const HomePage = () => {
   const { data: userFollowingRequests } = useGetFollowingRequests();
   const { mutate: createFollowRequest } = useCreateFollowRequest();
   const { mutate: createComment } = useCreateComment();
+  const { mutate: createPost } = useCreatePost();
   const [commentContent, setCommentContent] = useState<string>("");
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
 
@@ -63,6 +65,9 @@ const HomePage = () => {
         )}
 
         <div className="flex flex-col w-1/2">
+          <h1>What are you thinking today? Share your thoughts!</h1>
+          <button className="border p-3 w-1/5">Create Post</button>
+
           {timelineData?.length > 0 ? (
             timelineData.map((post: any, index: number) => (
               <div key={index} className="flex flex-col border-b p-4">
