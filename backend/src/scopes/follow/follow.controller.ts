@@ -28,6 +28,11 @@ export class FollowController {
     return this.followService.getAllFollowRequests(req.user.userId);
   }
 
+  @Get('following')
+  getAllFollowingRequests(@Request() req) {
+    return this.followService.getAllFollowingRequests(req.user.userId);
+  }
+
   @Post()
   create(@Body() createFollowDto: CreateFollowDto, @Request() req) {
     createFollowDto.followerId = req.user?.userId;

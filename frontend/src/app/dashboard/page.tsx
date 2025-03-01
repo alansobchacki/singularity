@@ -7,12 +7,16 @@ import { useGetAllUsers } from "../../hooks/userService/useGetAllUsers";
 import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
 import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreateFollowRequest } from "../../hooks/followService/useCreateFollowRequest";
+import { useGetAllFollowers } from "../../hooks/followService/useGetAllFollowers";
+import { useGetFollowRequests } from "../../hooks/followService/useGetAllFollowRequests";
 import ProtectedRoute from "../../components/ProtectedRoute";
 
 const HomePage = () => {
   const user = useAtomValue(hydratedAuthStateAtom);
   const { data: usersData } = useGetAllUsers();
   const { data: timelineData, isLoading } = useGetTimeline();
+  const { data: userFollowers } = useGetAllFollowers(user.id);
+  const { data: userFollowRequests } = useGetFollowRequests()
   const { mutate: createFollowRequest } = useCreateFollowRequest();
   const { mutate: createComment } = useCreateComment();
   const [commentContent, setCommentContent] = useState<string>("");
@@ -20,9 +24,11 @@ const HomePage = () => {
 
   // temp use effect for debugging
   useEffect(() => {
-    console.log(timelineData);
-    console.log(usersData);
-  }, [timelineData, usersData]);
+    //console.log(timelineData);
+    //console.log(usersData);
+    console.log(userFollowers);
+    console.log(userFollowRequests);
+  }, [timelineData, usersData, userFollowers]);
 
   const handleCommentSubmit = (postId: string) => {
     if (!commentContent.trim()) return;

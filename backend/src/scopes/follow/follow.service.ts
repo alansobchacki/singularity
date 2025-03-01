@@ -59,6 +59,19 @@ export class FollowService {
     return followRequests;
   }
 
+  async getAllFollowingRequests(userId: string) {
+    const followingRequests = await this.followRepository.find({
+      where: { follower: { id: userId } },
+      relations: ['following'],
+      select: {
+        id: true,
+        following: { id: true },
+      },
+    });
+  
+    return followingRequests;
+  }
+
   async updateFollowRequest(updateFollowDto: UpdateFollowDto): Promise<Follow> {
     const { userId, followId, followStatus } = updateFollowDto;
 
