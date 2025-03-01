@@ -8,7 +8,7 @@ import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
 import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreateFollowRequest } from "../../hooks/followService/useCreateFollowRequest";
 import { useGetAllFollowers } from "../../hooks/followService/useGetAllFollowers";
-import { useGetFollowRequests } from "../../hooks/followService/useGetAllFollowRequests";
+import { useGetFollowingRequests } from "../../hooks/followService/useGetAllFollowingRequests";
 import ProtectedRoute from "../../components/ProtectedRoute";
 
 const HomePage = () => {
@@ -16,7 +16,7 @@ const HomePage = () => {
   const { data: usersData } = useGetAllUsers();
   const { data: timelineData, isLoading } = useGetTimeline();
   const { data: userFollowers } = useGetAllFollowers(user.id);
-  const { data: userFollowRequests } = useGetFollowRequests()
+  const { data: userFollowingRequests } = useGetFollowingRequests();
   const { mutate: createFollowRequest } = useCreateFollowRequest();
   const { mutate: createComment } = useCreateComment();
   const [commentContent, setCommentContent] = useState<string>("");
@@ -26,9 +26,9 @@ const HomePage = () => {
   useEffect(() => {
     //console.log(timelineData);
     //console.log(usersData);
-    console.log(userFollowers);
-    console.log(userFollowRequests);
-  }, [timelineData, usersData, userFollowers]);
+
+    console.log(userFollowingRequests);
+  }, [timelineData, usersData, userFollowers, userFollowingRequests]);
 
   const handleCommentSubmit = (postId: string) => {
     if (!commentContent.trim()) return;
@@ -129,21 +129,29 @@ const HomePage = () => {
         <div className="flex flex-col w-1/5 gap-4">
           <p>Follow more people to see more content!</p>
           {usersData?.length > 0 &&
-            usersData.map((user: any, index: number) => (
-              <div
-                key={index}
-                className="flex justify-between items-center gap-1"
-              >
-                <p>{user.name}</p>
-                <p>{user.bio}</p>
-                <button
-                  className="px-2 py-1 text-sm rounded-full bg-blue-500 text-white hover:bg-blue-600"
-                  onClick={() => handleFollowAction(user.id)}
-                >
-                  Follow
-                </button>
-              </div>
-            ))}
+            usersData.map((user: any, index: number) => {
+              const isFollowingRequested = userFollowingRequests?.some(
+                (request: { following: { id: string } }) => request.following.id === user.id
+              );
+
+              return (
+                <div key={index} className="flex justify-between items-center gap-1">
+                  <p>{user.name}</p>
+                  <p>{user.bio}</p>
+                  <button
+                    className={`px-2 py-1 text-sm rounded-full ${
+                      isFollowingRequested
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-600"
+                    } text-white`}
+                    onClick={() => handleFollowAction(user.id)}
+                    disabled={isFollowingRequested}
+                  >
+                    {isFollowingRequested ? "Request Sent" : "Follow"}
+                  </button>
+                </div>
+              );
+            })}
         </div>
       </div>
     </ProtectedRoute>
