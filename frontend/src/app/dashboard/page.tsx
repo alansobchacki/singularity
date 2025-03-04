@@ -7,7 +7,6 @@ import { useGetAllUsers } from "../../hooks/userService/useGetAllUsers";
 import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
 import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreateFollowRequest } from "../../hooks/followService/useCreateFollowRequest";
-import { useGetAllFollowers } from "../../hooks/followService/useGetAllFollowers";
 import { useGetFollowingRequests } from "../../hooks/followService/useGetAllFollowingRequests";
 import { useCreatePost } from "../../hooks/postService/useCreatePost";
 import ProtectedRoute from "../../components/ProtectedRoute";
@@ -16,21 +15,30 @@ const HomePage = () => {
   const user = useAtomValue(hydratedAuthStateAtom);
   const { data: usersData } = useGetAllUsers();
   const { data: timelineData, isLoading } = useGetTimeline();
-  const { data: userFollowers } = useGetAllFollowers(user.id);
   const { data: userFollowingRequests } = useGetFollowingRequests();
   const { mutate: createFollowRequest } = useCreateFollowRequest();
   const { mutate: createComment } = useCreateComment();
   const { mutate: createPost } = useCreatePost();
+  const [isCreatingPost, setIsCreatingPost] = useState(false);
+  const [postContent, setPostContent] = useState<string>("");
   const [commentContent, setCommentContent] = useState<string>("");
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
 
   // temp use effect for debugging
+  // remove after building the app
+  /*
   useEffect(() => {
-    //console.log(timelineData);
-    //console.log(usersData);
-
     console.log(userFollowingRequests);
   }, [timelineData, usersData, userFollowers, userFollowingRequests]);
+  */
+
+  const handleCreatePost = () => {
+    setIsCreatingPost(true);
+  }
+
+  const handlePostSubmit = () => {
+    createPost({ authorId: user.id, content: postContent });
+  }
 
   const handleCommentSubmit = (postId: string) => {
     if (!commentContent.trim()) return;
@@ -64,9 +72,27 @@ const HomePage = () => {
           </div>
         )}
 
-        <div className="flex flex-col w-1/2">
+        <div id="timeline-container" className="flex flex-col w-1/2">
           <h1>What are you thinking today? Share your thoughts!</h1>
-          <button className="border p-3 w-1/5">Create Post</button>
+          
+          {!isCreatingPost ? (
+            <button className="border p-3 w-1/5" onClick={handleCreatePost}>Create Post</button>
+          ) : (
+            <div className="mt-4 w-1/3">
+              <textarea
+                className="w-full p-2 border rounded-md"
+                placeholder="Write your post..."
+                value={postContent}
+                onChange={(e) => setPostContent(e.target.value)}
+              />
+              <button
+                className="mt-2 border p-2 w-full bg-blue-500 text-white"
+                onClick={() => handlePostSubmit()}
+              >
+                Create Post
+              </button>
+            </div>
+          )}
 
           {timelineData?.length > 0 ? (
             timelineData.map((post: any, index: number) => (
@@ -131,7 +157,7 @@ const HomePage = () => {
           )}
         </div>
 
-        <div className="flex flex-col w-1/5 gap-4">
+        <div id="users-container" className="flex flex-col w-1/5 gap-4">
           <p>Follow more people to see more content!</p>
           {usersData?.length > 0 &&
             usersData.map((user: any, index: number) => {

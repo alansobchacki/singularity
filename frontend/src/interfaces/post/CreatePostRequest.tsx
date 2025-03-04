@@ -1,4 +1,4 @@
 export default interface CreatePostRequest {
-  postId: string;
+  authorId: string;
   content: string;
 }
