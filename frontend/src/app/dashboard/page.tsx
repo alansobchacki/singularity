@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAtomValue } from "jotai";
 import { hydratedAuthStateAtom } from "../../state/authState";
 import { useGetAllUsers } from "../../hooks/userService/useGetAllUsers";
@@ -23,14 +23,6 @@ const HomePage = () => {
   const [postContent, setPostContent] = useState<string>("");
   const [commentContent, setCommentContent] = useState<string>("");
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
-
-  // temp use effect for debugging
-  // remove after building the app
-  /*
-  useEffect(() => {
-    console.log(userFollowingRequests);
-  }, [timelineData, usersData, userFollowers, userFollowingRequests]);
-  */
 
   const handleCreatePost = () => {
     setIsCreatingPost(true);
