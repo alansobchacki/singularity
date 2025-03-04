@@ -153,7 +153,7 @@ const HomePage = () => {
               </div>
             ))
           ) : (
-            <p>No posts available.</p>
+            <p>No posts available. Follow more people to see more stuff!</p>
           )}
         </div>
 
