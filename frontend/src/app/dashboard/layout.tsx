@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { authStateAtom } from "../../state/authState";

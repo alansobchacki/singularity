@@ -1,3 +1,15 @@
+'use client'
+
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+// This will/should become a landing page in the future
 export default function LandingPage() {
-  return <h1>Welcome to the index page/maybe a landing page in the future?</h1>;
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/login");
+  },[]);
+  
+  return null;
 }

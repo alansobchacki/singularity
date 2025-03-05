@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useAtomValue } from "jotai";
 import { hydratedAuthStateAtom } from "../../../state/authState";
 import { useGetFollowRequests } from "../../../hooks/followService/useGetAllFollowRequests";
@@ -12,13 +11,6 @@ const FollowsPage = () => {
   const { data: followRequests } = useGetFollowRequests();
   const { data: followers } = useGetAllFollowers(user.id);
   const { mutate: updateFollow } = useUpdateFollowRequest();
-
-  useEffect(() => {
-    // temporary useEffect for debugging, remove later
-    console.log(followRequests);
-    console.log(followers);
-    console.log(user.id);
-  }, [followRequests]);
 
   const handleFollowAction = (id: string, action: "ACCEPTED" | "REJECTED") => {
     updateFollow(
