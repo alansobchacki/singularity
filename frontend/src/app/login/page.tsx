@@ -18,13 +18,15 @@ const LoginPage = () => {
   });
 
   return (
-    <div className="flex flex-row h-screen bg-white">
-      <div className="w-1/2 bg-blue-200"></div>
+    <section id="login-section" className="flex flex-row h-screen bg-white">
+      <div id="left-container" className="flex flex-col justify-center items-center w-1/2 bg-blue-200">
+        <h1 className="text-xl font-bold text-black">Learning Book</h1>
+        <h2 className="text-black">A full-stack social media app built for learning purposes.</h2>
+      </div>
 
       <div id="right-container" className="w-1/2 flex flex-col justify-center gap-5">
         <div id="form-container" className="flex flex-col mx-auto gap-3">
-          <h1 className="text-xl font-bold text-black">Welcome Back</h1>
-          <h2 className="text font-bold text-black">Enter to see all the cool kids chatting</h2>
+          <h2 className="text-xl font-bold text-black">Welcome Back</h2>
           <Formik
             initialValues={{
               email: "newuser69@example.com",
@@ -33,9 +35,6 @@ const LoginPage = () => {
             validationSchema={loginSchema}
             onSubmit={(values, { setSubmitting }) => {
               login(values, {
-                onSuccess: () => {
-                  alert("Login successful!");
-                },
                 onError: () => {
                   alert("Wrong email or password. Please try again.");
                 },
@@ -86,9 +85,10 @@ const LoginPage = () => {
             )}
           </Formik>
 
-          <p className="text-black text-gray-400">Or login with:</p>
-          <button className="text-black border p-3 rounded-lg" disabled>Google Button (soon)</button>
-          <button className="text-black border p-3 rounded-lg">Login as spectator</button>
+          <p className="text-black text-gray-400 text-center">- or -</p>
+          
+          {/*<button className="text-black border p-3 rounded-lg" disabled>Google Button (soon)</button>*/}
+          <button className="text-black border p-3 rounded-lg">Enter as a guest</button>
 
           <p className="text-black">
             Don't have an account?{" "}
@@ -101,7 +101,7 @@ const LoginPage = () => {
           </p>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
