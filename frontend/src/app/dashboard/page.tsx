@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useAtomValue } from "jotai";
 import { hydratedAuthStateAtom } from "../../state/authState";
 import { useGetAllUsers } from "../../hooks/userService/useGetAllUsers";
+import { useGetAllLikedContent } from "../../hooks/likeService/useGetAllLikedContent";
 import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
 import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreateFollowRequest } from "../../hooks/followService/useCreateFollowRequest";
 import { useGetFollowingRequests } from "../../hooks/followService/useGetAllFollowingRequests";
 import { useCreatePost } from "../../hooks/postService/useCreatePost";
-import { useCreateLikePost } from "../../hooks/likeService/useCreateLikePost";
+import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeContent";
+import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
 import ProtectedRoute from "../../components/ProtectedRoute";
 
 const HomePage = () => {
@@ -17,14 +19,18 @@ const HomePage = () => {
   const { data: usersData } = useGetAllUsers();
   const { data: timelineData, isLoading } = useGetTimeline();
   const { data: userFollowingRequests } = useGetFollowingRequests();
+  const { data: userLikedContent } = useGetAllLikedContent();
   const { mutate: createFollowRequest } = useCreateFollowRequest();
   const { mutate: createComment } = useCreateComment();
   const { mutate: createPost } = useCreatePost();
-  const { mutate: createLikePost } = useCreateLikePost();
+  const { mutate: createLikeContent } = useCreateLikeContent();
+  const { mutate: deleteLikeContent } = useDeleteLikeContent();
   const [isCreatingPost, setIsCreatingPost] = useState(false);
   const [postContent, setPostContent] = useState<string>("");
   const [commentContent, setCommentContent] = useState<string>("");
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
+  const isContentLiked = (contentId: string) =>
+    userLikedContent?.includes(contentId);
 
   const handleCreatePost = () => {
     setIsCreatingPost(true);
@@ -43,8 +49,22 @@ const HomePage = () => {
     setActiveCommentBox(null);
   };
 
-  const handleLikePost = (postId: string) => {
-    createLikePost({ userId: user.id, postId });
+  const handleLikeContent = (contentId: string, type: "post" | "comment") => {
+    const data = {
+      userId: user.id,
+      [type === "post" ? "postId" : "commentId"]: contentId,
+    };
+
+    createLikeContent(data);
+  };
+
+  const handleUnlikeContent = (contentId: string, type: "post" | "comment") => {
+    const data = {
+      userId: user.id,
+      [type === "post" ? "postId" : "commentId"]: contentId,
+    };
+
+    deleteLikeContent(data);
   };
 
   const handleFollowAction = (followingId: string) => {
@@ -100,12 +120,21 @@ const HomePage = () => {
                 <p className="font-bold">{post.author?.name}</p>
                 <p>{post.content}</p>
                 <p>Likes: {post.likes?.length ?? 0}</p>
-                <button
-                  className="border p-3 w-1/5"
-                  onClick={() => handleLikePost(post.id)}
-                >
-                  Like this post
-                </button>
+                {isContentLiked(post.id) ? (
+                  <button
+                    className={"border p-3 w-1/5 bg-red-500 text-white"}
+                    onClick={() => handleUnlikeContent(post.id, "post")}
+                  >
+                    Unlike This
+                  </button>
+                ) : (
+                  <button
+                    className={"border p-3 w-1/5 bg-blue-500 text-white"}
+                    onClick={() => handleLikeContent(post.id, "post")}
+                  >
+                    Like This
+                  </button>
+                )}
                 <button
                   className="border p-3 w-1/5"
                   onClick={() =>
@@ -127,9 +156,27 @@ const HomePage = () => {
                         </p>
                         <p className="text-sm">{comment.content}</p>
                         <p>Likes: {comment.likes?.length ?? 0}</p>
-                        <button className="border p-3">
-                          Like this comment
-                        </button>
+                        {isContentLiked(comment.id) ? (
+                          <button
+                            className={"border p-3 w-1/5 bg-red-500 text-white"}
+                            onClick={() =>
+                              handleUnlikeContent(comment.id, "comment")
+                            }
+                          >
+                            Unlike This
+                          </button>
+                        ) : (
+                          <button
+                            className={
+                              "border p-3 w-1/5 bg-blue-500 text-white"
+                            }
+                            onClick={() =>
+                              handleLikeContent(comment.id, "comment")
+                            }
+                          >
+                            Like This
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>

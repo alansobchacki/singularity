@@ -68,8 +68,10 @@ export class LikeService {
   async getAllLikedContent(userId: string) {
     const likes = await this.likeRepository.find({
       where: { user: { id: userId } },
+      select: ['post', 'comment'],
+      relations: ['post', 'comment'],
     });
 
-    return likes;
+    return likes.map((like) => like.post?.id || like.comment?.id);
   }
 }
