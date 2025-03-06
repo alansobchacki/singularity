@@ -5,7 +5,6 @@ import CreatePostRequest from "../../interfaces/post/CreatePostRequest";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
-// replace promise<any> with a proper<Post> interface later
 const createPost = async (data: CreatePostRequest): Promise<any> => {
   try {
     const response = await api.post(`/api/v1/posts`, data);
@@ -31,13 +30,10 @@ export const useCreatePost = () => {
         });
         queryClient.invalidateQueries({ queryKey: ["timeline"] });
 
-        queryClient.setQueryData(
-          ["posts", newPost.postId],
-          (oldData: any) => {
-            if (!oldData) return [newPost];
-            return [...oldData, newPost];
-          }
-        );
+        queryClient.setQueryData(["posts", newPost.postId], (oldData: any) => {
+          if (!oldData) return [newPost];
+          return [...oldData, newPost];
+        });
       } catch (err) {
         console.error(unexpectedErrorText);
       }

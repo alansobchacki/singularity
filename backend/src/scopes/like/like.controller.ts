@@ -14,14 +14,14 @@ import { CreateLikeDto } from './dto/create-like.dto';
 import { RemoveLikeDto } from './dto/remove-like.dto';
 import { CountLikesDto } from './dto/count-likes.dto';
 
-@Controller('like')
+@Controller('likes')
 @UseGuards(JwtAuthGuard)
 export class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
   @Get()
-  async countLikes(@Query() countLikesDto: CountLikesDto) {
-    return this.likeService.countLikes(countLikesDto);
+  async userLikedContent(@Request() req) {
+    return this.likeService.getAllLikedContent(req.user.userId);
   }
 
   @Post()

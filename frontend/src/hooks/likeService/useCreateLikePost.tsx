@@ -12,13 +12,13 @@ const createLikePost = async (data: CreateLikePostRequest): Promise<any> => {
     if (response.status === 201) return response.data;
   } catch (err) {
     if (axios.isAxiosError(err))
-      throw new Error("Cannot like this content. Try again later.");
+      throw new Error("Cannot like this post. Try again later.");
   }
 
   throw new Error(unexpectedErrorText);
 };
 
-export const useCreateLikePost= () => {
+export const useCreateLikePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -30,16 +30,13 @@ export const useCreateLikePost= () => {
         });
         queryClient.invalidateQueries({ queryKey: ["timeline"] });
 
-        queryClient.setQueryData(
-          ["like", newLike.likeId],
-          (oldData: any) => {
-            if (!oldData) return [newLike];
-            return [...oldData, newLike];
-          }
-        );
+        queryClient.setQueryData(["like", newLike.likeId], (oldData: any) => {
+          if (!oldData) return [newLike];
+          return [...oldData, newLike];
+        });
       } catch (err) {
         console.error(unexpectedErrorText);
       }
-    }
+    },
   });
 };

@@ -65,17 +65,11 @@ export class LikeService {
     };
   }
 
-  async countLikes(countLikesDto: CountLikesDto): Promise<number> {
-    const { postId, commentId } = countLikesDto;
-
-    if (!postId && !commentId) {
-      throw new NotFoundException(
-        'Target resource (post or comment) not specified.',
-      );
-    }
-
-    return this.likeRepository.count({
-      where: { post: { id: postId }, comment: { id: commentId } },
+  async getAllLikedContent(userId: string) {
+    const likes = await this.likeRepository.find({
+      where: { user: { id: userId } },
     });
+
+    return likes;
   }
 }
