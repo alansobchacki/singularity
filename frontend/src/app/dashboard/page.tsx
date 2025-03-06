@@ -9,6 +9,7 @@ import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreateFollowRequest } from "../../hooks/followService/useCreateFollowRequest";
 import { useGetFollowingRequests } from "../../hooks/followService/useGetAllFollowingRequests";
 import { useCreatePost } from "../../hooks/postService/useCreatePost";
+import { useCreateLikePost } from "../../hooks/likeService/useCreateLikePost";
 import ProtectedRoute from "../../components/ProtectedRoute";
 
 const HomePage = () => {
@@ -19,6 +20,7 @@ const HomePage = () => {
   const { mutate: createFollowRequest } = useCreateFollowRequest();
   const { mutate: createComment } = useCreateComment();
   const { mutate: createPost } = useCreatePost();
+  const { mutate: createLikePost } = useCreateLikePost();
   const [isCreatingPost, setIsCreatingPost] = useState(false);
   const [postContent, setPostContent] = useState<string>("");
   const [commentContent, setCommentContent] = useState<string>("");
@@ -26,11 +28,11 @@ const HomePage = () => {
 
   const handleCreatePost = () => {
     setIsCreatingPost(true);
-  }
+  };
 
   const handlePostSubmit = () => {
     createPost({ authorId: user.id, content: postContent });
-  }
+  };
 
   const handleCommentSubmit = (postId: string) => {
     if (!commentContent.trim()) return;
@@ -39,6 +41,10 @@ const HomePage = () => {
 
     setCommentContent("");
     setActiveCommentBox(null);
+  };
+
+  const handleLikePost = (postId: string) => {
+    createLikePost({ userId: user.id, postId });
   };
 
   const handleFollowAction = (followingId: string) => {
@@ -66,9 +72,11 @@ const HomePage = () => {
 
         <div id="timeline-container" className="flex flex-col w-1/2">
           <h1>What are you thinking today? Share your thoughts!</h1>
-          
+
           {!isCreatingPost ? (
-            <button className="border p-3 w-1/5" onClick={handleCreatePost}>Create Post</button>
+            <button className="border p-3 w-1/5" onClick={handleCreatePost}>
+              Create Post
+            </button>
           ) : (
             <div className="mt-4 w-1/3">
               <textarea
@@ -92,7 +100,12 @@ const HomePage = () => {
                 <p className="font-bold">{post.author?.name}</p>
                 <p>{post.content}</p>
                 <p>Likes: {post.likes?.length ?? 0}</p>
-                <button className="border p-3 w-1/5">Like this post</button>
+                <button
+                  className="border p-3 w-1/5"
+                  onClick={() => handleLikePost(post.id)}
+                >
+                  Like this post
+                </button>
                 <button
                   className="border p-3 w-1/5"
                   onClick={() =>
@@ -154,11 +167,15 @@ const HomePage = () => {
           {usersData?.length > 0 &&
             usersData.map((user: any, index: number) => {
               const isFollowingRequested = userFollowingRequests?.some(
-                (request: { following: { id: string } }) => request.following.id === user.id
+                (request: { following: { id: string } }) =>
+                  request.following.id === user.id
               );
 
               return (
-                <div key={index} className="flex justify-between items-center gap-1">
+                <div
+                  key={index}
+                  className="flex justify-between items-center gap-1"
+                >
                   <p>{user.name}</p>
                   <p>{user.bio}</p>
                   <button

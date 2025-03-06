@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { authStateAtom } from "../../state/authState";
@@ -26,19 +26,17 @@ export default function DashboardLayout({
     <ProtectedRoute>
       <div className="flex min-h-screen">
         <aside className="flex flex-col justify-between w-64 bg-gray-800 text-white p-4 sticky top-0 h-screen">
-          <div className="pl-[20px]">
-            <h2 className="text-lg font-bold">Dashboard</h2>
+          <div className="flex flex-col gap-4 pl-[20px]">
+            <h2 className="text-lg font-bold">Hello, user</h2>
             <ul>
               <li><a href="/dashboard/">Home</a></li>
               <li><a href="/dashboard/network">Network</a></li>
+              <li><a href="/dashboard/settings">Settings</a></li>
             </ul>
           </div>
           
           <div className="pl-[20px]">
-            <ul>
-              <li><a href="/dashboard/settings">Settings</a></li>
-              <button onClick={() => setIsLoggingOut(true)}>Logout</button>
-            </ul>
+            <button onClick={() => setIsLoggingOut(true)}>Logout</button>
           </div>
         </aside>
 
