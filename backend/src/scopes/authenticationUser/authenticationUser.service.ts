@@ -22,6 +22,16 @@ export class UserService {
     });
   }
 
+  async findById(id: string): Promise<any> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+
+    const { password, createdAt, updatedAt, ...sanitizedUser } = user;
+
+    return sanitizedUser;
+  }
+
   async findAllUsers() {
     const users = await this.userRepository
       .createQueryBuilder('authenticationUser')

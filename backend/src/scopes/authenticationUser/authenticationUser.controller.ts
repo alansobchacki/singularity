@@ -32,8 +32,17 @@ export class UserController {
   }
 
   @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  @UseGuards(JwtAuthGuard)
+  async getProfile(@Request() req) {
+    const userId = req.user.id;
+
+    const user = await this.userService.findById(userId);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
   }
 
   @Get('all')
