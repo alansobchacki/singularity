@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useAtomValue } from "jotai";
 import { hydratedAuthStateAtom } from "../../state/authState";
@@ -223,7 +224,9 @@ const HomePage = () => {
                   key={index}
                   className="flex justify-between items-center gap-1"
                 >
-                  <p>{user.name}</p>
+                  <Link href={`/dashboard/users/profile?id=${user.id}`}>
+                    {user.name}
+                  </Link>
                   <p>{user.bio}</p>
                   <button
                     className={`px-2 py-1 text-sm rounded-full ${
