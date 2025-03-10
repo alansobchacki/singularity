@@ -1,6 +1,7 @@
 import {
   Controller,
   UseGuards,
+  Query,
   Get,
   Post,
   Body,
@@ -31,6 +32,16 @@ export class FollowController {
   @Get('following')
   getAllFollowingRequests(@Request() req) {
     return this.followService.getAllFollowingRequests(req.user.userId);
+  }
+
+  @Get('is-following')
+  async isFollowingUser(
+    @Request() req,
+    @Query('followingId') followingId: string,
+  ) {
+    const followerId = req.user?.userId;
+
+    return this.followService.isFollowing(followerId, followingId);
   }
 
   @Post()

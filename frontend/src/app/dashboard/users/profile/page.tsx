@@ -3,6 +3,8 @@
 import { useSearchParams } from "next/navigation";
 import { useGetUserDetails } from "../../../../hooks/userService/useGetUserDetails";
 import { useGetAllFollowers } from "../../../../hooks/followService/useGetAllFollowers";
+import { useGetUserPosts } from "../../../../hooks/postService/useGetUserPosts";
+import { useGetIsFollowing } from "../../../../hooks/followService/useGetIsFollowing";
 import LoadingSpinner from "../../../../components/LoadingSpinner";
 
 const UserProfilePage = () => {
@@ -13,6 +15,11 @@ const UserProfilePage = () => {
     id as string
   );
   const { data: followers, isLoading: isLoadingFollowers } = useGetAllFollowers(
+    id as string
+  );
+  const { data: isFollowing, isLoading: isLoadingFollowing } =
+    useGetIsFollowing(id as string);
+  const { data: posts, isLoading: isLoadingPosts } = useGetUserPosts(
     id as string
   );
 
@@ -33,6 +40,33 @@ const UserProfilePage = () => {
         <LoadingSpinner />
       ) : (
         <p>Followers: {followers.length}</p>
+      )}
+
+      {!isLoadingFollowing && isFollowing ? (
+        <>
+          {isLoadingPosts ? (
+            <LoadingSpinner />
+          ) : (
+            <>
+              {posts?.length > 0 ? (
+                <>
+                  {posts.map((post: any, index: number) => (
+                    <div key={index}>
+                      <p>{post.content}</p>
+                      <p>Likes: {post.likes?.length ?? 0}</p>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <p>This user has not made any posts yet</p>
+              )}
+            </>
+          )}
+        </>
+      ) : (
+        <p>
+          You can view this user's posts if they accept your follow request.
+        </p>
       )}
     </div>
   );

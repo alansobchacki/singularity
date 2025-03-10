@@ -55,17 +55,19 @@ export class PostController {
     return this.postService.remove(id, userId, userType);
   }
 
-  @Get('timeline/:userId?')
-  async getTimeline(
-    @Request() req,
-    @Param('userId') userId?: string,
-  ): Promise<PostEntity[]> {
-    const user = userId || req.user?.userId;
+  @Get('timeline')
+  async getTimeline(@Request() req): Promise<PostEntity[]> {
+    const user = req.user?.userId;
 
     if (!user) {
       throw new UnauthorizedException('User not authenticated');
     }
 
     return this.postService.findUserAndFollowedPosts(user);
+  }
+
+  @Get(':userId')
+  async getUserPosts(@Param('userId') userId: string): Promise<PostEntity[]> {
+    return this.postService.findUserPosts(userId);
   }
 }

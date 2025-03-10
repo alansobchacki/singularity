@@ -122,4 +122,42 @@ export class PostService {
 
     return posts;
   }
+
+  async findUserPosts(userId: string): Promise<Post[]> {
+    if (!userId) {
+      throw new UnauthorizedException('No users to get posts from.');
+    }
+
+    const posts = await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.author', 'author')
+      .leftJoinAndSelect('post.comments', 'comment')
+      .leftJoinAndSelect('post.likes', 'postLike')
+      .leftJoinAndSelect('comment.author', 'commentAuthor')
+      .leftJoinAndSelect('comment.likes', 'commentLike')
+      .where('post.author.id = :userId', { userId })
+      .orderBy('post.createdAt', 'DESC')
+      .select([
+        'post.id',
+        'post.content',
+        'post.createdAt',
+        'post.updatedAt',
+        'author.id',
+        'author.name',
+        'author.profilePicture',
+        'postLike.id',
+        'postLike.userId',
+        'comment.id',
+        'comment.content',
+        'comment.createdAt',
+        'commentAuthor.id',
+        'commentAuthor.name',
+        'commentAuthor.profilePicture',
+        'commentLike.id',
+        'commentLike.userId',
+      ])
+      .getMany();
+
+    return posts;
+  }
 }

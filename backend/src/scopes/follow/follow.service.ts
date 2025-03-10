@@ -19,7 +19,7 @@ export class FollowService {
       throw new HttpException(
         'You cannot follow yourself',
         HttpStatus.CONFLICT,
-      )
+      );
     }
 
     const existingFollow = await this.followRepository.findOne({
@@ -68,8 +68,20 @@ export class FollowService {
         following: { id: true },
       },
     });
-  
+
     return followingRequests;
+  }
+
+  async isFollowing(followerId: string, followingId: string): Promise<boolean> {
+    const follow = await this.followRepository.findOne({
+      where: {
+        follower: { id: followerId },
+        following: { id: followingId },
+        status: 'ACCEPTED',
+      },
+    });
+
+    return !!follow;
   }
 
   async updateFollowRequest(updateFollowDto: UpdateFollowDto): Promise<Follow> {
