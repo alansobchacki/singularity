@@ -5,6 +5,7 @@ import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { authStateAtom } from "../../state/authState";
 import { useGetCurrentUserDetails } from "../../hooks/userService/useGetCurrentUserDetails";
+import Link from "next/link";
 import ProtectedRoute from "../../components/ProtectedRoute";
 
 export default function DashboardLayout({
@@ -30,9 +31,9 @@ export default function DashboardLayout({
         <aside className="flex flex-col justify-between w-64 bg-gray-800 text-white p-4 sticky top-0 h-screen">
           <div className="flex flex-col gap-4 pl-[20px]">
             <ul>
-              <li>
-                <a href="/">{currentUserData?.name}</a>
-              </li>
+              <Link href={`/dashboard/users/profile?id=${currentUserData?.id}`}>
+                {currentUserData?.name}
+              </Link>
               <li>
                 <a href="/dashboard/">Newsfeed</a>
               </li>
