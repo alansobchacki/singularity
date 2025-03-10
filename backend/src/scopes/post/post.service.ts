@@ -73,8 +73,12 @@ export class PostService {
   }
 
   async findUserAndFollowedPosts(userId: string): Promise<Post[]> {
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
     const followedUsers = await this.followRepository.find({
-      where: { follower: { id: userId } },
+      where: { follower: { id: userId }, status: 'ACCEPTED' },
       relations: ['following'],
     });
 
