@@ -1,6 +1,5 @@
 import {
   Controller,
-  Query,
   Post,
   Body,
   Put,
@@ -14,7 +13,6 @@ import { UserService } from './authenticationUser.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
-import { error } from 'console';
 
 @Controller('users')
 export class UserController {
@@ -25,7 +23,7 @@ export class UserController {
   @Get('self')
   @UseGuards(JwtAuthGuard)
   async getCurrentUserProfile(@Request() req) {
-    const userId = req.user.id;
+    const userId = req.user?.userId;
 
     const user = await this.userService.findById(userId);
 

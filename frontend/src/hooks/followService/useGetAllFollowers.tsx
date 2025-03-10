@@ -20,7 +20,7 @@ const getAllFollowers = async (id: string): Promise<any> => {
 
 export const useGetAllFollowers = (id: string) => {
   return useQuery({
-    queryKey: ["followers"],
+    queryKey: ["followers", id],
     queryFn: () => getAllFollowers(id),
     staleTime: 5 * 60 * 1000,
     retry: 2,
