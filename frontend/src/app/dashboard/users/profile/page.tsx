@@ -30,7 +30,7 @@ const UserProfilePage = () => {
       ) : (
         <>
           <p>{user.name}</p>
-          <p>Image: {user.profilePicture}</p>
+          <img src={user.profilePicture} alt="" />
           <p>Bio: {user.bio}</p>
           <p>Location: {user.location}</p>
         </>

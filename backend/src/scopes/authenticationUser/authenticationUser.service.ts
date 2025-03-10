@@ -54,9 +54,11 @@ export class UserService {
       createUserDto.password,
       saltRounds,
     );
+    const randomAvatar = Math.floor(Math.random() * 6) + 1;
 
     const user = this.userRepository.create({
       ...createUserDto,
+      profilePicture: `${process.env.AVATAR_BASE_URL}avatar${randomAvatar}.jpg`,
       password: hashedPassword,
     });
 
