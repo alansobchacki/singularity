@@ -29,12 +29,12 @@ export default function DashboardLayout({
       <div className="flex min-h-screen">
         <aside className="flex flex-col justify-between w-64 bg-gray-800 text-white p-4 sticky top-0 h-screen">
           <div className="flex flex-col gap-4 pl-[20px]">
-            <h2 className="text-lg font-bold">
-              Hello, {currentUserData?.name}
-            </h2>
             <ul>
               <li>
-                <a href="/dashboard/">Home</a>
+                <a href="/">{currentUserData?.name}</a>
+              </li>
+              <li>
+                <a href="/dashboard/">Newsfeed</a>
               </li>
               <li>
                 <a href="/dashboard/network">Network</a>

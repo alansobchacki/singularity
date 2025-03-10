@@ -14,6 +14,7 @@ import { UserService } from './authenticationUser.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { error } from 'console';
 
 @Controller('users')
 export class UserController {
@@ -21,19 +22,9 @@ export class UserController {
 
   constructor(private readonly userService: UserService) {}
 
-  @Get()
+  @Get('self')
   @UseGuards(JwtAuthGuard)
-  async findByEmail(@Query('email') email: string) {
-    const user = await this.userService.findByEmail({ email });
-    if (!user) {
-      throw new Error('User not found');
-    }
-    return user;
-  }
-
-  @Get('profile')
-  @UseGuards(JwtAuthGuard)
-  async getProfile(@Request() req) {
+  async getCurrentUserProfile(@Request() req) {
     const userId = req.user.id;
 
     const user = await this.userService.findById(userId);
@@ -55,6 +46,18 @@ export class UserController {
     }
 
     return users;
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  async getProfile(@Param('id') id: string) {
+    const user = await this.userService.findById(id);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
   }
 
   @Post()
