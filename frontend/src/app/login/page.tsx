@@ -1,12 +1,11 @@
 "use client";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useLogin } from "../../hooks/userService/useLogin";
-import { useRouter } from "next/navigation";
+import Link from 'next/link';
 import * as Yup from "yup";
 
 const LoginPage = () => {
   const { mutate: login } = useLogin();
-  const router = useRouter();
 
   const loginSchema = Yup.object({
     email: Yup.string()
@@ -42,32 +41,30 @@ const LoginPage = () => {
               });
             }}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, isValid, dirty }) => (
               <Form className="space-y-4">
-                <div>
                   <Field
                     type="text"
                     name="email"
                     placeholder="Email"
-                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full p-3 text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                   <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
-                </div>
 
-                <div>
+
                   <Field
                     type="password"
                     name="password"
                     placeholder="Password"
-                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                   <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
-                </div>
+
 
                 <button
                   type="submit"
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg transition disabled:bg-gray-400"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !isValid || !dirty}
                 >
                   {isSubmitting ? "Logging in..." : "Login"}
                 </button>
@@ -87,9 +84,9 @@ const LoginPage = () => {
 
           <p className="text-center text-gray-600">
             Don't have an account?&nbsp;
-            <span className="text-blue-500 cursor-pointer" onClick={() => router.push("/signup")}>
+            <Link className="text-blue-500 cursor-pointer" href="/signup">
               Create one
-            </span>
+            </Link>
           </p>
         </div>
       </div>

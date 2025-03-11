@@ -2,6 +2,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useCreateUser } from "../../hooks/userService/useCreateUser";
 import { useRouter } from "next/navigation";
+import Link from 'next/link';
 import * as Yup from "yup";
 
 const CreateAccountPage = () => {
@@ -11,10 +12,10 @@ const CreateAccountPage = () => {
   const createUserSchema = Yup.object({
     email: Yup.string()
       .email("Please enter a valid email")
-      .required("Email is required"),
+      .required("Email is required and must be unique"),
     name: Yup.string()
       .min(4, "Your name must have more than 4 characters")
-      .required("Name is required"),
+      .required("Name is required and must be unique"),
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")
       .required("Password is required"),
@@ -28,7 +29,7 @@ const CreateAccountPage = () => {
       </div>
 
       <div className="w-1/2 flex flex-col justify-center items-center bg-white p-10 shadow-lg">
-        <div className="w-full flex flex-col max-w-md space-y-6">
+        <div className="w-full max-w-md space-y-6">
           <h2 className="text-2xl font-semibold text-gray-800 text-center">Create Your Account</h2>
 
           <Formik
@@ -51,42 +52,36 @@ const CreateAccountPage = () => {
               });
             }}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, isValid, dirty }) => (
               <Form className="space-y-4">
-                <div>
-                  <Field
-                    type="text"
-                    name="email"
-                    placeholder="Email"
-                    className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
-                </div>
+                <Field
+                  type="text"
+                  name="email"
+                  placeholder="Email"
+                  className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
 
-                <div>
-                  <Field
-                    type="text"
-                    name="name"
-                    placeholder="Name"
-                    className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  <ErrorMessage name="name" component="div" className="text-red-500 text-sm mt-1" />
-                </div>
+                <Field
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <ErrorMessage name="name" component="div" className="text-red-500 text-sm" />
 
-                <div>
-                  <Field
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
-                </div>
+                <Field
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
 
                 <button
                   type="submit"
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg transition disabled:bg-gray-400"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !dirty || !isValid}
                 >
                   {isSubmitting ? "Creating Account..." : "Create Account"}
                 </button>
@@ -94,12 +89,15 @@ const CreateAccountPage = () => {
             )}
           </Formik>
 
-          <button
-            className="text-blue-500 text-center mx-auto cursor-pointer bg-transparent border-none p-0"
-            onClick={() => router.push("/login")}
-          >
-            ← Return
-          </button>
+          <div className="flex items-center justify-center gap-2">
+            <Link href="/login">
+              <button
+                className="text-blue-500 cursor-pointer bg-transparent border-none p-0 mt-2.5"
+              >
+                ← Return
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     </section>
