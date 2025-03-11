@@ -2,7 +2,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useCreateUser } from "../../hooks/userService/useCreateUser";
 import { useRouter } from "next/navigation";
-import Link from 'next/link';
+import Link from "next/link";
 import * as Yup from "yup";
 
 const CreateAccountPage = () => {
@@ -30,7 +30,9 @@ const CreateAccountPage = () => {
 
       <div className="w-1/2 flex flex-col justify-center items-center bg-white p-10 shadow-lg">
         <div className="w-full max-w-md space-y-6">
-          <h2 className="text-2xl font-semibold text-gray-800 text-center">Create Your Account</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 text-center">
+            Create Your Account
+          </h2>
 
           <Formik
             initialValues={{ email: "", name: "", password: "" }}
@@ -60,7 +62,11 @@ const CreateAccountPage = () => {
                   placeholder="Email"
                   className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
 
                 <Field
                   type="text"
@@ -68,7 +74,11 @@ const CreateAccountPage = () => {
                   placeholder="Name"
                   className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <ErrorMessage name="name" component="div" className="text-red-500 text-sm" />
+                <ErrorMessage
+                  name="name"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
 
                 <Field
                   type="password"
@@ -76,7 +86,11 @@ const CreateAccountPage = () => {
                   placeholder="Password"
                   className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <ErrorMessage name="password" component="div" className="text-red-500 text-sm" />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
 
                 <button
                   type="submit"
@@ -91,9 +105,7 @@ const CreateAccountPage = () => {
 
           <div className="flex items-center justify-center gap-2">
             <Link href="/login">
-              <button
-                className="text-blue-500 cursor-pointer bg-transparent border-none p-0 mt-2.5"
-              >
+              <button className="text-blue-500 cursor-pointer bg-transparent border-none p-0 mt-2.5">
                 ← Return
               </button>
             </Link>

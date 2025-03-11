@@ -1,7 +1,7 @@
 "use client";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useLogin } from "../../hooks/userService/useLogin";
-import Link from 'next/link';
+import Link from "next/link";
 import * as Yup from "yup";
 
 const LoginPage = () => {
@@ -20,12 +20,16 @@ const LoginPage = () => {
     <section className="flex h-screen bg-gradient-to-r from-blue-400 to-blue-600 text-white">
       <div className="flex flex-col justify-center items-center w-1/2 p-10 text-center">
         <h1 className="text-3xl font-bold">Learning Book</h1>
-        <p className="mt-2 text-lg">A full-stack social media app built for learning purposes.</p>
+        <p className="mt-2 text-lg">
+          A full-stack social media app built for learning purposes.
+        </p>
       </div>
 
       <div className="w-1/2 flex flex-col justify-center items-center bg-white p-10 shadow-lg">
         <div className="w-full max-w-md space-y-6">
-          <h2 className="text-2xl font-semibold text-gray-800 text-center">Welcome Back</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 text-center">
+            Welcome Back
+          </h2>
 
           <Formik
             initialValues={{ email: "", password: "" }}
@@ -43,23 +47,29 @@ const LoginPage = () => {
           >
             {({ isSubmitting, isValid, dirty }) => (
               <Form className="space-y-4">
-                  <Field
-                    type="text"
-                    name="email"
-                    placeholder="Email"
-                    className="w-full p-3 text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
+                <Field
+                  type="text"
+                  name="email"
+                  placeholder="Email"
+                  className="w-full p-3 text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
 
-
-                  <Field
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
-
+                <Field
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
 
                 <button
                   type="submit"
@@ -73,9 +83,9 @@ const LoginPage = () => {
           </Formik>
 
           <div className="flex items-center justify-center gap-2 text-gray-500">
-            <div className="w-32 h-px bg-gray-400"/>
+            <div className="w-32 h-px bg-gray-400" />
             <p className="text-center">or</p>
-            <div className="w-32 h-px bg-gray-400"/>
+            <div className="w-32 h-px bg-gray-400" />
           </div>
 
           <button className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-3 rounded-lg transition">

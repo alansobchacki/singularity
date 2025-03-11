@@ -34,19 +34,22 @@ export default function DashboardLayout({
               <Link href={`/dashboard/users/profile?id=${currentUserData?.id}`}>
                 {currentUserData?.name}
               </Link>
-              <li>
-                <a href="/dashboard/">Newsfeed</a>
-              </li>
-              <li>
-                <a href="/dashboard/network">Network</a>
-              </li>
-              <li>
-                <a href="/dashboard/settings">Settings</a>
-              </li>
+              <Link href="/dashboard">
+                <li>Timeline</li>
+              </Link>
+              <Link href="/dashboard/network">
+                <li>Connections</li>
+              </Link>
+              <Link href="/dashboard/trending-users">
+                <li>Trending Users</li>
+              </Link>
             </ul>
           </div>
 
           <div className="pl-[20px]">
+            <Link href="/dashboard/settings">
+              <p>Settings</p>
+            </Link>
             <button onClick={() => setIsLoggingOut(true)}>Logout</button>
           </div>
         </aside>
