@@ -10,33 +10,31 @@ const LoginPage = () => {
 
   const loginSchema = Yup.object({
     email: Yup.string()
-      .email("Write a valid email")
-      .required("Write your email"),
+      .email("Please enter a valid email")
+      .required("Email is required"),
     password: Yup.string()
-      .min(8, "Minimum of 8 characters")
-      .required("Write your password"),
+      .min(8, "Password must be at least 8 characters")
+      .required("Password is required"),
   });
 
   return (
-    <section id="login-section" className="flex flex-row h-screen bg-white">
-      <div id="left-container" className="flex flex-col justify-center items-center w-1/2 bg-blue-200">
-        <h1 className="text-xl font-bold text-black">Learning Book</h1>
-        <h2 className="text-black">A full-stack social media app built for learning purposes.</h2>
+    <section className="flex h-screen bg-gradient-to-r from-blue-400 to-blue-600 text-white">
+      <div className="flex flex-col justify-center items-center w-1/2 p-10 text-center">
+        <h1 className="text-3xl font-bold">Learning Book</h1>
+        <p className="mt-2 text-lg">A full-stack social media app built for learning purposes.</p>
       </div>
 
-      <div id="right-container" className="w-1/2 flex flex-col justify-center gap-5">
-        <div id="form-container" className="flex flex-col mx-auto gap-3">
-          <h2 className="text-xl font-bold text-black">Welcome Back</h2>
+      <div className="w-1/2 flex flex-col justify-center items-center bg-white p-10 shadow-lg">
+        <div className="w-full max-w-md space-y-6">
+          <h2 className="text-2xl font-semibold text-gray-800 text-center">Welcome Back</h2>
+
           <Formik
-            initialValues={{
-              email: "newuser69@example.com",
-              password: "password123",
-            }}
+            initialValues={{ email: "", password: "" }}
             validationSchema={loginSchema}
             onSubmit={(values, { setSubmitting }) => {
               login(values, {
                 onError: () => {
-                  alert("Wrong email or password. Please try again.");
+                  alert("Incorrect email or password. Please try again.");
                 },
                 onSettled: () => {
                   setSubmitting(false);
@@ -45,38 +43,30 @@ const LoginPage = () => {
             }}
           >
             {({ isSubmitting }) => (
-              <Form className="flex flex-col gap-4">
-                <>
+              <Form className="space-y-4">
+                <div>
                   <Field
                     type="text"
                     name="email"
                     placeholder="Email"
-                    className="text-black border p-2 rounded-lg"
+                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
-                  <ErrorMessage
-                    name="email"
-                    component="div"
-                    className="text-red-500"
-                  />
-                </>
+                  <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
+                </div>
 
-                <>
+                <div>
                   <Field
                     type="password"
                     name="password"
                     placeholder="Password"
-                    className="text-black border p-2 rounded-lg"
+                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="text-red-500"
-                  />
-                </>
+                  <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
+                </div>
 
                 <button
                   type="submit"
-                  className="text-black border p-3 rounded-lg"
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg transition disabled:bg-gray-400"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Logging in..." : "Login"}
@@ -85,17 +75,19 @@ const LoginPage = () => {
             )}
           </Formik>
 
-          <p className="text-black text-gray-400 text-center">- or -</p>
-          
-          {/*<button className="text-black border p-3 rounded-lg" disabled>Google Button (soon)</button>*/}
-          <button className="text-black border p-3 rounded-lg">Enter as a guest</button>
+          <div className="flex items-center justify-center gap-2 text-gray-500">
+            <div className="w-32 h-px bg-gray-400"/>
+            <p className="text-center">or</p>
+            <div className="w-32 h-px bg-gray-400"/>
+          </div>
 
-          <p className="text-black">
-            Don't have an account?{" "}
-            <span
-              className="cursor-pointer text-blue-500"
-              onClick={() => router.push("/signup")}
-            >
+          <button className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-3 rounded-lg transition">
+            Enter as a Guest
+          </button>
+
+          <p className="text-center text-gray-600">
+            Don't have an account?&nbsp;
+            <span className="text-blue-500 cursor-pointer" onClick={() => router.push("/signup")}>
               Create one
             </span>
           </p>
