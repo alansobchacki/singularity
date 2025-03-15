@@ -6,17 +6,16 @@ import { hydratedAuthStateAtom } from "../../state/authState";
 import { useGetAllLikedContent } from "../../hooks/likeService/useGetAllLikedContent";
 import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
 import { useCreateComment } from "../../hooks/commentService/useCreateComment";
-import { useCreateFollowRequest } from "../../hooks/followService/useCreateFollowRequest";
 import { useCreatePost } from "../../hooks/postService/useCreatePost";
 import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeContent";
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
+import CreatePostButton from "../../components/CreatePostButton";
 import ProtectedRoute from "../../components/ProtectedRoute";
 
 const HomePage = () => {
   const user = useAtomValue(hydratedAuthStateAtom);
   const { data: timelineData, isLoading } = useGetTimeline();
   const { data: userLikedContent } = useGetAllLikedContent();
-  const { mutate: createFollowRequest } = useCreateFollowRequest();
   const { mutate: createComment } = useCreateComment();
   const { mutate: createPost } = useCreatePost();
   const { mutate: createLikeContent } = useCreateLikeContent();
@@ -65,22 +64,22 @@ const HomePage = () => {
 
   return (
     <ProtectedRoute>
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         {isLoading && (
           <div className="fixed inset-0 flex items-center justify-center bg-[#353535] z-50">
             <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
 
-        <div id="timeline-container" className="flex flex-col w-1/2">
+        <div id="timeline-container" className="flex flex-col w-[75%]">
           <h1>What are you thinking today? Share your thoughts!</h1>
 
           {!isCreatingPost ? (
-            <button className="border p-3 w-1/5" onClick={handleCreatePost}>
-              Create Post
-            </button>
+            <CreatePostButton onClick={handleCreatePost}>
+
+            </CreatePostButton>
           ) : (
-            <div className="mt-4 w-1/3">
+            <div className="mt-4">
               <textarea
                 className="w-full p-2 border rounded-md"
                 placeholder="Write your post..."
@@ -104,21 +103,21 @@ const HomePage = () => {
                 <p>Likes: {post.likes?.length ?? 0}</p>
                 {isContentLiked(post.id) ? (
                   <button
-                    className={"border p-3 w-1/5 bg-red-500 text-white"}
+                    className={"border p-3 bg-red-500 text-white"}
                     onClick={() => handleUnlikeContent(post.id, "post")}
                   >
                     Unlike This
                   </button>
                 ) : (
                   <button
-                    className={"border p-3 w-1/5 bg-blue-500 text-white"}
+                    className={"border p-3 bg-blue-500 text-white"}
                     onClick={() => handleLikeContent(post.id, "post")}
                   >
                     Like This
                   </button>
                 )}
                 <button
-                  className="border p-3 w-1/5"
+                  className="border p-3 "
                   onClick={() =>
                     setActiveCommentBox(
                       activeCommentBox === post.id ? null : post.id
@@ -140,7 +139,7 @@ const HomePage = () => {
                         <p>Likes: {comment.likes?.length ?? 0}</p>
                         {isContentLiked(comment.id) ? (
                           <button
-                            className={"border p-3 w-1/5 bg-red-500 text-white"}
+                            className={"border p-3 bg-red-500 text-white"}
                             onClick={() =>
                               handleUnlikeContent(comment.id, "comment")
                             }
@@ -150,7 +149,7 @@ const HomePage = () => {
                         ) : (
                           <button
                             className={
-                              "border p-3 w-1/5 bg-blue-500 text-white"
+                              "border p-3 bg-blue-500 text-white"
                             }
                             onClick={() =>
                               handleLikeContent(comment.id, "comment")

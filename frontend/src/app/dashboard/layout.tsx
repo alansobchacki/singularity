@@ -32,7 +32,7 @@ export default function DashboardLayout({
           <div className="flex flex-col gap-4 pl-[20px]">
             <ul>
               <Link href={`/dashboard/users/profile?id=${currentUserData?.id}`}>
-                {currentUserData?.name}
+                Hello, {currentUserData?.name}
               </Link>
               <Link href="/dashboard">
                 <li>Timeline</li>
@@ -47,14 +47,16 @@ export default function DashboardLayout({
           </div>
 
           <div className="pl-[20px]">
+            {/* Add a settings page later for users to update their account settings
             <Link href="/dashboard/settings">
               <p>Settings</p>
             </Link>
+            */}
             <button onClick={() => setIsLoggingOut(true)}>Logout</button>
           </div>
         </aside>
 
-        <main className="flex-1 p-6 overflow-auto">{children}</main>
+        <main className="flex-1 p-6 items-center overflow-auto">{children}</main>
 
         {isLoggingOut && (
           <>
