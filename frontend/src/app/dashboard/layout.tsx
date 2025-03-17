@@ -28,7 +28,7 @@ export default function DashboardLayout({
   return (
     <ProtectedRoute>
       <div className="flex min-h-screen">
-        <aside className="flex flex-col justify-between w-64 bg-gray-800 text-white p-4 sticky top-0 h-screen">
+        <aside className="flex flex-col justify-between w-64 bg-blue-500 text-white p-4 sticky top-0 h-screen">
           <div className="flex flex-col gap-4 pl-[20px]">
             <ul>
               <Link href={`/dashboard/users/profile?id=${currentUserData?.id}`}>
@@ -56,7 +56,9 @@ export default function DashboardLayout({
           </div>
         </aside>
 
-        <main className="flex-1 p-6 items-center overflow-auto">{children}</main>
+        <main className="flex-1 p-6 items-center overflow-auto bg-gray-200">
+          {children}
+        </main>
 
         {isLoggingOut && (
           <>

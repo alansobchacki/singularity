@@ -9,7 +9,9 @@ import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreatePost } from "../../hooks/postService/useCreatePost";
 import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeContent";
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
-import CreatePostButton from "../../components/CreatePostButton";
+import TextField from "@mui/material/TextField";
+import CreateContentButton from "../../components/CreateContentButton";
+import Button from "../../components/Button";
 import ProtectedRoute from "../../components/ProtectedRoute";
 
 const HomePage = () => {
@@ -28,7 +30,7 @@ const HomePage = () => {
     userLikedContent?.includes(contentId);
 
   const handleCreatePost = () => {
-    setIsCreatingPost(true);
+    setIsCreatingPost(!isCreatingPost);
   };
 
   const handlePostSubmit = () => {
@@ -64,57 +66,69 @@ const HomePage = () => {
 
   return (
     <ProtectedRoute>
-      <div className="flex justify-between items-center">
+      <div id="main-container" className="flex justify-between items-center">
         {isLoading && (
           <div className="fixed inset-0 flex items-center justify-center bg-[#353535] z-50">
             <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
 
-        <div id="timeline-container" className="flex flex-col w-[75%]">
-          <h1>What are you thinking today? Share your thoughts!</h1>
-
-          {!isCreatingPost ? (
-            <CreatePostButton onClick={handleCreatePost}>
-
-            </CreatePostButton>
-          ) : (
-            <div className="mt-4">
-              <textarea
-                className="w-full p-2 border rounded-md"
-                placeholder="Write your post..."
-                value={postContent}
-                onChange={(e) => setPostContent(e.target.value)}
+        <div id="timeline-container" className="flex flex-col w-[75%] gap-10">
+          <div
+            id="create-post-container"
+            className="flex flex-col bg-gray-100 p-4 rounded-lg"
+          >
+            <div className="flex items-center justify-center gap-4">
+              <CreateContentButton
+                onClick={handleCreatePost}
+                size={48}
+                state={isCreatingPost}
               />
-              <button
-                className="mt-2 border p-2 w-full bg-blue-500 text-white"
-                onClick={() => handlePostSubmit()}
-              >
-                Create Post
-              </button>
+              <h1 className="text-black">
+                What are you thinking today? Share your thoughts!
+              </h1>
             </div>
-          )}
+
+            {isCreatingPost && (
+              <div className="flex flex-col create-post-textarea gap-5 mt-4">
+                <TextField
+                  label="What are your thoughts?"
+                  className="w-full p-2 border rounded-md bg-gray-100"
+                  multiline
+                  rows={4}
+                  value={postContent}
+                  onChange={(e) => setPostContent(e.target.value)}
+                />
+                <Button
+                  onClick={() => handlePostSubmit()}
+                  size={150}
+                  text={"Create Post"}
+                />
+              </div>
+            )}
+          </div>
 
           {timelineData?.length > 0 ? (
             timelineData.map((post: any, index: number) => (
-              <div key={index} className="flex flex-col border-b p-4">
-                <p className="font-bold">{post.author?.name}</p>
-                <p>{post.content}</p>
-                <p>Likes: {post.likes?.length ?? 0}</p>
+              <div
+                key={index}
+                className="flex flex-col border-b p-4 bg-gray-100"
+              >
+                <p className="font-bold text-black">{post.author?.name}</p>
+                <p className="text-black">{post.content}</p>
+                <p className="text-black">Likes: {post.likes?.length ?? 0}</p>
                 {isContentLiked(post.id) ? (
-                  <button
-                    className={"border p-3 bg-red-500 text-white"}
+                  <Button
                     onClick={() => handleUnlikeContent(post.id, "post")}
-                  >
-                    Unlike This
-                  </button>
+                    size={150}
+                    text={"Unlike this"}
+                  />
                 ) : (
-                  <button
-                    className={"border p-3 bg-blue-500 text-white"}
+                  <Button
                     onClick={() => handleLikeContent(post.id, "post")}
-                  >
-                    Like This
-                  </button>
+                    size={150}
+                    text={"Like this"}
+                  />
                 )}
                 <button
                   className="border p-3 "
@@ -148,9 +162,7 @@ const HomePage = () => {
                           </button>
                         ) : (
                           <button
-                            className={
-                              "border p-3 bg-blue-500 text-white"
-                            }
+                            className={"border p-3 bg-blue-500 text-white"}
                             onClick={() =>
                               handleLikeContent(comment.id, "comment")
                             }
