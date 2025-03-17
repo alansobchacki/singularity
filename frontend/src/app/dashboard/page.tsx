@@ -10,6 +10,7 @@ import { useCreatePost } from "../../hooks/postService/useCreatePost";
 import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeContent";
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
 import TextField from "@mui/material/TextField";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CreateContentButton from "../../components/CreateContentButton";
 import Button from "../../components/Button";
 import ProtectedRoute from "../../components/ProtectedRoute";
@@ -73,7 +74,7 @@ const HomePage = () => {
           </div>
         )}
 
-        <div id="timeline-container" className="flex flex-col w-[75%] gap-10">
+        <div id="timeline-container" className="flex flex-col w-[75%] gap-5">
           <div
             id="create-post-container"
             className="flex flex-col bg-gray-100 p-4 rounded-lg"
@@ -85,7 +86,7 @@ const HomePage = () => {
                 state={isCreatingPost}
               />
               <h1 className="text-black">
-                What are you thinking today? Share your thoughts!
+                What are you thinking today? Create a new post!
               </h1>
             </div>
 
@@ -108,98 +109,138 @@ const HomePage = () => {
             )}
           </div>
 
-          {timelineData?.length > 0 ? (
-            timelineData.map((post: any, index: number) => (
-              <div
-                key={index}
-                className="flex flex-col border-b p-4 bg-gray-100"
-              >
-                <p className="font-bold text-black">{post.author?.name}</p>
-                <p className="text-black">{post.content}</p>
-                <p className="text-black">Likes: {post.likes?.length ?? 0}</p>
-                {isContentLiked(post.id) ? (
-                  <Button
-                    onClick={() => handleUnlikeContent(post.id, "post")}
-                    size={150}
-                    text={"Unlike this"}
-                  />
-                ) : (
-                  <Button
-                    onClick={() => handleLikeContent(post.id, "post")}
-                    size={150}
-                    text={"Like this"}
-                  />
-                )}
-                <button
-                  className="border p-3 "
-                  onClick={() =>
-                    setActiveCommentBox(
-                      activeCommentBox === post.id ? null : post.id
-                    )
-                  }
+          <div id="posts-container" className="flex flex-col gap-10">
+            {timelineData?.length > 0 ? (
+              timelineData.map((post: any, index: number) => (
+                <div
+                  key={index}
+                  className="flex flex-col border-b p-4 bg-gray-100"
                 >
-                  Reply
-                </button>
-
-                {post.comments?.length > 0 ? (
-                  <div className="mt-2 pl-4 border-l">
-                    <p className="font-semibold">Comments:</p>
-                    {post.comments.map((comment: any, commentIndex: number) => (
-                      <div key={commentIndex} className="mt-1">
-                        <p className="text-sm font-medium">
-                          {comment.author?.name}
-                        </p>
-                        <p className="text-sm">{comment.content}</p>
-                        <p>Likes: {comment.likes?.length ?? 0}</p>
-                        {isContentLiked(comment.id) ? (
-                          <button
-                            className={"border p-3 bg-red-500 text-white"}
-                            onClick={() =>
-                              handleUnlikeContent(comment.id, "comment")
-                            }
-                          >
-                            Unlike This
-                          </button>
-                        ) : (
-                          <button
-                            className={"border p-3 bg-blue-500 text-white"}
-                            onClick={() =>
-                              handleLikeContent(comment.id, "comment")
-                            }
-                          >
-                            Like This
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-sm mt-2">
-                    No comments yet. Be the first to comment!
-                  </p>
-                )}
-
-                {activeCommentBox === post.id && (
-                  <div className="mt-4 w-1/3">
-                    <textarea
-                      className="w-full p-2 border rounded-md"
-                      placeholder="Write a comment..."
-                      value={commentContent}
-                      onChange={(e) => setCommentContent(e.target.value)}
+                  <div className="flex gap-2">
+                    <img
+                      className="w-[24px] h-[24px] rounded-full"
+                      src={post.author?.profilePicture}
+                      alt={`${post.author?.name}'s avatar`}
                     />
-                    <button
-                      className="mt-2 border p-2 w-full bg-blue-500 text-white"
-                      onClick={() => handleCommentSubmit(post.id)}
-                    >
-                      Add Comment
-                    </button>
+                    <p className="font-bold text-black mb-2">
+                      {post.author?.name}
+                    </p>
                   </div>
-                )}
-              </div>
-            ))
-          ) : (
-            <p>No posts available. Follow more people to see more stuff!</p>
-          )}
+
+                  <p className="text-black mb-5">{post.content}</p>
+                  <div className="flex gap-2">
+                    <ThumbUpIcon sx={{ color: "rgb(15, 119, 255)" }} />
+                    <p className="text-black">{post.likes?.length ?? 0}</p>
+                  </div>
+
+                  {post.comments?.length < 1 && (
+                    <p className="text-gray-500 text-center">
+                      No comments yet. Be the first to comment!
+                    </p>
+                  )}
+
+                  <span className="block border-t border-gray-300 my-2"></span>
+
+                  {activeCommentBox === post.id && (
+                    <div className="mt-4 w-full">
+                      <TextField
+                        label="Write your comment"
+                        className="w-full p-2 border rounded-md bg-gray-100"
+                        multiline
+                        rows={4}
+                        value={commentContent}
+                        onChange={(e) => setCommentContent(e.target.value)}
+                      />
+                      <Button
+                        onClick={() => handleCommentSubmit(post.id)}
+                        size={150}
+                        text={"Create Comment"}
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex justify-center gap-5">
+                    {isContentLiked(post.id) ? (
+                      <Button
+                        onClick={() => handleUnlikeContent(post.id, "post")}
+                        size={150}
+                        text={"Unlike this"}
+                      />
+                    ) : (
+                      <Button
+                        onClick={() => handleLikeContent(post.id, "post")}
+                        size={150}
+                        text={"Like this"}
+                      />
+                    )}
+                    <Button
+                      onClick={() =>
+                        setActiveCommentBox(
+                          activeCommentBox === post.id ? null : post.id
+                        )
+                      }
+                      size={150}
+                      text={"Comment"}
+                    />
+                  </div>
+
+                  {post.comments?.length > 0 && (
+                    <div className="flex flex-col mt-5 pl-4 border-l gap-5">
+                      {post.comments.map(
+                        (comment: any, commentIndex: number) => (
+                          <div key={commentIndex} className="mt-1">
+                            <div className="flex gap-2">
+                              <img
+                                className="w-[24px] h-[24px] rounded-full"
+                                src={comment.author?.profilePicture}
+                                alt={`${comment.author?.name}'s avatar`}
+                              />
+                              <p className="text-sm text-black font-semibold">
+                                {comment.author?.name}
+                              </p>
+                            </div>
+
+                            <p className="text-sm text-black ">
+                              {comment.content}
+                            </p>
+
+                            <div className="flex gap-2">
+                              <ThumbUpIcon
+                                sx={{ color: "rgb(15, 119, 255)" }}
+                              />
+                              <p className="text-black">
+                                {comment.likes?.length ?? 0}
+                              </p>
+                            </div>
+
+                            {isContentLiked(comment.id) ? (
+                              <Button
+                                onClick={() =>
+                                  handleUnlikeContent(comment.id, "comment")
+                                }
+                                size={150}
+                                text={"Unlike this"}
+                              />
+                            ) : (
+                              <Button
+                                onClick={() =>
+                                  handleLikeContent(comment.id, "comment")
+                                }
+                                size={150}
+                                text={"Like this"}
+                              />
+                            )}
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p>No posts available. Follow more people to see more stuff!</p>
+            )}
+          </div>
         </div>
       </div>
     </ProtectedRoute>
