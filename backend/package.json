@@ -16,6 +16,7 @@
     "migration:generate": "npm run typeorm -- migration:generate src/infrastructure/migrations/Migration",
     "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
+    "initializeDb": "npm run build && node dist/scripts/initializeDb.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
