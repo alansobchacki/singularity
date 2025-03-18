@@ -51,7 +51,7 @@ export default function DashboardLayout({
             </div>
             <div className="flex gap-2">
               <GroupIcon />
-              <Link href="/dashboard/network">
+              <Link href="/dashboard/connections">
                 <li className="font-semibold">Connections</li>
               </Link>
             </div>
@@ -81,16 +81,13 @@ export default function DashboardLayout({
           </div>
         </aside>
 
-        <main className="flex-1 p-6 items-center overflow-auto bg-gray-200">
+        <main className="flex flex-col p-6 w-full items-center overflow-auto bg-gray-200">
           {children}
         </main>
 
         {isLoggingOut && (
-          <div
-            className="fixed inset-0 bg-gray-500 bg-opacity-50 z-9"
-            onClick={() => setIsLoggingOut(false)}
-          >
-            <div className="flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-300 w-[250px] h-[250px] rounded-lg z-10">
+          <>
+            <div className="flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 w-[250px] h-[250px] rounded-lg z-10">
               <p className="text-black mb-6">Do you really wish to logout?</p>
               <Button onClick={handleLogout} size={150} text={"Yes"} />
               <Button
@@ -99,7 +96,12 @@ export default function DashboardLayout({
                 text={"No"}
               />
             </div>
-          </div>
+
+            <div
+              className="fixed inset-0 bg-gray-500 bg-opacity-50 z-9"
+              onClick={() => setIsLoggingOut(false)}
+            />
+          </>
         )}
       </div>
     </ProtectedRoute>

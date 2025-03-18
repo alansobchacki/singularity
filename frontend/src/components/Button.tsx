@@ -1,14 +1,20 @@
 interface ButtonProps {
   onClick?: () => void;
+  disabled?: boolean;
   size: number;
   text: string;
 }
 
-const Button = ({ onClick, size, text }: ButtonProps) => {
+const Button = ({ onClick, disabled, size, text }: ButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className={`mt-2 w-[${size}px] border p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-400`}
+      disabled={disabled}
+      className={`mt-2 w-[${size}px] border p-2 rounded-lg text-white ${
+        disabled
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-blue-500 hover:bg-blue-400"
+      }`}
     >
       {text}
     </button>
