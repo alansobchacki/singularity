@@ -5,6 +5,7 @@ import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { authStateAtom } from "../../state/authState";
 import { useGetCurrentUserDetails } from "../../hooks/userService/useGetCurrentUserDetails";
+import { useQueryClient } from "@tanstack/react-query";
 import Button from "../../components/Button";
 import FeedIcon from "@mui/icons-material/Feed";
 import GroupIcon from "@mui/icons-material/Group";
@@ -21,10 +22,13 @@ export default function DashboardLayout({
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [authState, setAuthState] = useAtom(authStateAtom);
   const { data: currentUserData } = useGetCurrentUserDetails();
+  const queryClient = useQueryClient();
   const router = useRouter();
 
   const handleLogout = () => {
     localStorage.clear();
+    queryClient.clear();
+
     setAuthState({ id: "", isAuthenticated: false });
 
     router.replace("/login");
