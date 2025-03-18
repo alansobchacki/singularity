@@ -23,10 +23,6 @@ const CreateContentButton = ({
         height: "40px",
         borderRadius: "50%",
         padding: "12px",
-        transition: "transform 0.3s ease",
-        "&:hover": {
-          transform: "scale(1.1)",
-        },
       }}
     >
       {state ? (

@@ -114,7 +114,7 @@ const HomePage = () => {
               timelineData.map((post: any, index: number) => (
                 <div
                   key={index}
-                  className="flex flex-col border-b p-4 bg-gray-100"
+                  className="flex flex-col border-b p-4 bg-gray-100 rounded-lg"
                 >
                   <div className="flex gap-2">
                     <img
