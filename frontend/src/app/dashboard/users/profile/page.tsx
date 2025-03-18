@@ -24,50 +24,67 @@ const UserProfilePage = () => {
   );
 
   return (
-    <div>
-      {isLoadingUser ? (
-        <LoadingSpinner />
-      ) : (
-        <>
-          <p>{user.name}</p>
-          <img src={user.profilePicture} alt="" />
-          <p>Bio: {user.bio}</p>
-          <p>Location: {user.location}</p>
-        </>
-      )}
-
-      {isLoadingFollowers ? (
-        <LoadingSpinner />
-      ) : (
-        <p>Followers: {followers.length}</p>
-      )}
-
-      {!isLoadingFollowing && isFollowing ? (
-        <>
-          {isLoadingPosts ? (
-            <LoadingSpinner />
-          ) : (
-            <>
-              {posts?.length > 0 ? (
-                <>
-                  {posts.map((post: any, index: number) => (
-                    <div key={index}>
-                      <p>{post.content}</p>
-                      <p>Likes: {post.likes?.length ?? 0}</p>
-                    </div>
-                  ))}
-                </>
+    <div
+      id="main-container"
+      className="flex flex-col w-full justify-center items-center gap-6"
+    >
+      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg">
+        {isLoadingUser ? (
+          <LoadingSpinner />
+        ) : (
+          <div className="flex gap-5">
+            <img
+              className="w-[80px] h-[80px] rounded-full"
+              src={user?.profilePicture}
+              alt={`${user?.name}'s avatar'`}
+            />
+            <div className="flex flex-col">
+              <p className="text-black">
+                <b>{user?.name}</b>
+              </p>
+              <p className="text-black">{user?.bio}</p>
+              <p className="text-black">{user?.location}</p>
+              {isLoadingFollowers ? (
+                <LoadingSpinner />
               ) : (
-                <p>This user has not made any posts yet</p>
+                <p className="text-black">Followers: {followers.length}</p>
               )}
-            </>
-          )}
-        </>
-      ) : (
-        <p>
-          You can view this user's posts if they accept your follow request.
-        </p>
-      )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg">
+        {!isLoadingFollowing && isFollowing ? (
+          <>
+            {isLoadingPosts ? (
+              <LoadingSpinner />
+            ) : (
+              <>
+                {posts?.length > 0 ? (
+                  <>
+                    {posts.map((post: any, index: number) => (
+                      <div key={index}>
+                        <p>{post.content}</p>
+                        <p>Likes: {post.likes?.length ?? 0}</p>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <p className="text-black">
+                    {user?.name} still hasn't made any posts.
+                  </p>
+                )}
+              </>
+            )}
+          </>
+        ) : (
+          <p className="text-black">
+            {user?.name}'s post history is private. You can view this user's
+            posts if they accept your follow request.
+          </p>
+        )}
+      </div>
     </div>
   );
 };
