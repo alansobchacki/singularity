@@ -9,6 +9,7 @@ import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreatePost } from "../../hooks/postService/useCreatePost";
 import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeContent";
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
+import Image from "next/image";
 import TextField from "@mui/material/TextField";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CreateContentButton from "../../components/CreateContentButton";
@@ -80,7 +81,7 @@ const HomePage = () => {
         <div id="timeline-container" className="flex flex-col w-[75%] gap-5">
           <div
             id="create-post-container"
-            className="flex flex-col bg-gray-100 p-4 rounded-lg"
+            className="flex flex-col bg-gray-100 p-4 rounded-lg shadow-md"
           >
             <div className="flex items-center justify-center gap-4">
               <CreateContentButton
@@ -112,20 +113,57 @@ const HomePage = () => {
             )}
           </div>
 
+          <div
+            id="disclaimer-container"
+            className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md"
+          >
+            <div className="flex items-center gap-4">
+              <img
+                className="w-[42px] h-[42px] border-2 border-green-500 rounded-full"
+                src={"/avatars/adminavatar.jpg"}
+                alt={"Alan Sobchacki's avatar"}
+              />
+              <p className="font-bold text-black">Alan Sobchacki</p>
+            </div>
+
+            <p className="text-black mt-5 mb-5">
+              👋 Hello folks,
+              <br />
+              <br />
+              Welcome to my social media app! I built this project because I
+              thought it was fun.
+              <br />
+              <br />
+              You can create posts, comment on posts, like content, follow users
+              and have followers. In this page, you'll only view posts made by
+              people that you follow. This post is here because I'm special 😎.
+              <br />
+              <br />
+              Feel free to try it out and have fun!
+            </p>
+
+            <span className="block border-t border-gray-300 my-2"></span>
+
+            <p className="text-gray-500 text-center">
+              Likes and comments are disabled for this post to protect the
+              author's ego.
+            </p>
+          </div>
+
           <div id="posts-container" className="flex flex-col gap-10">
             {timelineData?.length > 0 ? (
               timelineData.map((post: any, index: number) => (
                 <div
                   key={index}
-                  className="flex flex-col border-b p-4 bg-gray-100 rounded-lg"
+                  className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md"
                 >
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-4">
                     <img
-                      className="w-[42px] h-[42px] rounded-full"
+                      className="w-[42px] h-[42px] border-2 border-blue-600 rounded-full"
                       src={post.author?.profilePicture}
                       alt={`${post.author?.name}'s avatar`}
                     />
-                    <p className="font-bold text-black mb-2">
+                    <p className="font-bold text-black mt-5 mb-5">
                       {post.author?.name}
                     </p>
                   </div>

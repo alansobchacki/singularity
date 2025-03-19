@@ -28,13 +28,13 @@ const UserProfilePage = () => {
       id="main-container"
       className="flex flex-col w-full justify-center items-center gap-6"
     >
-      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg">
+      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
         {isLoadingUser ? (
           <LoadingSpinner />
         ) : (
-          <div className="flex gap-5">
+          <div className="flex items-center gap-5">
             <img
-              className="w-[80px] h-[80px] rounded-full"
+              className="w-[80px] h-[80px] border-4 border-blue-500 rounded-full"
               src={user?.profilePicture}
               alt={`${user?.name}'s avatar'`}
             />
@@ -54,7 +54,7 @@ const UserProfilePage = () => {
         )}
       </div>
 
-      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg">
+      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
         {!isLoadingFollowing && isFollowing ? (
           <>
             {isLoadingPosts ? (

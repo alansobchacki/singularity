@@ -34,7 +34,7 @@ const FollowsPage = () => {
       id="main-container"
       className="flex flex-col w-full justify-center items-center gap-6"
     >
-      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg">
+      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
         {followRequests?.length > 0 ? (
           followRequests.map((followRequest: any, index: number) => (
             <div key={index}>
@@ -83,7 +83,7 @@ const FollowsPage = () => {
         )}
       </div>
 
-      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg">
+      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
         {followers?.length > 0 ? (
           <p className="text-black">You have {followers?.length} followers!</p>
         ) : (

@@ -33,7 +33,7 @@ const TrendingUsersPage = () => {
       id="main-container"
       className="flex flex-col w-full justify-center items-center gap-6"
     >
-      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg">
+      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
         <h1 className="text-black text-center">
           Follow more people to see more content in your timeline!
         </h1>
@@ -41,7 +41,7 @@ const TrendingUsersPage = () => {
 
       <div
         id="trending-users-container"
-        className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg gap-5"
+        className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md gap-5"
       >
         {usersData?.length > 0 &&
           usersData.map((user: any, index: number) => {
@@ -57,7 +57,7 @@ const TrendingUsersPage = () => {
               >
                 <div className="flex gap-5 items-center">
                   <img
-                    className="w-[42px] h-[42px] rounded-full"
+                    className="w-[42px] h-[42px] rounded-full border-2 border-blue-500"
                     src={user?.profilePicture}
                     alt={`${user?.name}'s avatar`}
                   />
