@@ -9,12 +9,12 @@ import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreatePost } from "../../hooks/postService/useCreatePost";
 import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeContent";
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
-import Image from "next/image";
 import TextField from "@mui/material/TextField";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CreateContentButton from "../../components/CreateContentButton";
 import Button from "../../components/Button";
 import ProtectedRoute from "../../components/ProtectedRoute";
+import Image from "next/image";
 
 const HomePage = () => {
   const user = useAtomValue(hydratedAuthStateAtom);
@@ -121,7 +121,7 @@ const HomePage = () => {
               <img
                 className="w-[42px] h-[42px] border-2 border-green-500 rounded-full"
                 src={"/avatars/adminavatar.jpg"}
-                alt={"Alan Sobchacki's avatar"}
+                alt="Alan Sobchacki's avatar"
               />
               <p className="font-bold text-black">Alan Sobchacki</p>
             </div>
@@ -234,20 +234,18 @@ const HomePage = () => {
                       {post.comments.map(
                         (comment: any, commentIndex: number) => (
                           <div key={commentIndex} className="mt-1">
-                            <div className="flex gap-2">
+                            <div className="flex items-center gap-4 mb-2">
                               <img
-                                className="w-[42px] h-[42px] rounded-full"
+                                className="w-[42px] h-[42px] border-2 border-blue-600 rounded-full"
                                 src={comment.author?.profilePicture}
                                 alt={`${comment.author?.name}'s avatar`}
                               />
-                              <p className="text-sm text-black font-semibold">
+                              <p className="text-black font-semibold">
                                 {comment.author?.name}
                               </p>
                             </div>
 
-                            <p className="text-sm text-black ">
-                              {comment.content}
-                            </p>
+                            <p className="text-black mb-5">{comment.content}</p>
 
                             <div className="flex gap-2">
                               <ThumbUpIcon

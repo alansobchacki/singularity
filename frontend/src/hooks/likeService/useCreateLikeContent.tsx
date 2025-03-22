@@ -27,10 +27,10 @@ export const useCreateLikeContent = () => {
     mutationFn: createLikeContent,
     onSuccess: (newLike) => {
       try {
-        queryClient.invalidateQueries({
-          queryKey: ["like", newLike.likeId],
-        });
+        console.log("COMMENT IS BEING LIKED");
+        queryClient.invalidateQueries({ queryKey: ["like", newLike.likeId] });
         queryClient.invalidateQueries({ queryKey: ["timeline"] });
+        queryClient.invalidateQueries({ queryKey: ["likes"] });
 
         queryClient.setQueryData(["like", newLike.likeId], (oldData: any) => {
           if (!oldData) return [newLike];

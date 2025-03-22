@@ -6,7 +6,7 @@ import {
   Body,
   UseGuards,
   Request,
-  Query,
+  HttpCode
 } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
@@ -32,11 +32,12 @@ export class LikeController {
   }
 
   @Delete()
+  @HttpCode(204)
   async removeLike(
     @Body() removeLikeDto: RemoveLikeDto,
     @Request() req,
-  ): Promise<{ message: string; removedLikeId: string }> {
+  ): Promise<void> {
     removeLikeDto.userId = req.user?.userId;
-    return this.likeService.removeLike(removeLikeDto);
+    await this.likeService.removeLike(removeLikeDto);
   }
 }

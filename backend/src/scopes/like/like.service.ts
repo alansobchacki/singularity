@@ -39,7 +39,7 @@ export class LikeService {
 
   async removeLike(
     removeLikeDto: RemoveLikeDto,
-  ): Promise<{ message: string; removedLikeId: string }> {
+  ): Promise<void> {
     const { userId, postId, commentId } = removeLikeDto;
 
     const existingLike = await this.likeRepository.findOne({
@@ -58,11 +58,6 @@ export class LikeService {
     }
 
     await this.likeRepository.remove(existingLike);
-
-    return {
-      message: 'Like removed successfully',
-      removedLikeId: existingLike.id,
-    };
   }
 
   async getAllLikedContent(userId: string) {

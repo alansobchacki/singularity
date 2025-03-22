@@ -13,7 +13,7 @@ const deleteLikeContent = async (
       data,
     });
 
-    if (response.status === 204) return;
+    if (response.status === 204) return data.postId || data.commentId;
   } catch (err) {
     if (axios.isAxiosError(err))
       throw new Error("Cannot unlike this content. Try again later.");
@@ -27,17 +27,15 @@ export const useDeleteLikeContent = () => {
 
   return useMutation({
     mutationFn: deleteLikeContent,
-    onSuccess: (data) => {
+    onSuccess: (contentId) => {
       try {
-        queryClient.invalidateQueries({
-          queryKey: ["like", data.likeId],
-        });
+        console.log("COMMENT IS BEING DELETED");
+        queryClient.invalidateQueries({ queryKey: ["likes"] });
         queryClient.invalidateQueries({ queryKey: ["timeline"] });
 
-        queryClient.setQueryData(["like", data.likeId], (oldData: any) => {
+        queryClient.setQueryData(["likes"], (oldData: string[] | undefined) => {
           if (!oldData) return [];
-
-          return oldData.filter((like: any) => like.likeId !== data.likeId);
+          return oldData.filter((id) => id !== contentId);
         });
       } catch (err) {
         console.error(unexpectedErrorText);
