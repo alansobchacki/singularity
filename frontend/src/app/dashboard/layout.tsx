@@ -94,11 +94,7 @@ export default function DashboardLayout({
             <div className="flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 w-[250px] h-[250px] rounded-lg z-10">
               <p className="text-black mb-6">Do you really wish to logout?</p>
               <Button onClick={handleLogout} size={150} text={"Yes"} />
-              <Button
-                onClick={() => setIsLoggingOut(false)}
-                size={150}
-                text={"No"}
-              />
+              <Button onClick={() => setIsLoggingOut(false)} size={150} text={"No"} />
             </div>
 
             <div
