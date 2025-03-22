@@ -139,7 +139,11 @@ const HomePage = () => {
               people that you follow. This post is here because I'm special 😎.
               <br />
               <br />
-              Feel free to try it out and have fun!
+              And if you're a guest user, you can view every post! But you can't
+              interact with anyone though.
+              <br />
+              <br />
+              Anyway, feel free to try it out and have fun!
             </p>
 
             <span className="block border-t border-gray-300 my-2"></span>
