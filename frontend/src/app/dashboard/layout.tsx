@@ -11,6 +11,7 @@ import FeedIcon from "@mui/icons-material/Feed";
 import GroupIcon from "@mui/icons-material/Group";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import LogoutIcon from "@mui/icons-material/Logout";
+import MenuIcon from '@mui/icons-material/Menu';
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Link from "next/link";
 
@@ -37,7 +38,13 @@ export default function DashboardLayout({
   return (
     <ProtectedRoute>
       <div className="flex min-h-screen">
-        <aside className="flex flex-col justify-between w-64 bg-blue-500 text-white p-4 sticky top-0 h-screen">
+        <button
+          className="fixed top-4 left-4 z-20 p-2 bg-blue-500 text-white rounded-lg md:hidden"
+        >
+          <MenuIcon />
+        </button>
+
+        <aside className="hidden md:flex flex-col justify-between w-64 bg-blue-500 text-white p-4 sticky top-0 h-screen sm:hidden">
           <ul className="flex flex-col gap-2 pl-[20px]">
             <div className="flex mb-6">
               <Link

@@ -78,7 +78,7 @@ const HomePage = () => {
           </div>
         )}
 
-        <div id="timeline-container" className="flex flex-col w-[75%] gap-5">
+        <div id="timeline-container" className="w-[90%] md:w-[75%] flex flex-col gap-5">
           <div
             id="create-post-container"
             className="flex flex-col bg-gray-100 p-4 rounded-lg shadow-md"
