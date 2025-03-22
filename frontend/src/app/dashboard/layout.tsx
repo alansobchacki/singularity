@@ -39,12 +39,12 @@ export default function DashboardLayout({
     <ProtectedRoute>
       <div className="flex min-h-screen">
         <button
-          className="fixed top-4 left-4 z-20 p-2 bg-blue-500 text-white rounded-lg md:hidden"
+          className="fixed top-4 right-4 z-20 p-2 bg-blue-500 text-white rounded-lg md:hidden"
         >
           <MenuIcon />
         </button>
 
-        <aside className="hidden md:flex flex-col justify-between w-64 bg-blue-500 text-white p-4 sticky top-0 h-screen sm:hidden">
+        <aside className="hidden md:flex flex-col justify-between w-64 bg-gradient-to-t from-blue-500 to-blue-400 text-white p-4 sticky top-0 h-screen sm:hidden">
           <ul className="flex flex-col gap-2 pl-[20px]">
             <div className="flex mb-6">
               <Link

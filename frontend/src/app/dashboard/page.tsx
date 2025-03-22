@@ -14,6 +14,7 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CreateContentButton from "../../components/CreateContentButton";
 import Button from "../../components/Button";
 import ProtectedRoute from "../../components/ProtectedRoute";
+import Link from "next/link";
 import Image from "next/image";
 
 const HomePage = () => {
@@ -89,7 +90,7 @@ const HomePage = () => {
                 size={48}
                 state={isCreatingPost}
               />
-              <h1 className="text-black">
+              <h1 className="text-black font-bold">
                 What are you thinking today? Create a new post!
               </h1>
             </div>
@@ -168,7 +169,11 @@ const HomePage = () => {
                       alt={`${post.author?.name}'s avatar`}
                     />
                     <p className="font-bold text-black mt-5 mb-5">
-                      {post.author?.name}
+                      <Link 
+                        href={`/dashboard/users/profile?id=${post.author?.id}`}
+                      >
+                        {post.author?.name}
+                      </Link>
                     </p>
                   </div>
 
@@ -240,8 +245,12 @@ const HomePage = () => {
                                 src={comment.author?.profilePicture}
                                 alt={`${comment.author?.name}'s avatar`}
                               />
-                              <p className="text-black font-semibold">
-                                {comment.author?.name}
+                              <p className="font-bold text-black">
+                                <Link 
+                                  href={`/dashboard/users/profile?id=${comment.author?.id}`}
+                                >
+                                  {comment.author?.name}
+                                </Link>
                               </p>
                             </div>
 
