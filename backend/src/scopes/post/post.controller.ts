@@ -57,6 +57,7 @@ export class PostController {
 
   @Get('timeline')
   async getTimeline(@Request() req): Promise<PostEntity[]> {
+    console.log(req.user);
     const user = req.user?.userId;
 
     if (!user) {

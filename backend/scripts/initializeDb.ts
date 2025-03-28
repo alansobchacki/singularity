@@ -183,7 +183,7 @@ async function initializeDb() {
   );
   console.log("Regular mock accounts created!");
 
-  // adds random posts to regular users
+  // adds random posts to mock users
   console.log("Adding random posts to regular mock accounts...");
   for (let i = 0; i < createdUsers.length / 2; i++) {
     const post = postRepo.create({
@@ -195,7 +195,7 @@ async function initializeDb() {
   }
   console.log("Posts created!");
 
-  // creates random following relationships between regular users
+  // creates random following relationships between mock users
   console.log("Creating following relationships between mock accounts...");
   for (let i = 0; i < createdUsers.length / 3; i++) {
     const follower = createdUsers[i];
