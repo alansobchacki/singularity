@@ -95,7 +95,7 @@ const admin = {
 };
 
 const spectator = {
-  name: 'Guest',
+  name: 'Spectator',
   email: `${process.env.SPECTATOR_EMAIL}`,
   bio: 'Just watching',
   location: 'Somewhere',

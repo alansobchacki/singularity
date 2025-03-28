@@ -34,9 +34,10 @@ export const useLogin = () => {
       try {
         const decodedToken: DecodedToken = jwtDecode(data.access_token);
         const userId = decodedToken.sub;
+        const userType = decodedToken.userType;
 
         localStorage.setItem("accessToken", data.access_token);
-        setAuthState({ id: userId, isAuthenticated: true });
+        setAuthState({ id: userId, credentials: userType, isAuthenticated: true });
         router.replace("/dashboard");
       } catch (err) {
         throw new Error(unexpectedErrorText);

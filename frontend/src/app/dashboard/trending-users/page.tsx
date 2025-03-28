@@ -34,9 +34,15 @@ const TrendingUsersPage = () => {
       className="flex flex-col w-full justify-center items-center gap-6"
     >
       <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
-        <h1 className="text-black text-center">
-          Follow more people to see more content in your timeline!
-        </h1>
+        {user.credentials === 'SPECTATOR' ? (
+          <h1 className="text-black text-center">
+            You can't follow anyone since you're an spectator 😔
+          </h1>
+        ) : (
+          <h1 className="text-black text-center">
+            👥 Follow more people to see more content in your timeline!
+          </h1>
+        )}
       </div>
 
       <div
@@ -44,10 +50,10 @@ const TrendingUsersPage = () => {
         className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md gap-5"
       >
         {usersData?.length > 0 &&
-          usersData.map((user: any, index: number) => {
+          usersData.map((trendingUser: any, index: number) => {
             const isFollowingRequested = userFollowingRequests?.some(
               (request: { following: { id: string } }) =>
-                request.following.id === user.id
+                request.following.id === trendingUser.id
             );
 
             return (
@@ -58,22 +64,22 @@ const TrendingUsersPage = () => {
                 <div className="flex gap-5 items-center">
                   <img
                     className="w-[42px] h-[42px] rounded-full border-2 border-blue-500"
-                    src={user?.profilePicture}
-                    alt={`${user?.name}'s avatar`}
+                    src={trendingUser?.profilePicture}
+                    alt={`${trendingUser?.name}'s avatar`}
                   />
                   <Link
                     className="text-black font-semibold"
-                    href={`/dashboard/users/profile?id=${user.id}`}
+                    href={`/dashboard/users/profile?id=${trendingUser.id}`}
                   >
-                    {user.name}
+                    {trendingUser?.name}
                   </Link>
                 </div>
 
                 <Button
-                  onClick={() => handleFollowAction(user.id)}
-                  disabled={isFollowingRequested}
+                  onClick={() => handleFollowAction(trendingUser?.id)}
                   size={150}
                   text={isFollowingRequested ? "Request Sent" : "Follow"}
+                  disabled={isFollowingRequested || user?.credentials === 'SPECTATOR'}
                 />
               </div>
             );

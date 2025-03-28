@@ -9,7 +9,7 @@ const LoginPage = () => {
   const { mutate: login } = useLogin();
   const { mutate: spectatorLogin } = useSpectatorLogin();
 
-  const handleGuestLogin = () => {
+  const handleSpectatorLogin = () => {
     spectatorLogin();
   };
 
@@ -94,9 +94,9 @@ const LoginPage = () => {
 
           <button 
             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-3 rounded-lg transition"
-            onClick={handleGuestLogin}
+            onClick={handleSpectatorLogin}
           >
-            Enter as a Guest
+            View as Spectator
           </button>
 
           <p className="text-center text-gray-600">

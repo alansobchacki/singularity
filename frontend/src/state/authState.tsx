@@ -3,6 +3,7 @@ import { atom } from "jotai";
 
 export const authStateAtom = atomWithStorage("authState", {
   id: "",
+  credentials: "",
   isAuthenticated: false,
 });
 

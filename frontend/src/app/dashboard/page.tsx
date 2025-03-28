@@ -77,39 +77,51 @@ const HomePage = () => {
         )}
 
         <div id="timeline-container" className="w-[90%] md:w-[75%] flex flex-col gap-5">
-          <div
-            id="create-post-container"
-            className="flex flex-col bg-gray-100 p-4 rounded-lg shadow-md"
-          >
-            <div className="flex items-center justify-center gap-4">
-              <CreateContentButton
-                onClick={handleCreatePost}
-                size={48}
-                state={isCreatingPost}
-              />
+          {user?.credentials === 'SPECTATOR' ? (
+            <div
+              id="create-post-container"
+              className="flex flex-col items-center bg-gray-100 p-4 rounded-lg shadow-md"
+            >
               <h1 className="text-black font-bold">
-                What are you thinking today? Create a new post!
+                📢 Want to create posts and comments? Create your own account!
               </h1>
             </div>
-
-            {isCreatingPost && (
-              <div className="flex flex-col create-post-textarea gap-5 mt-4">
-                <TextField
-                  label="What are your thoughts?"
-                  className="w-full p-2 border rounded-md bg-gray-100"
-                  multiline
-                  rows={4}
-                  value={postContent}
-                  onChange={(e) => setPostContent(e.target.value)}
+          ) : (
+            <div
+              id="create-post-container"
+              className="flex flex-col bg-gray-100 p-4 rounded-lg shadow-md"
+            >
+              <div className="flex items-center justify-center gap-4">
+                <CreateContentButton
+                  onClick={handleCreatePost}
+                  size={48}
+                  state={isCreatingPost}
                 />
-                <Button
-                  onClick={() => handlePostSubmit()}
-                  size={150}
-                  text={"Create Post"}
-                />
+                <h1 className="text-black font-bold">
+                  What are you thinking today? Create a new post!
+                </h1>
               </div>
-            )}
-          </div>
+
+              {isCreatingPost && (
+                <div className="flex flex-col create-post-textarea gap-5 mt-4">
+                  <TextField
+                    label="What are your thoughts?"
+                    className="w-full p-2 border rounded-md bg-gray-100"
+                    multiline
+                    rows={4}
+                    value={postContent}
+                    onChange={(e) => setPostContent(e.target.value)}
+                  />
+                  <Button
+                    onClick={() => handlePostSubmit()}
+                    size={150}
+                    text={"Create Post"}
+                    disabled={user?.credentials === 'SPECTATOR'}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           <div
             id="disclaimer-container"
@@ -137,7 +149,7 @@ const HomePage = () => {
               people that you follow. This post is here because I'm special 😎.
               <br />
               <br />
-              And if you're a guest user, you can view every post! But you can't
+              And if you're a spectator, you can view every post! But you can't
               interact with anyone though.
               <br />
               <br />
@@ -181,9 +193,15 @@ const HomePage = () => {
                   </div>
 
                   {post.comments?.length < 1 && (
-                    <p className="text-gray-500 text-center">
-                      No comments yet. Be the first to comment!
-                    </p>
+                    user.credentials === 'SPECTATOR' ? (
+                      <p className="text-gray-500 text-center">
+                        No comments yet. Spectators can't add comments.
+                      </p>
+                    ) : (
+                      <p className="text-gray-500 text-center">
+                        No comments yet. Be the first to comment!
+                      </p>
+                    )
                   )}
 
                   <span className="block border-t border-gray-300 my-2"></span>
@@ -202,6 +220,7 @@ const HomePage = () => {
                         onClick={() => handleCommentSubmit(post.id)}
                         size={150}
                         text={"Create Comment"}
+                        disabled={user?.credentials === 'SPECTATOR'}
                       />
                     </div>
                   )}
@@ -212,12 +231,14 @@ const HomePage = () => {
                         onClick={() => handleUnlikeContent(post.id, "post")}
                         size={150}
                         text={"Unlike this"}
+                        disabled={user?.credentials === 'SPECTATOR'}
                       />
                     ) : (
                       <Button
                         onClick={() => handleLikeContent(post.id, "post")}
                         size={150}
                         text={"Like this"}
+                        disabled={user?.credentials === 'SPECTATOR'}
                       />
                     )}
                     <Button
@@ -228,6 +249,7 @@ const HomePage = () => {
                       }
                       size={150}
                       text={"Comment"}
+                      disabled={user?.credentials === 'SPECTATOR'}
                     />
                   </div>
 
@@ -269,6 +291,7 @@ const HomePage = () => {
                                 }
                                 size={150}
                                 text={"Unlike this"}
+                                disabled={user?.credentials === 'SPECTATOR'}
                               />
                             ) : (
                               <Button
@@ -277,6 +300,7 @@ const HomePage = () => {
                                 }
                                 size={150}
                                 text={"Like this"}
+                                disabled={user?.credentials === 'SPECTATOR'}
                               />
                             )}
                           </div>
