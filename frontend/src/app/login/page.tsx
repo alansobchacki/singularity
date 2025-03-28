@@ -1,11 +1,17 @@
 "use client";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useLogin } from "../../hooks/userService/useLogin";
+import { useSpectatorLogin } from "../../hooks/userService/useSpectatorLogin";
 import Link from "next/link";
 import * as Yup from "yup";
 
 const LoginPage = () => {
   const { mutate: login } = useLogin();
+  const { mutate: spectatorLogin } = useSpectatorLogin();
+
+  const handleGuestLogin = () => {
+    spectatorLogin();
+  };
 
   const loginSchema = Yup.object({
     email: Yup.string()
@@ -86,7 +92,10 @@ const LoginPage = () => {
             <div className="w-32 h-px bg-gray-400" />
           </div>
 
-          <button className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-3 rounded-lg transition">
+          <button 
+            className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-3 rounded-lg transition"
+            onClick={handleGuestLogin}
+          >
             Enter as a Guest
           </button>
 

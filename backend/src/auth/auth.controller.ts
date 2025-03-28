@@ -11,4 +11,21 @@ export class AuthController {
   async login(@Request() req) {
     return this.authService.login(req.user);
   }
+
+  @Post('spectator-login')
+  async spectatorLogin() {
+    const spectatorEmail = process.env.SPECTATOR_EMAIL;
+    const spectatorPassword = process.env.SPECTATOR_PASSWORD;
+
+    console.log(spectatorEmail);
+    console.log(spectatorPassword);
+
+    const user = await this.authService.validateUser(spectatorEmail, spectatorPassword);
+
+    if (!user) {
+      throw new Error('Spectator login failed');
+    }
+
+    return this.authService.login(user);
+  }
 }

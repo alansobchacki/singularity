@@ -125,7 +125,7 @@ async function initializeDb() {
   console.log("Creating admin account...");
   await (async () => {
     const hashedPassword = await bcrypt.hash(
-      process.env.ADMIN_ACC_PASSWORD,
+      process.env.ADMIN_PASSWORD,
       saltRounds,
     );
 
@@ -145,7 +145,7 @@ async function initializeDb() {
   console.log("Creating spectator account...");
   await (async () => {
     const hashedPassword = await bcrypt.hash(
-      process.env.SPECTATOR_ACC_PASSWORD,
+      process.env.SPECTATOR_PASSWORD,
       saltRounds,
     );
 
@@ -166,7 +166,7 @@ async function initializeDb() {
   const createdUsers = await Promise.all(
     mockUsers.map(async (user, index) => {
       const hashedPassword = await bcrypt.hash(
-        process.env.REGULAR_ACC_PASSWORD,
+        process.env.REGULAR_PASSWORD,
         saltRounds,
       );
 
