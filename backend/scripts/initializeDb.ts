@@ -1,8 +1,8 @@
 import { config } from 'dotenv';
-import { AuthenticationUsers } from '../src/scopes/authenticationUser/entities/authenticationUser.entity';
 import { Post } from '../src/scopes/post/entities/post.entity';
 import { Follow } from '../src/scopes/follow/entities/follow.entity';
 import { dataSource } from '../src/infrastructure/data-source';
+import { AuthenticationUsers } from '../src/scopes/authenticationUser/entities/authenticationUser.entity';
 import * as bcrypt from 'bcrypt';
 
 config();
@@ -12,91 +12,91 @@ const avatars = Array.from(
   (_, i) => `${process.env.AVATAR_BASE_URL}avatar${i + 1}.jpg`,
 );
 
-const users = [
+const mockUsers = [
   {
     name: 'Carla Dias',
     email: 'carla.dias@email.com',
     bio: 'Exploradora de novos horizontes.',
-    location: 'Rio de Janeiro, RJ - Brasil',
+    location: 'Rio de Janeiro, RJ - Brazil',
   },
   {
     name: 'Miguel Souza',
     email: 'miguel.souza@email.com',
     bio: 'Apaixonado por tecnologia e inovação.',
-    location: 'São Paulo, SP - Brasil',
+    location: 'São Paulo, SP - Brazil',
   },
   {
     name: 'Amanda Nunes',
     email: 'amanda.nunes@email.com',
     bio: 'Entusiasta de fotografia e viagens.',
-    location: 'Curitiba, PR - Brasil',
+    location: 'Curitiba, PR - Brazil',
   },
   {
     name: 'Lucas Oliveira',
     email: 'lucas.oliveira@email.com',
     bio: 'Desenvolvedor full stack e gamer.',
-    location: 'Belo Horizonte, MG - Brasil',
+    location: 'Belo Horizonte, MG - Brazil',
   },
   {
     name: 'Fernanda Castro',
     email: 'fernanda.castro@email.com',
     bio: 'Viciada em café e livros.',
-    location: 'Brasília, DF - Brasil',
+    location: 'Brasília, DF - Brazil',
   },
   {
     name: 'Bruno Lima',
     email: 'bruno.lima@email.com',
     bio: 'Apreciador de música e boas conversas.',
-    location: 'Salvador, BA - Brasil',
+    location: 'Salvador, BA - Brazil',
   },
   {
     name: 'Tatiane Ramos',
     email: 'tatiane.ramos@email.com',
     bio: 'Apaixonada por arte e criatividade.',
-    location: 'Porto Alegre, RS - Brasil',
+    location: 'Porto Alegre, RS - Brazil',
   },
   {
     name: 'Gabriel Santos',
     email: 'gabriel.santos@email.com',
     bio: 'Atleta e motivador nato.',
-    location: 'Recife, PE - Brasil',
+    location: 'Recife, PE - Brazil',
   },
   {
     name: 'Juliana Alves',
     email: 'juliana.alves@email.com',
     bio: 'Chef de cozinha em formação.',
-    location: 'Fortaleza, CE - Brasil',
+    location: 'Fortaleza, CE - Brazil',
   },
   {
     name: 'Ricardo Mendes',
     email: 'ricardo.mendes@email.com',
     bio: 'Fã de ficção científica e programação.',
-    location: 'Manaus, AM - Brasil',
+    location: 'Manaus, AM - Brazil',
   },
   {
     name: 'Priscila Rocha',
     email: 'priscila.rocha@email.com',
     bio: 'Amante de animais e natureza.',
-    location: 'Florianópolis, SC - Brasil',
+    location: 'Florianópolis, SC - Brazil',
   },
   {
     name: 'Felipe Araújo',
     email: 'felipe.araujo@email.com',
     bio: 'Empreendedor e inovador.',
-    location: 'Goiânia, GO - Brasil',
+    location: 'Goiânia, GO - Brazil',
   },
 ];
 
 const admin = {
   name: 'Alan Sobchacki',
-  email: 'a.sobchack@email.com',
+  email: `${process.env.ADMIN_EMAIL}`,
   bio: 'Software Engineer | Web Developer',
-  location: 'Cabo Frio, RJ - Brasil',
+  location: 'Cabo Frio, RJ - Brazil',
 };
 
 const spectator = {
   name: 'Guest',
-  email: 'guest@guest.com',
+  email: `${process.env.SPECTATOR_EMAIL}`,
   bio: 'Just watching',
   location: 'Somewhere',
 };
@@ -110,6 +110,8 @@ const posts = [
   'Desenvolvendo uma nova aplicação! Breve novidades.',
 ];
 
+const saltRounds = 10;
+
 async function initializeDb() {
   if (!dataSource.isInitialized) {
     await dataSource.initialize();
@@ -120,8 +122,8 @@ async function initializeDb() {
   const followRepo = dataSource.getRepository(Follow);
 
   // creates admin
+  console.log("Creating admin account...");
   await (async () => {
-    const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(
       process.env.ADMIN_ACC_PASSWORD,
       saltRounds,
@@ -135,14 +137,15 @@ async function initializeDb() {
       accountStatus: 'ACTIVE',
     });
 
+    console.log("Admin account created!");
     return userRepo.save(newUser);
   })();
 
   // creates spectator
+  console.log("Creating spectator account...");
   await (async () => {
-    const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(
-      process.env.ADMIN_ACC_PASSWORD,
+      process.env.SPECTATOR_ACC_PASSWORD,
       saltRounds,
     );
 
@@ -154,13 +157,14 @@ async function initializeDb() {
       accountStatus: 'ACTIVE',
     });
 
+    console.log("Spectator account created!");
     return userRepo.save(newUser);
   })();
 
   // creates regular users
+  console.log("Creating regular mock accounts...");
   const createdUsers = await Promise.all(
-    users.map(async (user, index) => {
-      const saltRounds = 10;
+    mockUsers.map(async (user, index) => {
       const hashedPassword = await bcrypt.hash(
         process.env.REGULAR_ACC_PASSWORD,
         saltRounds,
@@ -177,17 +181,22 @@ async function initializeDb() {
       return userRepo.save(newUser);
     }),
   );
+  console.log("Regular mock accounts created!");
 
   // adds random posts to regular users
+  console.log("Adding random posts to regular mock accounts...");
   for (let i = 0; i < createdUsers.length / 2; i++) {
     const post = postRepo.create({
       content: posts[i % posts.length],
       author: createdUsers[i],
     });
+  
     await postRepo.save(post);
   }
+  console.log("Posts created!");
 
   // creates random following relationships between regular users
+  console.log("Creating following relationships between mock accounts...");
   for (let i = 0; i < createdUsers.length / 3; i++) {
     const follower = createdUsers[i];
     const following = createdUsers[createdUsers.length - i - 1];
@@ -197,6 +206,23 @@ async function initializeDb() {
     }
   }
 
+  const users = await userRepo.find();
+
+  // find follow requests where the user is the 'following' and the status is 'PENDING'
+  for (const user of users) {
+    const followRequests = await followRepo.find({
+      where: { following: user, status: 'PENDING' },
+      relations: ['follower', 'following'],
+    });
+
+    for (const followRequest of followRequests) {
+      followRequest.status = 'ACCEPTED';
+
+      await followRepo.save(followRequest); 
+    }
+  }
+
+  console.log('All follow requests have been processed!');
   console.log('Database initialized successfully!');
 }
 
