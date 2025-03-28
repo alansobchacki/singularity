@@ -12,6 +12,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Link from "next/link";
 
@@ -46,6 +47,13 @@ export default function DashboardLayout({
             ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
           `}
         >
+          <button
+            id="close-mobile-menu-button"
+            onClick={() => setIsMobileMenuOpen(false)} 
+            className="fixed top-4 right-4 z-20 p-2 bg-blue-500 text-white rounded-lg md:hidden"
+          >
+            <CloseIcon />
+          </button>
           <ul className="flex flex-col gap-4 pl-[20px]">
             <div className="flex gap-2">
               <FeedIcon className="text-black" />

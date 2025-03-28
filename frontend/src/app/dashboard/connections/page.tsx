@@ -79,7 +79,7 @@ const FollowsPage = () => {
             </div>
           ))
         ) : (
-          <p className="text-black mb-5">You have no follow requests.</p>
+          <p className="text-black">You have no follow requests.</p>
         )}
       </div>
 

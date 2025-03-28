@@ -53,7 +53,7 @@ const TrendingUsersPage = () => {
             return (
               <div
                 key={index}
-                className="flex justify-between items-center gap-1"
+                className="flex max-sm:flex-col max-sm:items-start justify-between items-center gap-1"
               >
                 <div className="flex gap-5 items-center">
                   <img
