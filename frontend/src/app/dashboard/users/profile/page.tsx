@@ -1,5 +1,7 @@
 "use client";
 
+import { useAtomValue } from "jotai";
+import { hydratedAuthStateAtom } from "../../../../state/authState";
 import { useSearchParams } from "next/navigation";
 import { useGetUserDetails } from "../../../../hooks/userService/useGetUserDetails";
 import { useGetAllFollowers } from "../../../../hooks/followService/useGetAllFollowers";
@@ -8,6 +10,7 @@ import { useGetIsFollowing } from "../../../../hooks/followService/useGetIsFollo
 import LoadingSpinner from "../../../../components/LoadingSpinner";
 
 const UserProfilePage = () => {
+  const currentUser = useAtomValue(hydratedAuthStateAtom);
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
@@ -79,10 +82,17 @@ const UserProfilePage = () => {
             )}
           </>
         ) : (
-          <p className="text-black">
-            {user?.name}'s post history is private. You can view this user's
-            posts if they accept your follow request.
-          </p>
+          (currentUser.credentials === 'SPECTATOR' ? (
+            <p className="text-black">
+              This is where you would see a user's post history. 
+              Spectators can't create posts.
+            </p>
+          ) : (
+            <p className="text-black">
+              {user?.name}'s post history is private. You can view this user's
+              posts if they accept your follow request.
+           </p>
+          ))
         )}
       </div>
     </div>
