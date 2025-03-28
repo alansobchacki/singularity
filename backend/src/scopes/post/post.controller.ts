@@ -57,14 +57,17 @@ export class PostController {
 
   @Get('timeline')
   async getTimeline(@Request() req): Promise<PostEntity[]> {
-    console.log(req.user);
-    const user = req.user?.userId;
+    const userId = req.user?.userId;
 
-    if (!user) {
+    if (!userId) {
       throw new UnauthorizedException('User not authenticated');
     }
 
-    return this.postService.findUserAndFollowedPosts(user);
+    const userType = req.user?.userType;
+
+    return userType === 'REGULAR' ? 
+      this.postService.findUserAndFollowedPosts(userId) :
+      this.postService.findEveryPost(userId);
   }
 
   @Get(':userId')
