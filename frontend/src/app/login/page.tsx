@@ -17,15 +17,13 @@ const LoginPage = () => {
   });
 
   return (
-    <section className="flex h-screen bg-gradient-to-r from-blue-400 to-blue-600 text-white">
-      <div className="flex flex-col justify-center items-center w-1/2 p-10 text-center">
+    <section className="flex flex-col-reverse sm:flex-row max-sm:items-center max-sm:justify-around max-sm:gap-5 h-screen bg-gradient-to-r from-blue-400 to-blue-600 text-white">
+      <div className="flex flex-col justify-center items-center w-full sm:w-1/2 sm:p-10 text-center">
         <h1 className="text-3xl font-bold">Learning Book</h1>
-        <p className="mt-2 text-lg">
-          A full-stack social media app built for learning purposes.
-        </p>
+        <p className="mt-2 text-lg">A full-stack social media app built for learning purposes.</p>
       </div>
 
-      <div className="w-1/2 flex flex-col justify-center items-center bg-white p-10 shadow-lg">
+      <div className="w-[90%] flex sm:w-1/2 max-sm:rounded-lg max-sm:mt-5 flex-col justify-center items-center bg-white p-10 shadow-lg">
         <div className="w-full max-w-md space-y-6">
           <h2 className="text-2xl font-semibold text-gray-800 text-center">
             Welcome Back

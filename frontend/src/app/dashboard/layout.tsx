@@ -20,9 +20,10 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [authState, setAuthState] = useAtom(authStateAtom);
   const { data: currentUserData } = useGetCurrentUserDetails();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -38,7 +39,54 @@ export default function DashboardLayout({
   return (
     <ProtectedRoute>
       <div className="flex min-h-screen">
+        <div
+          id="mobile-menu"
+          className={`fixed inset-0 bg-white z-50 flex flex-col justify-between p-6 gap-4
+            transition-transform duration-300 ease-in-out transform
+            ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
+          `}
+        >
+          <ul className="flex flex-col gap-4 pl-[20px]">
+            <div className="flex gap-2">
+              <FeedIcon className="text-black" />
+              <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                <li className="font-semibold text-black">Timeline</li>
+              </Link>
+            </div>
+            <div className="flex gap-2">
+              <GroupIcon className="text-black" />
+              <Link href="/dashboard/connections" onClick={() => setIsMobileMenuOpen(false)}>
+                <li className="font-semibold text-black">Connections</li>
+              </Link>
+            </div>
+            <div className="flex gap-2">
+              <TrendingUpIcon className="text-black" />
+              <Link href="/dashboard/trending-users" onClick={() => setIsMobileMenuOpen(false)}>
+                <li className="font-semibold text-black">Trending Users</li>
+              </Link>
+            </div>
+          </ul>
+
+          <div className="pl-[20px]">
+            <div className="flex gap-2">
+              <LogoutIcon className="text-black" />
+              <button
+                className="font-semibold text-black"
+                onClick={() => { 
+                  setIsMobileMenuOpen(false)
+                  setIsLoggingOut(true)
+                }}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+
+
         <button
+          id="hamburger-menu-button"
+          onClick={() => setIsMobileMenuOpen(true)} 
           className="fixed top-4 right-4 z-20 p-2 bg-blue-500 text-white rounded-lg md:hidden"
         >
           <MenuIcon />
