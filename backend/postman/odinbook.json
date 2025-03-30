@@ -9,169 +9,8 @@
       "event": []
     },
     {
-      "name": "auth",
-      "item": [
-        {
-          "name": "Create User",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": null,
-            "description": "",
-            "url": {
-              "raw": "{{ADDRESS}}/user",
-              "protocol": "",
-              "host": ["{{ADDRESS}}"],
-              "path": ["user"],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"newuser71@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"John Dude\",\n  \"userType\": \"regular\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Get User By Email",
-          "event": [],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "auth": null,
-            "description": "",
-            "url": {
-              "raw": "{{ADDRESS}}/user?email=newuser10@example.com",
-              "protocol": "",
-              "host": ["{{ADDRESS}}"],
-              "path": ["user?email=newuser10@example.com"],
-              "query": [
-                {
-                  "key": "email",
-                  "value": "newuser10@example.com"
-                }
-              ],
-              "variable": []
-            }
-          }
-        },
-        {
-          "name": "Get User By Token",
-          "event": [],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "",
-                "value": "",
-                "disabled": false,
-                "type": "default"
-              }
-            ],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzYyMDU1OTYsImV4cCI6MTczNjIwNjQ5Nn0.DhJSCBy8sDykD54tcHHWl-icQpuD5Sj22Jm90YhKPK8",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{ADDRESS}}/profile",
-              "protocol": "",
-              "host": ["{{ADDRESS}}"],
-              "path": ["profile"],
-              "query": [],
-              "variable": []
-            }
-          }
-        },
-        {
-          "name": "Login",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": null,
-            "description": "",
-            "url": {
-              "raw": "{{ADDRESS}}/auth/login",
-              "protocol": "",
-              "host": ["{{ADDRESS}}"],
-              "path": ["auth", "login"],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"newuser71@example.com\",\n  \"password\": \"password123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
       "name": "comments",
       "item": [
-        {
-          "name": "Create Comment",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{ADDRESS}}/comment",
-              "protocol": "",
-              "host": ["{{ADDRESS}}"],
-              "path": ["comment"],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\",\n  \"content\": \"a brand new comment!\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Update Content",
-          "event": [],
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "auth": null,
-            "description": "",
-            "url": {
-              "raw": ""
-            }
-          }
-        },
         {
           "name": "Archive Comment",
           "event": [],
@@ -190,8 +29,14 @@
             "url": {
               "raw": "{{ADDRESS}}/comment/archive/:id",
               "protocol": "",
-              "host": ["{{ADDRESS}}"],
-              "path": ["comment", "archive", ":id"],
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "comment",
+                "archive",
+                ":id"
+              ],
               "query": [],
               "variable": [
                 {
@@ -201,12 +46,181 @@
               ]
             }
           }
+        },
+        {
+          "name": "Comment",
+          "event": [],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/comment/:id",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "comment",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "cded58f1-eed6-49c6-adf0-3b508c2422e0"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"This comment is UPDATED baby!!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "New Comment",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/comment",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "comment"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\",\n  \"content\": \"a brand new comment!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
         }
       ]
     },
     {
-      "name": "follows",
-      "item": []
+      "name": "auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": null,
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/auth/login",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"carla.dias@email.com\",\n  \"password\": \"{{REGULAR_USER_PASSWORD}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Spectator Login",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": null,
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/auth/spectator-login",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "auth",
+                "spectator-login"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "User",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": null,
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/users",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser12345@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"John Dude IMAGEM\",\n  \"userType\": \"REGULAR\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "name": "likes",
@@ -221,7 +235,7 @@
               "type": "bearer",
               "bearer": {
                 "key": "token",
-                "value": "3971779a-0533-4cbd-b0d8-93fd191d3660",
+                "value": "{{TOKEN}}",
                 "type": "string"
               }
             },
@@ -229,14 +243,18 @@
             "url": {
               "raw": "{{ADDRESS}}/likes",
               "protocol": "",
-              "host": ["{{ADDRESS}}"],
-              "path": ["likes"],
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "likes"
+              ],
               "query": [],
               "variable": []
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"0e722892-d5f6-48a4-83c1-1c025195f955\",\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\"\n}",
+              "raw": "{\n  \"postId\": \"2b04f76e-7ebf-4624-9fa2-c5b2875a8e37\",\n  \"userId\": \"68d8c986-f00b-4f63-909f-a6f73e175869\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -255,7 +273,7 @@
               "type": "bearer",
               "bearer": {
                 "key": "token",
-                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3Mzk0Nzk0OTQsImV4cCI6MTczOTQ4MzA5NH0.-6-hG-zUh2ov4TcNEyxuqXNz2P4bUa1SbiinuDF1RWM",
+                "value": "{{TOKEN}}",
                 "type": "string"
               }
             },
@@ -263,14 +281,250 @@
             "url": {
               "raw": "{{ADDRESS}}/likes",
               "protocol": "",
-              "host": ["{{ADDRESS}}"],
-              "path": ["likes"],
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "likes"
+              ],
               "query": [],
               "variable": []
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"userId\": \"0e722892-d5f6-48a4-83c1-1c025195f955\",\n  \"postId\": \"3971779a-0533-4cbd-b0d8-93fd191d3660\"\n}",
+              "raw": "{\n  \"userId\": \"578bbaed-dae5-4557-9248-a1531ece09c8\",\n  \"commentId\": \"9af4e367-0a5f-44f9-984a-6d4159a7b85e\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Liked Content",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": null,
+            "description": "",
+            "url": {
+              "raw": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "follows",
+      "item": [
+        {
+          "name": "All Follow Requests",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/follow/requests",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "follow",
+                "requests"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "All Followers",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/follow/:userid/followers",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "follow",
+                ":userid",
+                "followers"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "userid",
+                  "value": "91b8be1e-78a4-40b7-9735-d0d78467a732"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "All Following Requests",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/follow/following",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "follow",
+                "following"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Is Following",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/follow/is-following?followingId=6025a353-1797-4748-8c77-142c24eb8d0b",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "follow",
+                "is-following?followingId=6025a353-1797-4748-8c77-142c24eb8d0b"
+              ],
+              "query": [
+                {
+                  "key": "followingId",
+                  "value": "6025a353-1797-4748-8c77-142c24eb8d0b"
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "New Follow Request",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/follow",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "follow"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"followerId\": \"bf6e2a27-06ef-48ef-8ffd-d5fa7e193e99\",\n  \"followingId\": \"91b8be1e-78a4-40b7-9735-d0d78467a732\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update Follow Request",
+          "event": [],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/follow/requests/:id",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "follow",
+                "requests",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "6726ef64-8aac-486a-93d0-2c2c40dacd91"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"followStatus\": \"ACCEPTED\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -285,7 +539,7 @@
       "name": "posts",
       "item": [
         {
-          "name": "Post",
+          "name": "New Post",
           "event": [],
           "request": {
             "method": "POST",
@@ -300,10 +554,14 @@
             },
             "description": "",
             "url": {
-              "raw": "{{ADDRESS}}/post",
+              "raw": "{{ADDRESS}}/posts",
               "protocol": "",
-              "host": ["{{ADDRESS}}"],
-              "path": ["post"],
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "posts"
+              ],
               "query": [],
               "variable": []
             },
@@ -319,6 +577,41 @@
           }
         },
         {
+          "name": "Posts By User",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/posts/:userId",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "posts",
+                ":userId"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "91b8be1e-78a4-40b7-9735-d0d78467a732"
+                }
+              ]
+            }
+          }
+        },
+        {
           "name": "Timeline",
           "event": [],
           "request": {
@@ -328,18 +621,123 @@
               "type": "bearer",
               "bearer": {
                 "key": "token",
-                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3Mzk0Nzk0OTQsImV4cCI6MTczOTQ4MzA5NH0.-6-hG-zUh2ov4TcNEyxuqXNz2P4bUa1SbiinuDF1RWM",
+                "value": "{{TOKEN}}",
                 "type": "string"
               }
             },
             "description": "",
             "url": {
-              "raw": "{{ADDRESS}}/post/timeline",
+              "raw": "{{ADDRESS}}/posts/timeline",
               "protocol": "",
-              "host": ["{{ADDRESS}}"],
-              "path": ["post", "timeline"],
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "posts",
+                "timeline"
+              ],
               "query": [],
               "variable": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "All Users",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/users/all",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "users",
+                "all"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Current User",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/users/self",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "users",
+                "self"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Specific User",
+          "event": [],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "key": "token",
+                "value": "{{TOKEN}}",
+                "type": "string"
+              }
+            },
+            "description": "",
+            "url": {
+              "raw": "{{ADDRESS}}/users/:id",
+              "protocol": "",
+              "host": [
+                "{{ADDRESS}}"
+              ],
+              "path": [
+                "users",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "0e722892-d5f6-48a4-83c1-1c025195f955"
+                }
+              ]
             }
           }
         }
@@ -354,6 +752,11 @@
     },
     {
       "key": "TOKEN",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "REGULAR_USER_PASSWORD",
       "value": "",
       "type": "default"
     }
