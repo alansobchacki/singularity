@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useAtomValue } from "jotai";
 import { hydratedAuthStateAtom } from "../../../state/authState";
 import { useGetAllUsers } from "../../../hooks/userService/useGetAllUsers";
@@ -28,13 +29,17 @@ const TrendingUsersPage = () => {
     );
   };
 
+  useEffect(() => {
+    console.log(usersData);
+  }, [usersData]);
+
   return (
     <div
       id="main-container"
       className="flex flex-col w-full justify-center items-center gap-6"
     >
       <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
-        {user.credentials === 'SPECTATOR' ? (
+        {user.credentials === "SPECTATOR" ? (
           <h1 className="text-black text-center">
             You can't follow anyone since you're an spectator 😔
           </h1>
@@ -50,40 +55,47 @@ const TrendingUsersPage = () => {
         className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md gap-5"
       >
         {usersData?.length > 0 &&
-          usersData.map((trendingUser: any, index: number) => {
-            const isFollowingRequested = userFollowingRequests?.some(
-              (request: { following: { id: string } }) =>
-                request.following.id === trendingUser.id
-            );
+          usersData
+            .filter(
+              (trendingUser: any) =>
+                trendingUser.id !== user.id && trendingUser.name !== "Spectator"
+            )
+            .map((trendingUser: any, index: number) => {
+              const isFollowingRequested = userFollowingRequests?.some(
+                (request: { following: { id: string } }) =>
+                  request.following.id === trendingUser.id
+              );
 
-            return (
-              <div
-                key={index}
-                className="flex max-sm:flex-col max-sm:items-start justify-between items-center gap-1"
-              >
-                <div className="flex gap-5 items-center">
-                  <img
-                    className="w-[42px] h-[42px] rounded-full border-2 border-blue-500"
-                    src={trendingUser?.profilePicture}
-                    alt={`${trendingUser?.name}'s avatar`}
+              return (
+                <div
+                  key={index}
+                  className="flex max-sm:flex-col max-sm:items-start justify-between items-center gap-1"
+                >
+                  <div className="flex gap-5 items-center">
+                    <img
+                      className="w-[42px] h-[42px] rounded-full border-2 border-blue-500"
+                      src={trendingUser?.profilePicture}
+                      alt={`${trendingUser?.name}'s avatar`}
+                    />
+                    <Link
+                      className="text-black font-semibold"
+                      href={`/dashboard/users/profile?id=${trendingUser.id}`}
+                    >
+                      {trendingUser?.name}
+                    </Link>
+                  </div>
+
+                  <Button
+                    onClick={() => handleFollowAction(trendingUser?.id)}
+                    size={150}
+                    text={isFollowingRequested ? "Request Sent" : "Follow"}
+                    disabled={
+                      isFollowingRequested || user?.credentials === "SPECTATOR"
+                    }
                   />
-                  <Link
-                    className="text-black font-semibold"
-                    href={`/dashboard/users/profile?id=${trendingUser.id}`}
-                  >
-                    {trendingUser?.name}
-                  </Link>
                 </div>
-
-                <Button
-                  onClick={() => handleFollowAction(trendingUser?.id)}
-                  size={150}
-                  text={isFollowingRequested ? "Request Sent" : "Follow"}
-                  disabled={isFollowingRequested || user?.credentials === 'SPECTATOR'}
-                />
-              </div>
-            );
-          })}
+              );
+            })}
       </div>
     </div>
   );
