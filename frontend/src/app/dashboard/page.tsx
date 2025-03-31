@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAtomValue } from "jotai";
 import { hydratedAuthStateAtom } from "../../state/authState";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useGetAllLikedContent } from "../../hooks/likeService/useGetAllLikedContent";
 import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
 import { useCreateComment } from "../../hooks/commentService/useCreateComment";
@@ -16,6 +17,7 @@ import Button from "../../components/Button";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Link from "next/link";
 import Image from "next/image";
+import * as Yup from "yup";
 
 const HomePage = () => {
   const user = useAtomValue(hydratedAuthStateAtom);
@@ -26,27 +28,18 @@ const HomePage = () => {
   const { mutate: createLikeContent } = useCreateLikeContent();
   const { mutate: deleteLikeContent } = useDeleteLikeContent();
   const [isCreatingPost, setIsCreatingPost] = useState(false);
-  const [postContent, setPostContent] = useState<string>("");
-  const [commentContent, setCommentContent] = useState<string>("");
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
   const isContentLiked = (contentId: string) =>
     userLikedContent?.includes(contentId);
 
+  const createContentSchema = Yup.object({
+    content: Yup.string()
+      .min(4, "Your content must have more than 4 characters")
+      .required("You must write valid content"),
+  });
+
   const handleCreatePost = () => {
     setIsCreatingPost(!isCreatingPost);
-  };
-
-  const handlePostSubmit = () => {
-    createPost({ authorId: user.id, content: postContent });
-  };
-
-  const handleCommentSubmit = (postId: string) => {
-    if (!commentContent.trim()) return;
-
-    createComment({ postId, content: commentContent });
-
-    setCommentContent("");
-    setActiveCommentBox(null);
   };
 
   const handleLikeContent = (contentId: string, type: "post" | "comment") => {
@@ -69,15 +62,21 @@ const HomePage = () => {
 
   return (
     <ProtectedRoute>
-      <div id="main-container" className="flex w-full justify-center items-center">
+      <div
+        id="main-container"
+        className="flex w-full justify-center items-center"
+      >
         {isLoading && (
           <div className="fixed inset-0 flex items-center justify-center bg-[#353535] z-50">
             <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
 
-        <div id="timeline-container" className="w-[90%] md:w-[75%] flex flex-col gap-5">
-          {user?.credentials === 'SPECTATOR' ? (
+        <div
+          id="timeline-container"
+          className="w-[90%] md:w-[75%] flex flex-col gap-5"
+        >
+          {user?.credentials === "SPECTATOR" ? (
             <div
               id="create-post-container"
               className="flex flex-col items-center bg-gray-100 p-4 rounded-lg shadow-md"
@@ -104,20 +103,61 @@ const HomePage = () => {
 
               {isCreatingPost && (
                 <div className="flex flex-col create-post-textarea gap-5 mt-4">
-                  <TextField
-                    label="What are your thoughts?"
-                    className="w-full p-2 border rounded-md bg-gray-100"
-                    multiline
-                    rows={4}
-                    value={postContent}
-                    onChange={(e) => setPostContent(e.target.value)}
-                  />
-                  <Button
-                    onClick={() => handlePostSubmit()}
-                    size={150}
-                    text={"Create Post"}
-                    disabled={user?.credentials === 'SPECTATOR'}
-                  />
+                  <Formik
+                    initialValues={{ authorId: user.id, content: "" }}
+                    validationSchema={createContentSchema}
+                    onSubmit={(
+                      values,
+                      { setSubmitting, resetForm, setErrors }
+                    ) => {
+                      const contentData = { ...values };
+
+                      createPost(contentData, {
+                        onSuccess: () => {
+                          alert("Post Created!");
+                          resetForm();
+                          setIsCreatingPost(false);
+                        },
+                        onError: (error) => {
+                          setErrors({ content: error.message });
+                        },
+                        onSettled: () => {
+                          setSubmitting(false);
+                        },
+                      });
+                    }}
+                  >
+                    {({ isSubmitting, isValid }) => (
+                      <Form className="space-y-4">
+                        <Field
+                          as={TextField}
+                          label="What are your thoughts?"
+                          name="content"
+                          className="w-full p-2 border rounded-md bg-gray-100"
+                          multiline
+                          rows={4}
+                        />
+                        <ErrorMessage
+                          name="content"
+                          component="div"
+                          className="text-red-500 text-sm"
+                        />
+
+                        <Button
+                          size={150}
+                          text={"Create Post"}
+                          type="submit"
+                          disabled={
+                            isSubmitting ||
+                            !isValid ||
+                            user?.credentials === "SPECTATOR"
+                          }
+                        >
+                          {isSubmitting ? "Creating Post..." : "Create Post"}
+                        </Button>
+                      </Form>
+                    )}
+                  </Formik>
                 </div>
               )}
             </div>
@@ -178,7 +218,7 @@ const HomePage = () => {
                       alt={`${post.author?.name}'s avatar`}
                     />
                     <p className="font-bold text-black mt-5 mb-5">
-                      <Link 
+                      <Link
                         href={`/dashboard/users/profile?id=${post.author?.id}`}
                       >
                         {post.author?.name}
@@ -192,8 +232,8 @@ const HomePage = () => {
                     <p className="text-black">{post.likes?.length ?? 0}</p>
                   </div>
 
-                  {post.comments?.length < 1 && (
-                    user.credentials === 'SPECTATOR' ? (
+                  {post.comments?.length < 1 &&
+                    (user.credentials === "SPECTATOR" ? (
                       <p className="text-gray-500 text-center">
                         No comments yet. Spectators can't add comments.
                       </p>
@@ -201,27 +241,69 @@ const HomePage = () => {
                       <p className="text-gray-500 text-center">
                         No comments yet. Be the first to comment!
                       </p>
-                    )
-                  )}
+                    ))}
 
                   <span className="block border-t border-gray-300 my-2"></span>
 
                   {activeCommentBox === post.id && (
                     <div className="mt-4 w-full">
-                      <TextField
-                        label="Write your comment"
-                        className="w-full p-2 border rounded-md bg-gray-100"
-                        multiline
-                        rows={4}
-                        value={commentContent}
-                        onChange={(e) => setCommentContent(e.target.value)}
-                      />
-                      <Button
-                        onClick={() => handleCommentSubmit(post.id)}
-                        size={150}
-                        text={"Create Comment"}
-                        disabled={user?.credentials === 'SPECTATOR'}
-                      />
+                      <Formik
+                        initialValues={{ postId: post.id, content: "" }}
+                        validationSchema={createContentSchema}
+                        onSubmit={(
+                          values,
+                          { setSubmitting, resetForm, setErrors }
+                        ) => {
+                          const contentData = { ...values };
+
+                          createComment(contentData, {
+                            onSuccess: () => {
+                              alert("Comment Created!");
+                              resetForm();
+                              setActiveCommentBox(null);
+                            },
+                            onError: (error) => {
+                              setErrors({ content: error.message });
+                            },
+                            onSettled: () => {
+                              setSubmitting(false);
+                            },
+                          });
+                        }}
+                      >
+                        {({ isSubmitting, isValid }) => (
+                          <Form className="space-y-4">
+                            <Field
+                              as={TextField}
+                              label="What are your thoughts?"
+                              name="content"
+                              className="w-full p-2 border rounded-md bg-gray-100"
+                              multiline
+                              rows={3}
+                            />
+                            <ErrorMessage
+                              name="content"
+                              component="div"
+                              className="text-red-500 text-sm"
+                            />
+
+                            <Button
+                              size={150}
+                              text={"Create Comment"}
+                              type="submit"
+                              disabled={
+                                isSubmitting ||
+                                !isValid ||
+                                user?.credentials === "SPECTATOR"
+                              }
+                            >
+                              {isSubmitting
+                                ? "Creating Comment..."
+                                : "Create Comment"}
+                            </Button>
+                          </Form>
+                        )}
+                      </Formik>
                     </div>
                   )}
 
@@ -231,14 +313,14 @@ const HomePage = () => {
                         onClick={() => handleUnlikeContent(post.id, "post")}
                         size={150}
                         text={"Unlike this"}
-                        disabled={user?.credentials === 'SPECTATOR'}
+                        disabled={user?.credentials === "SPECTATOR"}
                       />
                     ) : (
                       <Button
                         onClick={() => handleLikeContent(post.id, "post")}
                         size={150}
                         text={"Like this"}
-                        disabled={user?.credentials === 'SPECTATOR'}
+                        disabled={user?.credentials === "SPECTATOR"}
                       />
                     )}
                     <Button
@@ -249,7 +331,7 @@ const HomePage = () => {
                       }
                       size={150}
                       text={"Comment"}
-                      disabled={user?.credentials === 'SPECTATOR'}
+                      disabled={user?.credentials === "SPECTATOR"}
                     />
                   </div>
 
@@ -265,7 +347,7 @@ const HomePage = () => {
                                 alt={`${comment.author?.name}'s avatar`}
                               />
                               <p className="font-bold text-black">
-                                <Link 
+                                <Link
                                   href={`/dashboard/users/profile?id=${comment.author?.id}`}
                                 >
                                   {comment.author?.name}
@@ -291,7 +373,7 @@ const HomePage = () => {
                                 }
                                 size={150}
                                 text={"Unlike this"}
-                                disabled={user?.credentials === 'SPECTATOR'}
+                                disabled={user?.credentials === "SPECTATOR"}
                               />
                             ) : (
                               <Button
@@ -300,7 +382,7 @@ const HomePage = () => {
                                 }
                                 size={150}
                                 text={"Like this"}
-                                disabled={user?.credentials === 'SPECTATOR'}
+                                disabled={user?.credentials === "SPECTATOR"}
                               />
                             )}
                           </div>

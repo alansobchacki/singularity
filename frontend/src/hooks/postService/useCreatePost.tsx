@@ -11,8 +11,8 @@ const createPost = async (data: CreatePostRequest): Promise<any> => {
 
     if (response.status === 201) return response.data;
   } catch (err) {
-    if (axios.isAxiosError(err) && err.response?.status === 403)
-      throw new Error("Failed to add post. Try again later.");
+    if (axios.isAxiosError(err) && err.response?.status)
+      throw new Error(err.response.data?.message);
   }
 
   throw new Error(unexpectedErrorText);

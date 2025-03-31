@@ -8,6 +8,7 @@ import {
   HttpStatus,
   Put,
   Param,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -21,25 +22,16 @@ export class CommentController {
 
   @Post()
   async create(@Body() createCommentDto: CreateCommentDto, @Request() req) {
-    try {
-      const commentData = {
-        ...createCommentDto,
-        userId: req.user?.userId,
-      };
+    const { postId } = createCommentDto;
 
-      const comment = await this.commentService.create(commentData);
+    if (!postId) throw new UnauthorizedException('User not authenticated');
 
-      return {
-        success: true,
-        message: 'Comment created successfully',
-        data: comment,
-      };
-    } catch {
-      throw new HttpException(
-        'Failed to create comment',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    const commentData = {
+      ...createCommentDto,
+      userId: req.user?.userId,
+    };
+
+    return this.commentService.create(commentData);
   }
 
   @Put(':id')

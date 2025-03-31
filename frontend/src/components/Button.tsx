@@ -2,7 +2,9 @@ interface ButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   size: number;
-  text: string;
+  text?: string;
+  children?: any;
+  type?: any;
 }
 
 const Button = ({ onClick, disabled, size, text }: ButtonProps) => {

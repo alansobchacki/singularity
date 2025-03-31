@@ -8,8 +8,8 @@ import {
   Get,
   UseGuards,
   Request,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { UnauthorizedException } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -65,9 +65,9 @@ export class PostController {
 
     const userType = req.user?.userType;
 
-    return userType === 'REGULAR' ? 
-      this.postService.findUserAndFollowedPosts(userId) :
-      this.postService.findEveryPost(userId);
+    return userType === 'REGULAR'
+      ? this.postService.findUserAndFollowedPosts(userId)
+      : this.postService.findEveryPost(userId);
   }
 
   @Get(':userId')

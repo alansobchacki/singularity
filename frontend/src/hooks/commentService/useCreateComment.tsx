@@ -5,15 +5,14 @@ import CreateCommentRequest from "../../interfaces/comment/CreateCommentRequest"
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
-// replace promise<any> with a proper<comment> interface later
 const createComment = async (data: CreateCommentRequest): Promise<any> => {
   try {
     const response = await api.post(`/api/v1/comment`, data);
 
     if (response.status === 201) return response.data;
   } catch (err) {
-    if (axios.isAxiosError(err) && err.response?.status === 403)
-      throw new Error("Failed to add comment. Try again later.");
+    if (axios.isAxiosError(err) && err.response?.status)
+      throw new Error(err.response.data?.message);
   }
 
   throw new Error(unexpectedErrorText);
