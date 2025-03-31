@@ -27,6 +27,10 @@ export class UserService {
       where: { id },
     });
 
+    if (!user) {
+      throw new Error('User not found');
+    }
+
     const { password, createdAt, updatedAt, ...sanitizedUser } = user;
 
     return sanitizedUser;
