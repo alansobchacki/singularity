@@ -11,7 +11,6 @@ jest.mock('../../utils/toxicity-check', () => ({
   default: jest.fn().mockResolvedValue(false),
 }));
 
-// Import after mocking
 import * as toxicityCheck from '../../utils/toxicity-check';
 
 require('dotenv').config();

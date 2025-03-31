@@ -24,7 +24,7 @@ export class CommentController {
   async create(@Body() createCommentDto: CreateCommentDto, @Request() req) {
     const { postId } = createCommentDto;
 
-    if (!postId) throw new UnauthorizedException('User not authenticated');
+    if (!postId) throw new UnauthorizedException('No post to comment');
 
     const commentData = {
       ...createCommentDto,
