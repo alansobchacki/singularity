@@ -7,6 +7,7 @@ import { useGetAllUsers } from "../../../hooks/userService/useGetAllUsers";
 import { useCreateFollowRequest } from "../../../hooks/followService/useCreateFollowRequest";
 import { useGetFollowingRequests } from "../../../hooks/followService/useGetAllFollowingRequests";
 import Button from "../../../components/Button";
+import Image from "next/image";
 import Link from "next/link";
 
 const TrendingUsersPage = () => {
@@ -72,8 +73,10 @@ const TrendingUsersPage = () => {
                   className="flex max-sm:flex-col max-sm:items-start justify-between items-center gap-1"
                 >
                   <div className="flex gap-5 items-center">
-                    <img
-                      className="w-[42px] h-[42px] rounded-full border-2 border-blue-500"
+                    <Image
+                      className="rounded-full border-2 border-blue-500"
+                      width={42}
+                      height={42}
                       src={trendingUser?.profilePicture}
                       alt={`${trendingUser?.name}'s avatar`}
                     />

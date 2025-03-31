@@ -8,6 +8,7 @@ import { useGetAllFollowers } from "../../../../hooks/followService/useGetAllFol
 import { useGetUserPosts } from "../../../../hooks/postService/useGetUserPosts";
 import { useGetIsFollowing } from "../../../../hooks/followService/useGetIsFollowing";
 import LoadingSpinner from "../../../../components/LoadingSpinner";
+import Image from "next/image";
 
 const UserProfilePage = () => {
   const currentUser = useAtomValue(hydratedAuthStateAtom);
@@ -36,8 +37,10 @@ const UserProfilePage = () => {
           <LoadingSpinner />
         ) : (
           <div className="flex items-center gap-5">
-            <img
-              className="w-[80px] h-[80px] border-4 border-blue-500 rounded-full"
+            <Image
+              className="border-4 border-blue-500 rounded-full"
+              width={80}
+              height={80}
               src={user?.profilePicture}
               alt={`${user?.name}'s avatar'`}
             />
@@ -81,18 +84,16 @@ const UserProfilePage = () => {
               </>
             )}
           </>
+        ) : currentUser.credentials === "SPECTATOR" ? (
+          <p className="text-black">
+            This is where you would see a user's post history. Spectators can't
+            create posts.
+          </p>
         ) : (
-          (currentUser.credentials === 'SPECTATOR' ? (
-            <p className="text-black">
-              This is where you would see a user's post history. 
-              Spectators can't create posts.
-            </p>
-          ) : (
-            <p className="text-black">
-              {user?.name}'s post history is private. You can view this user's
-              posts if they accept your follow request.
-           </p>
-          ))
+          <p className="text-black">
+            {user?.name}'s post history is private. You can view this user's
+            posts if they accept your follow request.
+          </p>
         )}
       </div>
     </div>

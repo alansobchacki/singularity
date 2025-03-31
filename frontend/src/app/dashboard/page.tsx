@@ -168,8 +168,10 @@ const HomePage = () => {
             className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md"
           >
             <div className="flex items-center gap-4">
-              <img
-                className="w-[42px] h-[42px] border-2 border-green-500 rounded-full"
+              <Image
+                className="border-2 border-green-500 rounded-full"
+                width={42}
+                height={42}
                 src={"/avatars/adminavatar.jpg"}
                 alt="Alan Sobchacki's avatar"
               />
@@ -212,8 +214,10 @@ const HomePage = () => {
                   className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md"
                 >
                   <div className="flex items-center gap-4">
-                    <img
-                      className="w-[42px] h-[42px] border-2 border-blue-600 rounded-full"
+                    <Image
+                      className="border-2 border-blue-600 rounded-full"
+                      width={42}
+                      height={42}
                       src={post.author?.profilePicture}
                       alt={`${post.author?.name}'s avatar`}
                     />
@@ -341,8 +345,10 @@ const HomePage = () => {
                         (comment: any, commentIndex: number) => (
                           <div key={commentIndex} className="mt-1">
                             <div className="flex items-center gap-4 mb-2">
-                              <img
-                                className="w-[42px] h-[42px] border-2 border-blue-600 rounded-full"
+                              <Image
+                                className="border-2 border-blue-600 rounded-full"
+                                width={42}
+                                height={42}
                                 src={comment.author?.profilePicture}
                                 alt={`${comment.author?.name}'s avatar`}
                               />
