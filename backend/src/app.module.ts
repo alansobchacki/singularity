@@ -8,6 +8,8 @@ import { PostModule } from './scopes/post/post.module';
 import { LikeModule } from './scopes/like/like.module';
 import { CommentModule } from './scopes/comment/comment.module';
 import { FollowModule } from './scopes/follow/follow.module';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -18,7 +20,17 @@ import { FollowModule } from './scopes/follow/follow.module';
     LikeModule,
     CommentModule,
     FollowModule,
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 100,
+    }]),
   ],
   controllers: [AppController],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
