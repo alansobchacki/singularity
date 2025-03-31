@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  BadRequestException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
@@ -10,6 +11,7 @@ import { Follow } from '../follow/entities/follow.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthenticationUsers } from '../authenticationUser/entities/authenticationUser.entity';
+import checkToxicity from '../../utils/toxicity-check';
 
 @Injectable()
 export class PostService {
@@ -26,6 +28,10 @@ export class PostService {
     const author = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!author) throw new Error('User not found');
+
+    const isToxic = await checkToxicity(createPostDto.content);
+
+    if (isToxic) throw new BadRequestException('Your post is too toxic.');
 
     const post = this.postRepository.create({
       content: createPostDto.content,

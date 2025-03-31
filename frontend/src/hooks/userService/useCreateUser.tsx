@@ -13,8 +13,8 @@ const createUser = async (data: CreateUserRequest): Promise<User> => {
 
     if (response.status === 201) return response.data;
   } catch (err) {
-    if (axios.isAxiosError(err) && err.response?.status === 403)
-      throw new Error("Unable to create new user. Please try again.");
+    if (axios.isAxiosError(err) && err.response)
+      throw new Error(err.response.data?.message);
   }
 
   throw new Error(unexpectedErrorText);
@@ -23,7 +23,7 @@ const createUser = async (data: CreateUserRequest): Promise<User> => {
 export const useCreateUser = () => {
   const router = useRouter();
 
-  const mutation = useMutation<CreateUserRequest, Error, User>({
+  const mutation = useMutation<User, Error, CreateUserRequest>({
     mutationFn: createUser,
     onSuccess: () => {
       try {

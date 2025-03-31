@@ -37,7 +37,7 @@ const CreateAccountPage = () => {
           <Formik
             initialValues={{ email: "", name: "", password: "" }}
             validationSchema={createUserSchema}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={(values, { setSubmitting, setErrors }) => {
               const userData = { ...values, userType: "REGULAR" };
 
               createUser(userData, {
@@ -45,8 +45,8 @@ const CreateAccountPage = () => {
                   alert("Account Created!");
                   router.push("/login");
                 },
-                onError: () => {
-                  alert("Failed to create account. Please try again later.");
+                onError: (error) => {
+                  setErrors({ name: error.message });
                 },
                 onSettled: () => {
                   setSubmitting(false);

@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthenticationUsers } from './entities/authenticationUser.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUserByEmailDto } from './dto/find-user-by-email.dto';
+import checkToxicity from '../../utils/toxicity-check';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -53,6 +54,10 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<AuthenticationUsers> {
+    const isToxic = await checkToxicity(createUserDto.name);
+
+    if (isToxic) throw new BadRequestException('Your name is too toxic.');
+
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(
       createUserDto.password,

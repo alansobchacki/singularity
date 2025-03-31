@@ -1,8 +1,8 @@
 import { config } from 'dotenv';
-import { Post } from '../src/scopes/post/entities/post.entity';
-import { Follow } from '../src/scopes/follow/entities/follow.entity';
-import { dataSource } from '../src/infrastructure/data-source';
-import { AuthenticationUsers } from '../src/scopes/authenticationUser/entities/authenticationUser.entity';
+import { Post } from '../scopes/post/entities/post.entity';
+import { Follow } from '../scopes/follow/entities/follow.entity';
+import { dataSource } from '../infrastructure/data-source';
+import { AuthenticationUsers } from '../scopes/authenticationUser/entities/authenticationUser.entity';
 import * as bcrypt from 'bcrypt';
 
 config();

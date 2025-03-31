@@ -1,9 +1,10 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from './entities/comment.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import checkToxicity from '../../utils/toxicity-check';
 
 @Injectable()
 export class CommentService {
@@ -14,6 +15,12 @@ export class CommentService {
 
   async create(createCommentDto: CreateCommentDto): Promise<Comment> {
     const { userId, postId, content, image } = createCommentDto;
+
+    if (!userId) throw new Error('User not found');
+
+    const isToxic = await checkToxicity(content);
+
+    if (isToxic) throw new BadRequestException('Your comment is too toxic.');
 
     const comment = this.commentRepository.create({
       author: { id: userId },
