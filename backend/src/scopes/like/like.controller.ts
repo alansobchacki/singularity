@@ -12,8 +12,9 @@ import { LikeService } from './like.service';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { RemoveLikeDto } from './dto/remove-like.dto';
-import { CountLikesDto } from './dto/count-likes.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth('JWT-auth')
 @Controller('likes')
 @UseGuards(JwtAuthGuard)
 export class LikeController {
