@@ -13,6 +13,8 @@ import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeConte
 import TextField from "@mui/material/TextField";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CreateContentButton from "../../components/CreateContentButton";
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import FaceIcon from '@mui/icons-material/Face';
 import Button from "../../components/Button";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Link from "next/link";
@@ -145,7 +147,7 @@ const HomePage = () => {
 
                         <Button
                           size={150}
-                          text={"Create Post"}
+                          content={"Create Post"}
                           type="submit"
                           disabled={
                             isSubmitting ||
@@ -194,7 +196,7 @@ const HomePage = () => {
                   <br />
                   <br />
                   Sure, you might be able to guess since my app is fairly simple 
-                  — but what about on larger platforms?
+                  — but what about on other more popular platforms?
                   <br />
                   <br />
                   Anyway, give it a try and see for yourself. Have fun!
@@ -229,21 +231,30 @@ const HomePage = () => {
                   key={index}
                   className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md"
                 >
-                  <div className="flex items-center gap-4">
-                    <Image
-                      className="border-2 border-blue-600 rounded-full"
-                      width={42}
-                      height={42}
-                      src={post.author?.profilePicture}
-                      alt={`${post.author?.name}'s avatar`}
-                    />
-                    <p className="font-bold text-black mt-5 mb-5">
-                      <Link
-                        href={`/dashboard/users/profile?id=${post.author?.id}`}
-                      >
-                        {post.author?.name}
-                      </Link>
-                    </p>
+                  <div className="flex justify-between gap-4">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        className="border-2 border-blue-600 rounded-full"
+                        width={42}
+                        height={42}
+                        src={post.author?.profilePicture}
+                        alt={`${post.author?.name}'s avatar`}
+                      />
+                      <p className="font-bold text-black mt-5 mb-5">
+                        <Link
+                          href={`/dashboard/users/profile?id=${post.author?.id}`}
+                        >
+                          {post.author?.name}
+                        </Link>
+                      </p>
+                    </div>
+
+                    {user.credentials === "SPECTATOR" && (
+                      <div className="flex items-center gap-2">
+                        <Button size={42} content={<SmartToyOutlinedIcon />} />
+                        <Button size={42} content={<FaceIcon />} />
+                      </div>
+                    )}
                   </div>
 
                   <p className="text-black mb-5">{post.content}</p>
@@ -309,7 +320,7 @@ const HomePage = () => {
 
                             <Button
                               size={150}
-                              text={"Create Comment"}
+                              content={"Create Comment"}
                               type="submit"
                               disabled={
                                 isSubmitting ||
@@ -327,19 +338,19 @@ const HomePage = () => {
                     </div>
                   )}
 
-                  <div className="flex justify-center gap-5">
+                  <div className="flex justify-center gap-5 mt-2">
                     {isContentLiked(post.id) ? (
                       <Button
                         onClick={() => handleUnlikeContent(post.id, "post")}
                         size={150}
-                        text={"Unlike this"}
+                        content={"Unlike this"}
                         disabled={user?.credentials === "SPECTATOR"}
                       />
                     ) : (
                       <Button
                         onClick={() => handleLikeContent(post.id, "post")}
                         size={150}
-                        text={"Like this"}
+                        content={"Like this"}
                         disabled={user?.credentials === "SPECTATOR"}
                       />
                     )}
@@ -350,7 +361,7 @@ const HomePage = () => {
                         )
                       }
                       size={150}
-                      text={"Comment"}
+                      content={"Comment"}
                       disabled={user?.credentials === "SPECTATOR"}
                     />
                   </div>
@@ -375,6 +386,9 @@ const HomePage = () => {
                                   {comment.author?.name}
                                 </Link>
                               </p>
+                              <div>
+                                <Button size={42} content={<SmartToyOutlinedIcon/>} />
+                              </div>
                             </div>
 
                             <p className="text-black mb-5">{comment.content}</p>
@@ -383,9 +397,7 @@ const HomePage = () => {
                               <ThumbUpIcon
                                 sx={{ color: "rgb(15, 119, 255)" }}
                               />
-                              <p className="text-black">
-                                {comment.likes?.length ?? 0}
-                              </p>
+                              <p className="text-black">{comment.likes?.length ?? 0}</p>
                             </div>
 
                             {isContentLiked(comment.id) ? (
@@ -394,7 +406,7 @@ const HomePage = () => {
                                   handleUnlikeContent(comment.id, "comment")
                                 }
                                 size={150}
-                                text={"Unlike this"}
+                                content={"Unlike this"}
                                 disabled={user?.credentials === "SPECTATOR"}
                               />
                             ) : (
@@ -403,7 +415,7 @@ const HomePage = () => {
                                   handleLikeContent(comment.id, "comment")
                                 }
                                 size={150}
-                                text={"Like this"}
+                                content={"Like this"}
                                 disabled={user?.credentials === "SPECTATOR"}
                               />
                             )}

@@ -65,14 +65,14 @@ const FollowsPage = () => {
                       handleFollowAction(followRequest.id, "ACCEPTED")
                     }
                     size={150}
-                    text={"Accept"}
+                    content={"Accept"}
                   />
                   <Button
                     onClick={() =>
                       handleFollowAction(followRequest.id, "REJECTED")
                     }
                     size={150}
-                    text={"Reject"}
+                    content={"Reject"}
                   />
                 </div>
               </div>

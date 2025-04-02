@@ -15,6 +15,7 @@ const CreateAccountPage = () => {
       .required("Email is required and must be unique"),
     name: Yup.string()
       .min(4, "Your name must have more than 4 characters")
+      .max(25, "Your name cannot have more than 25 characters")
       .required("Name is required and must be unique"),
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")

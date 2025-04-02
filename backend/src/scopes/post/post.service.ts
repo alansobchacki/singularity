@@ -99,6 +99,7 @@ export class PostService {
       'author.id',
       'author.name',
       'author.profilePicture',
+      'author.userType',
       'postLike.id',
       'postLike.userId',
       'comment.id',
@@ -107,6 +108,7 @@ export class PostService {
       'commentAuthor.id',
       'commentAuthor.name',
       'commentAuthor.profilePicture',
+      'commentAuthor.userType',
       'commentLike.id',
       'commentLike.userId',
     ])

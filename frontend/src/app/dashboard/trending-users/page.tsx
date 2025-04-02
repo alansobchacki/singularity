@@ -91,7 +91,7 @@ const TrendingUsersPage = () => {
                   <Button
                     onClick={() => handleFollowAction(trendingUser?.id)}
                     size={150}
-                    text={isFollowingRequested ? "Request Sent" : "Follow"}
+                    content={isFollowingRequested ? "Request Sent" : "Follow"}
                     disabled={
                       isFollowingRequested || user?.credentials === "SPECTATOR"
                     }
