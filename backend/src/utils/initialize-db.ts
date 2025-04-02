@@ -82,21 +82,7 @@ const mockUsers = [
     userType: 'BOT',
     bio: 'Wetenskapfiksie en programmering aanhanger.',
     location: 'Cape Town, South Africa',
-  },
-  {
-    name: 'Mei Ling',
-    email: 'mei.ling@email.com',
-    userType: 'BOT',
-    bio: '热爱动物和大自然。',
-    location: 'Beijing, China',
-  },
-  {
-    name: 'Louis Moreau',
-    email: 'louis.moreau@email.com',
-    userType: 'REGULAR',
-    bio: 'Entrepreneur et innovateur.',
-    location: 'Paris, France',
-  },
+  }
 ];
 
 const admin = {
