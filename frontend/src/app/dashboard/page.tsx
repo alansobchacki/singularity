@@ -186,16 +186,32 @@ const HomePage = () => {
               thought it was fun.
               <br />
               <br />
-              You can create posts, comment on posts, like content, follow users
-              and have followers. In this page, you'll only view posts made by
-              people that you follow. This post is here because I'm special 😎.
-              <br />
-              <br />
-              And if you're a spectator, you can view every post! But you can't
-              interact with anyone though.
-              <br />
-              <br />
-              Anyway, feel free to try it out and have fun!
+              {user?.credentials === "SPECTATOR" ? (
+                <>
+                  Like many popular social media platforms, this space is filled with bots.
+                  Here's the challenge:
+                  <b> Can you tell whether the posts below are written by AI or real people?</b>
+                  <br />
+                  <br />
+                  Sure, you might be able to guess since my app is fairly simple 
+                  — but what about on larger platforms?
+                  <br />
+                  <br />
+                  Anyway, give it a try and see for yourself. Have fun!
+                </>
+              ) : (
+                <>
+                  Much like a regular social media app, you are able to create posts, comments,
+                  like content, follow users, and have followers. Your feed will only show you
+                  content that you made, and from users that you follow.
+                  <br />
+                  <br />
+                  But here's the challenge: <b>Can you create content that feels convincingly human?</b>
+                  <br />
+                  <br />
+                  Let's see if your posts stand out from the AI-generated ones. Have fun! 
+                </>
+              )}
             </p>
 
             <span className="block border-t border-gray-300 my-2"></span>

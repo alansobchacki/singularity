@@ -16,74 +16,86 @@ const mockUsers = [
   {
     name: 'Carla Dias',
     email: 'carla.dias@email.com',
+    userType: 'REGULAR',
     bio: 'Exploradora de novos horizontes.',
-    location: 'Rio de Janeiro, RJ - Brazil',
-  },
-  {
-    name: 'Miguel26',
-    email: 'miguel.souza@email.com',
-    bio: 'Apaixonado por tecnologia e inovação.',
     location: 'São Paulo, SP - Brazil',
   },
   {
-    name: 'Amanda Nunes',
-    email: 'amanda.nunes@email.com',
-    bio: 'Entusiasta de fotografia e viagens.',
-    location: 'Curitiba, PR - Brazil',
+    name: 'Michael Johnson',
+    email: 'michael.johnson@email.com',
+    userType: 'REGULAR',
+    bio: 'Passionate about technology and innovation.',
+    location: 'New York, NY - USA',
   },
   {
-    name: 'Lucas Oliveira',
-    email: 'lucas.oliveira@email.com',
-    bio: 'Desenvolvedor full stack e gamer.',
-    location: 'Belo Horizonte, MG - Brazil',
+    name: 'Anna Schneider',
+    email: 'anna.schneider@email.com',
+    userType: 'BOT',
+    bio: 'Fotografin und Reisebegeisterte.',
+    location: 'Berlin, Germany',
   },
   {
-    name: 'Fernanda Castro',
-    email: 'fernanda.castro@email.com',
-    bio: 'Viciada em café e livros.',
-    location: 'Brasília, DF - Brazil',
+    name: 'Haruto Tanaka',
+    email: 'haruto.tanaka@email.com',
+    userType: 'REGULAR',
+    bio: 'フルスタック開発者とゲーマー。',
+    location: 'Tokyo, Japan',
   },
   {
-    name: 'Bruno0',
-    email: 'bruno.lima@email.com',
-    bio: 'Apreciador de música e boas conversas.',
-    location: 'Salvador, BA - Brazil',
+    name: 'Emma Clarke',
+    email: 'emma.clarke@email.com',
+    userType: 'BOT',
+    bio: 'Amante de café e livros.',
+    location: 'Toronto, ON - Canada',
   },
   {
-    name: 'Tatiih',
-    email: 'tatiane.ramos@email.com',
-    bio: 'Apaixonada por arte e criatividade.',
-    location: 'Porto Alegre, RS - Brazil',
+    name: 'Carlos Fernández',
+    email: 'carlos.fernandez@email.com',
+    userType: 'BOT',
+    bio: 'Amante de música y buenas conversaciones.',
+    location: 'Madrid, Spain',
   },
   {
-    name: 'Gabrielsantos',
+    name: 'Liam Walker',
+    email: 'liam.walker@email.com',
+    userType: 'BOT',
+    bio: 'Passionate about art and creativity.',
+    location: 'London, UK',
+  },
+  {
+    name: 'Gabriel Santos',
     email: 'gabriel.santos@email.com',
-    bio: 'Atleta e motivador nato.',
-    location: 'Recife, PE - Brazil',
+    userType: 'REGULAR',
+    bio: 'Athlete and natural motivator.',
+    location: 'Los Angeles, CA - USA',
   },
   {
-    name: 'Juliana_alves',
-    email: 'juliana.alves@email.com',
-    bio: 'Chef de cozinha em formação.',
-    location: 'Fortaleza, CE - Brazil',
+    name: 'Ji-eun Park',
+    email: 'jieun.park@email.com',
+    userType: 'BOT',
+    bio: '요리사가 되기 위해 공부 중입니다.',
+    location: 'Seoul, South Korea',
   },
   {
-    name: 'xRicardox',
-    email: 'ricardo.mendes@email.com',
-    bio: 'Fã de ficção científica e programação.',
-    location: 'Manaus, AM - Brazil',
+    name: 'Richard Van der Merwe',
+    email: 'richard.merwe@email.com',
+    userType: 'BOT',
+    bio: 'Wetenskapfiksie en programmering aanhanger.',
+    location: 'Cape Town, South Africa',
   },
   {
-    name: 'Priscila Rocha',
-    email: 'priscila.rocha@email.com',
-    bio: 'Amante de animais e natureza.',
-    location: 'Florianópolis, SC - Brazil',
+    name: 'Mei Ling',
+    email: 'mei.ling@email.com',
+    userType: 'BOT',
+    bio: '热爱动物和大自然。',
+    location: 'Beijing, China',
   },
   {
-    name: 'felipe35',
-    email: 'felipe.araujo@email.com',
-    bio: 'Empreendedor e inovador.',
-    location: 'Goiânia, GO - Brazil',
+    name: 'Louis Moreau',
+    email: 'louis.moreau@email.com',
+    userType: 'REGULAR',
+    bio: 'Entrepreneur et innovateur.',
+    location: 'Paris, France',
   },
 ];
 
@@ -102,12 +114,16 @@ const spectator = {
 };
 
 const posts = [
-  'Primeiro dia no novo projeto! Vai vir coisa boa por aí.',
-  'Explorando novas tecnologias e aprendendo muito.',
-  'Nada como um café forte para começar o dia.',
-  'A vida é feita de desafios, e eu adoro superá-los!',
-  'Música boa, um livro e um dia tranquilo.',
-  'Desenvolvendo uma nova aplicação! Breve novidades.',
+  'life be lifein fr 🤷‍♂️',
+  'Living la vida loca',
+  'what is this lmao',
+  'マンション・オブ・マッドネスは史上最高のボードゲームだ！',
+  'idk why im writing this',
+  'bro i need sum motivation asap 💯',
+  'Just finished a coding session. Time for some well-deserved rest.',
+  'bruh this app is cooking',
+  'My day only starts after a good cup of coffee',
+  'nice app man!'
 ];
 
 const saltRounds = 10;
@@ -161,7 +177,7 @@ async function initializeDb() {
     return userRepo.save(newUser);
   })();
 
-  // creates regular users
+  // creates regular mock users
   console.log("Creating regular mock accounts...");
   const createdUsers = await Promise.all(
     mockUsers.map(async (user, index) => {
@@ -174,7 +190,7 @@ async function initializeDb() {
         ...user,
         password: hashedPassword,
         profilePicture: avatars[index % avatars.length],
-        userType: 'REGULAR',
+        userType: user.userType as AuthenticationUsers['userType'],
         accountStatus: 'ACTIVE',
       });
 
@@ -185,9 +201,9 @@ async function initializeDb() {
 
   // adds random posts to mock users
   console.log("Adding random posts to regular mock accounts...");
-  for (let i = 0; i < createdUsers.length / 2; i++) {
+  for (let i = 0; i < createdUsers.length; i++) {
     const post = postRepo.create({
-      content: posts[i % posts.length],
+      content: posts[i],
       author: createdUsers[i],
     });
   

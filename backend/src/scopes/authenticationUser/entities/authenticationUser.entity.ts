@@ -47,10 +47,10 @@ export class AuthenticationUsers {
 
   @Column({
     type: 'enum',
-    enum: ['REGULAR', 'ADMIN', 'SPECTATOR'],
+    enum: ['REGULAR', 'BOT', 'ADMIN', 'SPECTATOR'],
     default: 'REGULAR',
   })
-  userType: 'REGULAR' | 'ADMIN' | 'SPECTATOR';
+  userType: 'REGULAR' | 'BOT' | 'ADMIN' | 'SPECTATOR';
 
   @Column({ type: 'enum', enum: ['ACTIVE', 'SUSPENDED'], default: 'ACTIVE' })
   accountStatus: 'ACTIVE' | 'SUSPENDED';
