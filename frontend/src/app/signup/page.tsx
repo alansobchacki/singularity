@@ -9,9 +9,6 @@ import * as Yup from "yup";
 
 const CreateAccountPage = () => {
   const { mutate: createUser } = useCreateUser();
-  const [isAlertActive, setIsAlertActive] = useState(false);
-  const [isAlertPositive, setIsAlertPositive] = useState(true);
-  const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const createUserSchema = Yup.object({
@@ -27,18 +24,6 @@ const CreateAccountPage = () => {
       .required("Password is required"),
   });
 
-  const handleAccountCreation = (success: boolean, message: string) => {
-    setAlertMessage(message);
-    setIsAlertActive(true);
-    setIsAlertPositive(success);
-  
-    if (success) {
-      setTimeout(() => router.push("/login"), 3000);
-    } else {
-      setTimeout(() => setIsAlertActive(false), 3000);
-    }
-  }
-
   return (
     <section className="flex flex-col-reverse sm:flex-row max-sm:items-center max-sm:justify-around max-sm:gap-5 h-screen bg-gradient-to-r from-blue-400 to-blue-600 text-white">
       <div className="flex flex-col justify-center items-center w-full sm:w-1/2 sm:p-10 text-center">
@@ -52,23 +37,19 @@ const CreateAccountPage = () => {
             Create Your Account
           </h2>
 
-          <Alert active={isAlertActive} positive={isAlertPositive}>
-            {alertMessage}
-          </Alert>
-
           <Formik
             initialValues={{ email: "", name: "", password: "" }}
             validationSchema={createUserSchema}
-            onSubmit={(values, { setSubmitting, setErrors }) => {
+            onSubmit={(values, { setSubmitting, setStatus }) => {
               const userData = { ...values, userType: "REGULAR" };
 
               createUser(userData, {
                 onSuccess: () => {
-                  handleAccountCreation(true, "Account created! 🥳");
+                  setStatus({ message: "Account created! 🥳", positive: true });
+                  setTimeout(() => router.push("/login"), 3000);
                 },
                 onError: (error) => {
-                  setErrors({ name: error.message });
-                  handleAccountCreation(false, error.message);
+                  setStatus({ message: error.message, positive: false });
                 },
                 onSettled: () => {
                   setSubmitting(false);
@@ -76,8 +57,14 @@ const CreateAccountPage = () => {
               });
             }}
           >
-            {({ isSubmitting, isValid, dirty }) => (
+            {({ isSubmitting, isValid, dirty, status }) => (
               <Form className="space-y-4">
+                {status && (
+                  <Alert active={true} positive={status.positive}>
+                    {status.message}
+                  </Alert>
+                )}
+
                 <Field
                   type="text"
                   name="email"
