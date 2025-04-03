@@ -2,6 +2,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useCreateUser } from "../../hooks/userService/useCreateUser";
 import { useRouter } from "next/navigation";
+import Alert from "../../components/Alert";
 import Link from "next/link";
 import * as Yup from "yup";
 
@@ -43,6 +44,7 @@ const CreateAccountPage = () => {
 
               createUser(userData, {
                 onSuccess: () => {
+                  // change this
                   alert("Account Created!");
                   router.push("/login");
                 },

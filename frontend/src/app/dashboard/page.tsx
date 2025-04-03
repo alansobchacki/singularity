@@ -66,6 +66,17 @@ const HomePage = () => {
     deleteLikeContent(data);
   };
 
+  const handleBotGuess = (author: string, userType: 'BOT' | 'REGULAR', guess: 'BOT' | 'REGULAR') => {
+    makeGuess(author, userType, guess);
+    setGuessed(true);
+
+    const timer = setTimeout(() => {
+      setGuessed(false);
+    }, 3000);
+  
+    return () => clearTimeout(timer);
+  }
+
   return (
     <ProtectedRoute>
       <div
@@ -273,8 +284,7 @@ const HomePage = () => {
 
                     <Alert
                       active={guessed}
-                      onClose={() => setGuessed(false)}
-                      >
+                    >
                       <p>You guessed right! 🥳</p>
                     </Alert>
 
@@ -291,18 +301,14 @@ const HomePage = () => {
                             <Button 
                               size={42} 
                               content={<SmartToyOutlinedIcon />}
-                              onClick={() => {
-                                makeGuess(post.author.id, post.author.userType, 'BOT')
-                                setGuessed(true);
-                              }}
+                              onClick={() => handleBotGuess(post.author.id, post.author.userType, 'BOT')}
+                              disabled={guessed}
                             />
                             <Button 
                               size={42} 
                               content={<FaceIcon />}
-                              onClick={() => {
-                                makeGuess(post.author.id, post.author.userType, 'REGULAR')
-                                setGuessed(true);
-                              }}
+                              onClick={() => handleBotGuess(post.author.id, post.author.userType, 'BOT')}
+                              disabled={guessed}
                             />
                           </>
                         )}
