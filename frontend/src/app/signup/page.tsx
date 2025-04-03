@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useCreateUser } from "../../hooks/userService/useCreateUser";
 import { useRouter } from "next/navigation";
@@ -46,10 +45,14 @@ const CreateAccountPage = () => {
               createUser(userData, {
                 onSuccess: () => {
                   setStatus({ message: "Account created! 🥳", positive: true });
-                  setTimeout(() => router.push("/login"), 3000);
+                  setTimeout(() => {
+                    setStatus(null);
+                    router.push("/login");
+                  }, 3000);
                 },
                 onError: (error) => {
                   setStatus({ message: error.message, positive: false });
+                  setTimeout(() => setStatus(null), 3000); 
                 },
                 onSettled: () => {
                   setSubmitting(false);
@@ -59,11 +62,13 @@ const CreateAccountPage = () => {
           >
             {({ isSubmitting, isValid, dirty, status }) => (
               <Form className="space-y-4">
-                {status && (
-                  <Alert active={true} positive={status.positive}>
-                    {status.message}
-                  </Alert>
-                )}
+                <div className="h-[0px]">
+                  {status && (
+                    <Alert active={true} positive={status.positive}>
+                      {status.message}
+                    </Alert>
+                  )}
+                </div>
 
                 <Field
                   type="text"
@@ -104,7 +109,7 @@ const CreateAccountPage = () => {
                 <button
                   type="submit"
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg transition disabled:bg-gray-400"
-                  disabled={isSubmitting || !dirty || !isValid}
+                  disabled={isSubmitting || !dirty || !isValid || status}
                 >
                   {isSubmitting ? "Creating Account..." : "Create Account"}
                 </button>

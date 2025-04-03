@@ -9,7 +9,7 @@ import LoginRequest from "../../interfaces/authentication/LoginRequest";
 import AuthToken from "../../interfaces/authentication/AuthToken";
 import DecodedToken from "../../interfaces/authentication/DecodedToken";
 
-const unexpectedErrorText = "Unexpected error. Please try again.";
+const unexpectedErrorText = "Wrong email or password. Please try again.";
 
 const postLogin = async (data: LoginRequest): Promise<AuthToken> => {
   try {

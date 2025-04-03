@@ -283,9 +283,7 @@ const HomePage = () => {
                     </div>
 
                     {guessedRight ? (
-                      <Alert active={guessed}>
-                        <p>You guessed right! 🥳</p>
-                      </Alert>
+                      <Alert active={guessed}><p>You guessed right! 🥳</p></Alert>
                     ) : (
                       <Alert 
                         active={guessed}

@@ -36,7 +36,7 @@ const Alert = ({ active, children, positive = true }: AlertProps) => {
             "bg-green-100 border-green-300 text-green-700" : 
             "bg-red-100 border-red-300 text-red-700"
           }
-          ${active ? "animate-slideDownAndUp" : "opacity-0"}
+          ${active ? "animate-slideDownAndUp" : ""}
           border
         `}
       >

@@ -2,6 +2,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useLogin } from "../../hooks/userService/useLogin";
 import { useSpectatorLogin } from "../../hooks/userService/useSpectatorLogin";
+import Alert from "../../components/Alert";
 import Link from "next/link";
 import * as Yup from "yup";
 
@@ -38,10 +39,11 @@ const LoginPage = () => {
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={loginSchema}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={(values, { setSubmitting, setStatus }) => {
               login(values, {
-                onError: () => {
-                  alert("Incorrect email or password. Please try again.");
+                onError: (error) => {
+                  setStatus({ message: error.message, positive: false });
+                  setTimeout(() => setStatus(null), 3000); 
                 },
                 onSettled: () => {
                   setSubmitting(false);
@@ -49,8 +51,16 @@ const LoginPage = () => {
               });
             }}
           >
-            {({ isSubmitting, isValid, dirty }) => (
+            {({ isSubmitting, isValid, dirty, status }) => (
               <Form className="space-y-4">
+                <div className="h-[0px]">
+                  {status && (
+                    <Alert active={true} positive={status.positive}>
+                      {status.message}
+                    </Alert>
+                  )}
+                </div>
+  
                 <Field
                   type="text"
                   name="email"
@@ -78,7 +88,7 @@ const LoginPage = () => {
                 <button
                   type="submit"
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg transition disabled:bg-gray-400"
-                  disabled={isSubmitting || !isValid || !dirty}
+                  disabled={isSubmitting || !isValid || !dirty || status}
                 >
                   {isSubmitting ? "Logging in..." : "Login"}
                 </button>
