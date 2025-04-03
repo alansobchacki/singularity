@@ -182,41 +182,59 @@ const HomePage = () => {
               <p className="font-bold text-black">Alan Sobchacki</p>
             </div>
 
-            <p className="text-black mt-5 mb-5">
-              👋 Hello folks,
+            <div className="text-black mt-5 mb-5">
+              <p>👋 Hello, folks</p>
               <br />
+              <p>
+                Welcome to my social media app! I built this project because I
+                thought it was fun.
+              </p>
               <br />
-              Welcome to my social media app! I built this project because I
-              thought it was fun.
-              <br />
+              <p>
+                Much like a regular social media app, you are able to create posts, comments,
+                like content, follow users, and have followers.
+              </p>
               <br />
               {user?.credentials === "SPECTATOR" ? (
                 <>
-                  Like many popular social media platforms, this space is filled with bots.
-                  Here's the challenge:
-                  <b> Can you tell if the users below are real people?</b>
+                  <p>
+                    Like many popular social media platforms, this space is filled with bots.
+                    Here's the challenge: <b> Can you tell if the users below are real people?</b>
+                  </p>
                   <br />
+                  <p>
+                    Press the 🤖 button if you think they're AI, 
+                    or the 🧑 button if they're human.
+                  </p>
                   <br />
-                  Sure, you might be able to guess since my app is fairly simple 
-                  — but what about on other more popular platforms?
+                  <p>
+                    Sure, it might be easy since my app is fairly simple 
+                    — but what about on other more popular platforms?
+                  </p>
                   <br />
-                  <br />
-                  Anyway, give it a try and see for yourself. Have fun!
+                  <p>
+                    Anyway, give it a try and see for yourself. Have fun!
+                  </p>
                 </>
               ) : (
                 <>
-                  Much like a regular social media app, you are able to create posts, comments,
-                  like content, follow users, and have followers. Your feed will only show you
-                  content that you made, and from users that you follow.
+                  <p>
+                    As a regular user, your feed will only show you
+                    content that you made, and from users that you follow.
+                    Spectators will be able to view and rate your posts.
+                  </p>
                   <br />
+                  <p>
+                    But here's the challenge: 
+                    <b> Can you create content that feels convincingly human?</b>
+                  </p>
                   <br />
-                  But here's the challenge: <b>Can you create content that feels convincingly human?</b>
-                  <br />
-                  <br />
-                  Let's see if your posts stand out from the AI-generated ones. Have fun! 
+                  <p>
+                    Let's see if your posts stand out from the AI-generated ones. Have fun! 
+                  </p>
                 </>
               )}
-            </p>
+            </div>
 
             <span className="block border-t border-gray-300 my-2"></span>
 
@@ -253,18 +271,28 @@ const HomePage = () => {
 
                     {user.credentials === "SPECTATOR" && (
                       <div className="flex items-center gap-2">
-                        <Button 
-                          size={42} 
-                          content={<SmartToyOutlinedIcon />}
-                          onClick={() => makeGuess(post.id, post.author.userType, 'BOT')}
-                          disabled={hasGuessedPost(post.id)}
-                        />
-                        <Button 
-                          size={42} 
-                          content={<FaceIcon />}
-                          onClick={() => makeGuess(post.id, post.author.userType, 'REGULAR')}
-                          disabled={hasGuessedPost(post.id)}
-                        />
+                        {hasGuessedPost(post.author.id) ? (
+                          post.author.userType === 'BOT' ? (
+                            <p className="text-black"><b>AI</b></p>
+                          ) : (
+                            <p className="text-black"><b>Human</b></p>
+                          )
+                        ) : (
+                          <>
+                            <Button 
+                              size={42} 
+                              content={<SmartToyOutlinedIcon />}
+                              onClick={() => makeGuess(post.author.id, post.author.userType, 'BOT')}
+                              disabled={hasGuessedPost(post.author.id)}
+                            />
+                            <Button 
+                              size={42} 
+                              content={<FaceIcon />}
+                              onClick={() => makeGuess(post.author.id, post.author.userType, 'REGULAR')}
+                              disabled={hasGuessedPost(post.author.id)}
+                            />
+                          </>
+                        )}
                       </div>
                     )}
                   </div>

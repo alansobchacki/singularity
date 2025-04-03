@@ -8,16 +8,11 @@ const useBotDetectionGame = () => {
     const savedScores = localStorage.getItem('botDetectionScores');
     const savedGuesses = localStorage.getItem('botDetectionGuesses');
     
-    if (savedScores) {
-      setScores(JSON.parse(savedScores));
-    }
-    
-    if (savedGuesses) {
-      setGuessedPosts(JSON.parse(savedGuesses));
-    }
+    if (savedScores) setScores(JSON.parse(savedScores));
+    if (savedGuesses) setGuessedPosts(JSON.parse(savedGuesses));
   }, []);
 
-  const makeGuess = (postId: string, userType: 'BOT' | 'REGULAR', guess: 'BOT' | 'REGULAR') => {
+  const makeGuess = (authorId: string, userType: 'BOT' | 'REGULAR', guess: 'BOT' | 'REGULAR') => {
     const newScores = {
       correct: userType === guess ? scores.correct + 1 : scores.correct,
       total: scores.total + 1
@@ -25,7 +20,7 @@ const useBotDetectionGame = () => {
     
     const newGuessedPosts = {
       ...guessedPosts,
-      [postId]: true
+      [authorId]: true
     };
     
     setScores(newScores);
@@ -35,7 +30,7 @@ const useBotDetectionGame = () => {
     localStorage.setItem('botDetectionGuesses', JSON.stringify(newGuessedPosts));
   };
 
-  const hasGuessedPost = (postId: string) => guessedPosts[postId] || false;
+  const hasGuessedPost = (authorId: string) => guessedPosts[authorId] || false;
 
   return { scores, makeGuess, hasGuessedPost };
 };

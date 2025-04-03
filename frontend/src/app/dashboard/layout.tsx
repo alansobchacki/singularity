@@ -29,7 +29,8 @@ export default function DashboardLayout({
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('authState');
     queryClient.clear();
 
     setAuthState({ id: "", credentials: "", isAuthenticated: false });
@@ -154,7 +155,7 @@ export default function DashboardLayout({
 
         {isLoggingOut && (
           <>
-            <div className="flex flex-col items-center justify-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 w-[250px] h-[250px] rounded-lg z-10">
+            <div className="flex flex-col items-center justify-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 w-[250px] h-[250px] rounded-lg gap-2 z-10">
               <p className="text-black mb-6">Do you really wish to logout?</p>
               <Button onClick={handleLogout} size={150} content={"Yes"} />
               <Button onClick={() => setIsLoggingOut(false)} size={150} content={"No"} />
