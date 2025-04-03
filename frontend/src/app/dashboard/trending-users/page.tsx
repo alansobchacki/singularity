@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState } from "react";
 import { useAtomValue } from "jotai";
 import { hydratedAuthStateAtom } from "../../../state/authState";
 import { useGetAllUsers } from "../../../hooks/userService/useGetAllUsers";
 import { useCreateFollowRequest } from "../../../hooks/followService/useCreateFollowRequest";
 import { useGetFollowingRequests } from "../../../hooks/followService/useGetAllFollowingRequests";
 import Button from "../../../components/Button";
+import Alert from "../../../components/Alert";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,30 +16,48 @@ const TrendingUsersPage = () => {
   const { data: usersData } = useGetAllUsers();
   const { data: userFollowingRequests } = useGetFollowingRequests();
   const { mutate: createFollowRequest } = useCreateFollowRequest();
+  const [alertState, setAlertState] = useState<{
+    message: string;
+    positive: boolean;
+    show: boolean;
+  }>({ message: "", positive: true, show: false });
 
-  const handleFollowAction = (followingId: string) => {
+  const handleFollowAction = (followingId: string, userName: string) => {
     createFollowRequest(
       { followerId: user.id, followingId },
       {
         onSuccess: () => {
-          console.log("Follow request created successfully.");
+          setAlertState({
+            message: `Follow request sent to ${userName}!`,
+            positive: true,
+            show: true
+          });
+          setTimeout(() => setAlertState(prev => ({ ...prev, show: false })), 3000);
         },
         onError: (error) => {
-          console.error(error.message);
+          setAlertState({
+            message: error.message || "Failed to send follow request",
+            positive: false,
+            show: true
+          });
+          setTimeout(() => setAlertState(prev => ({ ...prev, show: false })), 3000);
         },
       }
     );
   };
-
-  useEffect(() => {
-    console.log(usersData);
-  }, [usersData]);
 
   return (
     <div
       id="main-container"
       className="flex flex-col w-full justify-center items-center gap-6"
     >
+
+      {alertState.show && (
+        <Alert active={true} positive={alertState.positive}>
+          {alertState.message}
+        </Alert>
+      )}
+
       <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
         {user.credentials === "SPECTATOR" ? (
           <h1 className="text-black text-center">
@@ -89,7 +108,7 @@ const TrendingUsersPage = () => {
                   </div>
 
                   <Button
-                    onClick={() => handleFollowAction(trendingUser?.id)}
+                    onClick={() => handleFollowAction(trendingUser?.id, trendingUser?.name)}
                     size={150}
                     content={isFollowingRequested ? "Request Sent" : "Follow"}
                     disabled={

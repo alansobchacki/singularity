@@ -26,7 +26,6 @@ export const useCreateFollowRequest = () => {
     onSuccess: () => {
       try {
         queryClient.invalidateQueries({ queryKey: ["following-requests"] });
-        alert("Follow request sent!");
       } catch (err) {
         throw new Error(unexpectedErrorText);
       }
