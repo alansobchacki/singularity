@@ -1,14 +1,18 @@
 "use client";
+
+import { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useCreateUser } from "../../hooks/userService/useCreateUser";
 import { useRouter } from "next/navigation";
 import Alert from "../../components/Alert";
+import Image from "next/image";
 import Link from "next/link";
 import * as Yup from "yup";
 
 const CreateAccountPage = () => {
   const { mutate: createUser } = useCreateUser();
   const router = useRouter();
+  const [emoji, setEmoji] = useState("🤖");
 
   const createUserSchema = Yup.object({
     email: Yup.string()
@@ -23,11 +27,23 @@ const CreateAccountPage = () => {
       .required("Password is required"),
   });
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setEmoji((prevEmoji) => (prevEmoji === "🤖" ? "🧑" : "🤖"));
+    }, 6000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <section className="flex flex-col-reverse sm:flex-row max-sm:items-center max-sm:justify-around max-sm:gap-5 h-screen bg-gradient-to-r from-blue-400 to-blue-600 text-white">
-      <div className="flex flex-col justify-center items-center w-full sm:w-1/2 sm:p-10 text-center">
-        <h1 className="text-3xl font-bold">Learning Book</h1>
-        <p className="mt-2 text-lg">Join us and start learning today.</p>
+    <section className="flex flex-col-reverse sm:flex-row max-sm:items-center max-sm:justify-around max-sm:gap-5 sm:h-screen bg-gradient-to-r from-blue-400 to-blue-600 text-white">
+      <div className="relative flex flex-col justify-center items-center w-full sm:w-1/2 sm:p-10 text-center overflow-hidden">
+        <h1 className="font-custom text-5xl font-bold">SINGULARITY</h1>
+        <p className="mt-2 text-g font-semibold">A social media app meant for humans and AI</p>
+        <div className="absolute left-1/2 opacity-0 transform -translate-x-1/2 text-5xl animate-floatUp">
+          {emoji}
+        </div>
+        <Image className="mb-4" width={600} height={600} alt="" src={"/misc/woman.png"} />
       </div>
 
       <div className="w-[90%] flex sm:w-1/2 max-sm:rounded-lg max-sm:mt-5 flex-col justify-center items-center bg-white p-10 shadow-lg">

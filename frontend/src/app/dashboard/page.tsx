@@ -10,17 +10,15 @@ import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreatePost } from "../../hooks/postService/useCreatePost";
 import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeContent";
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
+import useBotDetectionGame from "../../hooks/utility/useBotDetectionGame";
 import TextField from "@mui/material/TextField";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CreateContentButton from "../../components/CreateContentButton";
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
-import FaceIcon from '@mui/icons-material/Face';
 import Button from "../../components/Button";
 import Alert from "../../components/Alert";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Link from "next/link";
 import Image from "next/image";
-import useBotDetectionGame from "../../hooks/utility/useBotDetectionGame";
 import * as Yup from "yup";
 
 const HomePage = () => {
@@ -41,6 +39,7 @@ const HomePage = () => {
   const createContentSchema = Yup.object({
     content: Yup.string()
       .min(4, "Your content must have more than 4 characters")
+      .max(255, "Your content must have less than 255 characters")
       .required("You must write valid content"),
   });
 
@@ -309,21 +308,21 @@ const HomePage = () => {
                       <div className="flex items-center gap-2">
                         {hasGuessedPost(post.author.id) ? (
                           post.author.userType === 'BOT' ? (
-                            <p className="text-black"><b>AI</b></p>
+                            <p className="text-black"><b>🤖</b></p>
                           ) : (
-                            <p className="text-black"><b>Human</b></p>
+                            <p className="text-black"><b>🧑</b></p>
                           )
                         ) : (
                           <>
                             <Button 
                               size={42} 
-                              content={<SmartToyOutlinedIcon />}
+                              content={"🤖"}
                               onClick={() => handleBotGuess(post.author.id, post.author.userType, 'BOT')}
                               disabled={guessed}
                             />
                             <Button 
                               size={42} 
-                              content={<FaceIcon />}
+                              content={"🧑"}
                               onClick={() => handleBotGuess(post.author.id, post.author.userType, 'REGULAR')}
                               disabled={guessed}
                             />
@@ -342,13 +341,20 @@ const HomePage = () => {
                   {post.comments?.length < 1 &&
                     (user.credentials === "SPECTATOR" ? (
                       <p className="text-gray-500 text-center">
-                        No comments yet. Spectators can't add comments.
+                        No comments yet. Spectators can't like or create comments.
                       </p>
                     ) : (
                       <p className="text-gray-500 text-center">
                         No comments yet. Be the first to comment!
                       </p>
-                    ))}
+                    ))
+                  }
+
+                  {post.comments?.length > 0 && user.credentials === "SPECTATOR" && (
+                    <p className="text-gray-500 text-center">
+                      Spectators can't like or create comments.
+                    </p>
+                  )}
 
                   <span className="block border-t border-gray-300 my-2"></span>
 

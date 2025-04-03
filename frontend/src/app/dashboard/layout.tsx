@@ -29,7 +29,6 @@ export default function DashboardLayout({
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.clear();
     localStorage.removeItem('accessToken');
     localStorage.removeItem('authState');
     queryClient.clear();
@@ -57,6 +56,7 @@ export default function DashboardLayout({
             <CloseIcon />
           </button>
           <ul className="flex flex-col gap-4 pl-[20px]">
+            <h1 className="font-custom mb-4 text-2xl text-black font-bold">SINGULARITY</h1>
             <div className="flex gap-2">
               <FeedIcon className="text-black" />
               <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
@@ -93,7 +93,6 @@ export default function DashboardLayout({
           </div>
         </div>
 
-
         <button
           id="hamburger-menu-button"
           onClick={() => setIsMobileMenuOpen(true)} 
@@ -103,47 +102,41 @@ export default function DashboardLayout({
         </button>
 
         <aside className="hidden md:flex flex-col justify-between w-64 bg-gradient-to-t from-blue-500 to-blue-400 text-white p-4 sticky top-0 h-screen sm:hidden">
-          <ul className="flex flex-col gap-2 pl-[20px]">
-            <div className="flex mb-6">
+          <div>
+            <h1 className="font-custom mb-4 text-2xl font-bold pl-[20px]">SINGULARITY</h1>
+            <ul className="flex flex-col gap-2 pl-[20px]">
               <Link
                 href={`/dashboard/users/profile?id=${currentUserData?.id}`}
-                className="font-semibold"
+                className="flex mb-4 font-semibold"
               >
                 Hello, {currentUserData?.name}
               </Link>
-            </div>
-            <div className="flex gap-2">
-              <FeedIcon />
-              <Link href="/dashboard">
+
+              <Link className="flex gap-2" href="/dashboard">
+                <FeedIcon />
                 <li className="font-semibold">Timeline</li>
               </Link>
-            </div>
-            <div className="flex gap-2">
-              <GroupIcon />
-              <Link href="/dashboard/connections">
+              
+              <Link className="flex gap-2" href="/dashboard/connections">
+                <GroupIcon />
                 <li className="font-semibold">Connections</li>
               </Link>
-            </div>
-            <div className="flex gap-2">
-              <TrendingUpIcon />
-              <Link href="/dashboard/trending-users">
+
+              <Link className="flex gap-2" href="/dashboard/trending-users">
+                <TrendingUpIcon />
                 <li className="font-semibold">Trending Users</li>
               </Link>
-            </div>
-          </ul>
+            </ul>
+          </div>
 
-          {/* Add a settings page later for users to update their account settings
-            <Link href="/dashboard/settings">
-              <p>Settings</p>
-            </Link>
-            */}
           <div className="pl-[20px]">
             <div className="flex gap-2">
-              <LogoutIcon />
+              
               <button
-                className="font-semibold"
+                className="flex gap-2 font-semibold"
                 onClick={() => setIsLoggingOut(true)}
               >
+                <LogoutIcon />
                 Logout
               </button>
             </div>
