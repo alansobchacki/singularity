@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useCreateUser } from "../../hooks/userService/useCreateUser";
 import { useRouter } from "next/navigation";
+import TextField from "@mui/material/TextField";
 import Alert from "../../components/Alert";
 import Image from "next/image";
 import Link from "next/link";
@@ -87,10 +88,12 @@ const CreateAccountPage = () => {
                 </div>
 
                 <Field
+                  as={TextField}
                   type="text"
                   name="email"
-                  placeholder="Email"
-                  className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  label="Email"
+                  placeholder="Enter your email"
+                  className="w-full rounded-md"                
                 />
                 <ErrorMessage
                   name="email"
@@ -99,10 +102,12 @@ const CreateAccountPage = () => {
                 />
 
                 <Field
+                  as={TextField}
                   type="text"
                   name="name"
-                  placeholder="Name"
-                  className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  label="Your Name"
+                  placeholder="Enter your name"
+                  className="w-full rounded-md"                
                 />
                 <ErrorMessage
                   name="name"
@@ -111,10 +116,12 @@ const CreateAccountPage = () => {
                 />
 
                 <Field
+                  as={TextField}
                   type="password"
                   name="password"
-                  placeholder="Password"
-                  className="w-full p-3 border text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  label="Password"
+                  placeholder="Enter your password"
+                  className="w-full rounded-md"                
                 />
                 <ErrorMessage
                   name="password"
