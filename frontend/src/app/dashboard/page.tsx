@@ -125,18 +125,27 @@ const HomePage = () => {
                     validationSchema={createContentSchema}
                     onSubmit={(
                       values,
-                      { setSubmitting, resetForm, setErrors }
+                      { setSubmitting, resetForm, setStatus }
                     ) => {
                       const contentData = { ...values };
 
                       createPost(contentData, {
                         onSuccess: () => {
-                          alert("Post Created!");
-                          resetForm();
-                          setIsCreatingPost(false);
+                          setStatus({ message: "Post created! 🥳", positive: true });
+  
+                          setTimeout(() => {
+                            resetForm();
+                          }, 3000);
+                          
+                          setTimeout(() => {
+                            setIsCreatingPost(false);
+                          }, 3000);
+  
+                          setTimeout(() => setStatus(null), 3000); 
                         },
                         onError: (error) => {
-                          setErrors({ content: error.message });
+                          setStatus({ message: error.message, positive: false });
+                          setTimeout(() => setStatus(null), 3000);
                         },
                         onSettled: () => {
                           setSubmitting(false);
@@ -144,8 +153,15 @@ const HomePage = () => {
                       });
                     }}
                   >
-                    {({ isSubmitting, isValid }) => (
+                    {({ isSubmitting, isValid, status }) => (
                       <Form className="space-y-4">
+                        <div>
+                          {status && (
+                            <Alert active={true} positive={status.positive}>
+                              {status.message}
+                            </Alert>
+                          )}
+                        </div>
                         <Field
                           as={TextField}
                           label="What are your thoughts?"
@@ -167,6 +183,7 @@ const HomePage = () => {
                           disabled={
                             isSubmitting ||
                             !isValid ||
+                            status ||
                             user?.credentials === "SPECTATOR"
                           }
                         >
@@ -282,14 +299,9 @@ const HomePage = () => {
                       </p>
                     </div>
 
-                    {guessedRight ? (
-                      <Alert active={guessed}><p>You guessed right! 🥳</p></Alert>
-                    ) : (
-                      <Alert 
-                        active={guessed}
-                        positive={false}
-                      >
-                        <p>You guessed wrong. 😔</p>
+                    {user.credentials === "SPECTATOR" && guessed && (
+                      <Alert active={true} positive={!!guessedRight}>
+                        <p>{guessedRight ? "You guessed right! 🥳" : "You guessed wrong. 😔"}</p>
                       </Alert>
                     )}
 
@@ -322,7 +334,7 @@ const HomePage = () => {
                   </div>
 
                   <p className="text-black mb-5">{post.content}</p>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 mb-2">
                     <ThumbUpIcon sx={{ color: "rgb(15, 119, 255)" }} />
                     <p className="text-black">{post.likes?.length ?? 0}</p>
                   </div>
@@ -347,18 +359,27 @@ const HomePage = () => {
                         validationSchema={createContentSchema}
                         onSubmit={(
                           values,
-                          { setSubmitting, resetForm, setErrors }
+                          { setSubmitting, resetForm, setStatus }
                         ) => {
                           const contentData = { ...values };
 
                           createComment(contentData, {
                             onSuccess: () => {
-                              alert("Comment Created!");
-                              resetForm();
-                              setActiveCommentBox(null);
+                              setStatus({ message: "Comment created! 🥳", positive: true });
+
+                              setTimeout(() => {
+                                resetForm();
+                              }, 3000);
+                              
+                              setTimeout(() => {
+                                setActiveCommentBox(null);
+                              }, 3000);
+
+                              setTimeout(() => setStatus(null), 3000); 
                             },
                             onError: (error) => {
-                              setErrors({ content: error.message });
+                              setStatus({ message: error.message, positive: false });
+                              setTimeout(() => setStatus(null), 3000);
                             },
                             onSettled: () => {
                               setSubmitting(false);
@@ -366,8 +387,16 @@ const HomePage = () => {
                           });
                         }}
                       >
-                        {({ isSubmitting, isValid }) => (
+                        {({ isSubmitting, isValid, status }) => (
                           <Form className="space-y-4">
+                            <div>
+                              {status && (
+                                <Alert active={true} positive={status.positive}>
+                                  {status.message}
+                                </Alert>
+                              )}
+                            </div>
+
                             <Field
                               as={TextField}
                               label="What are your thoughts?"
@@ -389,6 +418,7 @@ const HomePage = () => {
                               disabled={
                                 isSubmitting ||
                                 !isValid ||
+                                status ||
                                 user?.credentials === "SPECTATOR"
                               }
                             >
@@ -450,14 +480,11 @@ const HomePage = () => {
                                   {comment.author?.name}
                                 </Link>
                               </p>
-                              <div>
-                                <Button size={42} content={<SmartToyOutlinedIcon/>} />
-                              </div>
                             </div>
 
                             <p className="text-black mb-5">{comment.content}</p>
 
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 mb-2">
                               <ThumbUpIcon
                                 sx={{ color: "rgb(15, 119, 255)" }}
                               />
