@@ -284,14 +284,14 @@ const HomePage = () => {
 
                     {guessedRight ? (
                       <Alert active={guessed}>
-                        You guessed right! 🥳
+                        <p>You guessed right! 🥳</p>
                       </Alert>
                     ) : (
                       <Alert 
                         active={guessed}
                         positive={false}
                       >
-                        You guessed wrong 😔
+                        <p>You guessed wrong. 😔</p>
                       </Alert>
                     )}
 

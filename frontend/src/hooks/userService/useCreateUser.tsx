@@ -25,13 +25,6 @@ export const useCreateUser = () => {
 
   const mutation = useMutation<User, Error, CreateUserRequest>({
     mutationFn: createUser,
-    onSuccess: () => {
-      try {
-        router.push("/login");
-      } catch (err) {
-        throw new Error(unexpectedErrorText);
-      }
-    },
   });
   return mutation;
 };

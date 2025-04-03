@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useCreateUser } from "../../hooks/userService/useCreateUser";
 import { useRouter } from "next/navigation";
@@ -8,6 +9,9 @@ import * as Yup from "yup";
 
 const CreateAccountPage = () => {
   const { mutate: createUser } = useCreateUser();
+  const [isAlertActive, setIsAlertActive] = useState(false);
+  const [isAlertPositive, setIsAlertPositive] = useState(true);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const createUserSchema = Yup.object({
@@ -23,6 +27,18 @@ const CreateAccountPage = () => {
       .required("Password is required"),
   });
 
+  const handleAccountCreation = (success: boolean, message: string) => {
+    setAlertMessage(message);
+    setIsAlertActive(true);
+    setIsAlertPositive(success);
+  
+    if (success) {
+      setTimeout(() => router.push("/login"), 3000);
+    } else {
+      setTimeout(() => setIsAlertActive(false), 3000);
+    }
+  }
+
   return (
     <section className="flex flex-col-reverse sm:flex-row max-sm:items-center max-sm:justify-around max-sm:gap-5 h-screen bg-gradient-to-r from-blue-400 to-blue-600 text-white">
       <div className="flex flex-col justify-center items-center w-full sm:w-1/2 sm:p-10 text-center">
@@ -36,6 +52,10 @@ const CreateAccountPage = () => {
             Create Your Account
           </h2>
 
+          <Alert active={isAlertActive} positive={isAlertPositive}>
+            {alertMessage}
+          </Alert>
+
           <Formik
             initialValues={{ email: "", name: "", password: "" }}
             validationSchema={createUserSchema}
@@ -44,12 +64,11 @@ const CreateAccountPage = () => {
 
               createUser(userData, {
                 onSuccess: () => {
-                  // change this
-                  alert("Account Created!");
-                  router.push("/login");
+                  handleAccountCreation(true, "Account created! 🥳");
                 },
                 onError: (error) => {
                   setErrors({ name: error.message });
+                  handleAccountCreation(false, error.message);
                 },
                 onSettled: () => {
                   setSubmitting(false);
