@@ -29,8 +29,9 @@ export default function DashboardLayout({
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('authState');
+    localStorage.clear();
+    // localStorage.removeItem('accessToken');
+    // localStorage.removeItem('authState');
     queryClient.clear();
 
     setAuthState({ id: "", credentials: "", isAuthenticated: false });

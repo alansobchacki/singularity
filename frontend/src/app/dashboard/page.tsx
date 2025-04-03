@@ -16,6 +16,7 @@ import CreateContentButton from "../../components/CreateContentButton";
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import FaceIcon from '@mui/icons-material/Face';
 import Button from "../../components/Button";
+import Alert from "../../components/Alert";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Link from "next/link";
 import Image from "next/image";
@@ -35,6 +36,7 @@ const HomePage = () => {
   const isContentLiked = (contentId: string) =>
     userLikedContent?.includes(contentId);
   const { scores, makeGuess, hasGuessedPost } = useBotDetectionGame();
+  const [guessed, setGuessed] = useState(false);
 
   const createContentSchema = Yup.object({
     content: Yup.string()
@@ -269,6 +271,13 @@ const HomePage = () => {
                       </p>
                     </div>
 
+                    <Alert
+                      active={guessed}
+                      onClose={() => setGuessed(false)}
+                      >
+                      <p>You guessed right! 🥳</p>
+                    </Alert>
+
                     {user.credentials === "SPECTATOR" && (
                       <div className="flex items-center gap-2">
                         {hasGuessedPost(post.author.id) ? (
@@ -282,14 +291,18 @@ const HomePage = () => {
                             <Button 
                               size={42} 
                               content={<SmartToyOutlinedIcon />}
-                              onClick={() => makeGuess(post.author.id, post.author.userType, 'BOT')}
-                              disabled={hasGuessedPost(post.author.id)}
+                              onClick={() => {
+                                makeGuess(post.author.id, post.author.userType, 'BOT')
+                                setGuessed(true);
+                              }}
                             />
                             <Button 
                               size={42} 
                               content={<FaceIcon />}
-                              onClick={() => makeGuess(post.author.id, post.author.userType, 'REGULAR')}
-                              disabled={hasGuessedPost(post.author.id)}
+                              onClick={() => {
+                                makeGuess(post.author.id, post.author.userType, 'REGULAR')
+                                setGuessed(true);
+                              }}
                             />
                           </>
                         )}
