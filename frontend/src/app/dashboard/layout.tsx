@@ -56,7 +56,7 @@ export default function DashboardLayout({
             <CloseIcon />
           </button>
           <ul className="flex flex-col gap-4 pl-[20px]">
-            <h1 className="font-custom mb-4 text-2xl text-black font-bold">SINGULARITY</h1>
+          <h1 className="font-custom mb-2 text-3xl font-bold text-black tracking-wider">SINGULARITY</h1>
             <div className="flex gap-2">
               <FeedIcon className="text-black" />
               <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
@@ -103,7 +103,7 @@ export default function DashboardLayout({
 
         <aside className="hidden md:flex flex-col justify-between w-64 bg-gradient-to-t from-blue-500 to-blue-400 text-white p-4 sticky top-0 h-screen sm:hidden">
           <div>
-            <h1 className="font-custom mb-4 text-2xl font-bold pl-[20px]">SINGULARITY</h1>
+            <h1 className="font-custom mb-4 text-2xl font-bold tracking-wider pl-[20px]">SINGULARITY</h1>
             <ul className="flex flex-col gap-2 pl-[20px]">
               <Link
                 href={`/dashboard/users/profile?id=${currentUserData?.id}`}

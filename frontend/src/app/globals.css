@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Techbit DEMO';
-  src: url('/fonts/OvercameDemoRegular.otf') format('otf');
+  font-family: 'OvercameDemoRegular';
+  src: url('/fonts/OvercameDemoRegular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
