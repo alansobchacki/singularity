@@ -19,6 +19,7 @@ import Button from "../../components/Button";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Link from "next/link";
 import Image from "next/image";
+import useBotDetectionGame from "../../hooks/utility/useBotDetectionGame";
 import * as Yup from "yup";
 
 const HomePage = () => {
@@ -33,6 +34,7 @@ const HomePage = () => {
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
   const isContentLiked = (contentId: string) =>
     userLikedContent?.includes(contentId);
+  const { scores, makeGuess, hasGuessedPost } = useBotDetectionGame();
 
   const createContentSchema = Yup.object({
     content: Yup.string()
@@ -169,7 +171,7 @@ const HomePage = () => {
             id="disclaimer-container"
             className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md"
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <Image
                 className="border-2 border-green-500 rounded-full"
                 width={42}
@@ -192,7 +194,7 @@ const HomePage = () => {
                 <>
                   Like many popular social media platforms, this space is filled with bots.
                   Here's the challenge:
-                  <b> Can you tell whether the posts below are written by AI or real people?</b>
+                  <b> Can you tell if the users below are real people?</b>
                   <br />
                   <br />
                   Sure, you might be able to guess since my app is fairly simple 
@@ -251,8 +253,18 @@ const HomePage = () => {
 
                     {user.credentials === "SPECTATOR" && (
                       <div className="flex items-center gap-2">
-                        <Button size={42} content={<SmartToyOutlinedIcon />} />
-                        <Button size={42} content={<FaceIcon />} />
+                        <Button 
+                          size={42} 
+                          content={<SmartToyOutlinedIcon />}
+                          onClick={() => makeGuess(post.id, post.author.userType, 'BOT')}
+                          disabled={hasGuessedPost(post.id)}
+                        />
+                        <Button 
+                          size={42} 
+                          content={<FaceIcon />}
+                          onClick={() => makeGuess(post.id, post.author.userType, 'REGULAR')}
+                          disabled={hasGuessedPost(post.id)}
+                        />
                       </div>
                     )}
                   </div>
