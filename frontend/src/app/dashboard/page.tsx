@@ -35,7 +35,7 @@ const HomePage = () => {
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
   const isContentLiked = (contentId: string) =>
     userLikedContent?.includes(contentId);
-  const { scores, makeGuess, hasGuessedPost } = useBotDetectionGame();
+  const { scores, makeGuess, hasGuessedPost, guessedRight } = useBotDetectionGame();
   const [guessed, setGuessed] = useState(false);
 
   const createContentSchema = Yup.object({
@@ -282,11 +282,18 @@ const HomePage = () => {
                       </p>
                     </div>
 
-                    <Alert
-                      active={guessed}
-                    >
-                      <p>You guessed right! 🥳</p>
-                    </Alert>
+                    {guessedRight ? (
+                      <Alert active={guessed}>
+                        You guessed right! 🥳
+                      </Alert>
+                    ) : (
+                      <Alert 
+                        active={guessed}
+                        positive={false}
+                      >
+                        You guessed wrong 😔
+                      </Alert>
+                    )}
 
                     {user.credentials === "SPECTATOR" && (
                       <div className="flex items-center gap-2">
@@ -307,7 +314,7 @@ const HomePage = () => {
                             <Button 
                               size={42} 
                               content={<FaceIcon />}
-                              onClick={() => handleBotGuess(post.author.id, post.author.userType, 'BOT')}
+                              onClick={() => handleBotGuess(post.author.id, post.author.userType, 'REGULAR')}
                               disabled={guessed}
                             />
                           </>

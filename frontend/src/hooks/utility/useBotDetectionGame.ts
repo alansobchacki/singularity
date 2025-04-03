@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 const useBotDetectionGame = () => {
   const [scores, setScores] = useState({ correct: 0, total: 0 });
   const [guessedPosts, setGuessedPosts] = useState<Record<string, boolean>>({});
+  const [guessedRight, setGuessedRight] = useState<boolean | null>(null);
 
   useEffect(() => {
     const savedScores = localStorage.getItem('botDetectionScores');
@@ -13,26 +14,29 @@ const useBotDetectionGame = () => {
   }, []);
 
   const makeGuess = (authorId: string, userType: 'BOT' | 'REGULAR', guess: 'BOT' | 'REGULAR') => {
+    const isCorrect = userType === guess;
+    setGuessedRight(isCorrect);
+
     const newScores = {
-      correct: userType === guess ? scores.correct + 1 : scores.correct,
+      correct: isCorrect ? scores.correct + 1 : scores.correct,
       total: scores.total + 1
     };
-    
+
     const newGuessedPosts = {
       ...guessedPosts,
       [authorId]: true
     };
-    
+
     setScores(newScores);
     setGuessedPosts(newGuessedPosts);
-    
+
     localStorage.setItem('botDetectionScores', JSON.stringify(newScores));
     localStorage.setItem('botDetectionGuesses', JSON.stringify(newGuessedPosts));
   };
 
   const hasGuessedPost = (authorId: string) => guessedPosts[authorId] || false;
 
-  return { scores, makeGuess, hasGuessedPost };
+  return { scores, makeGuess, hasGuessedPost, guessedRight };
 };
 
 export default useBotDetectionGame;

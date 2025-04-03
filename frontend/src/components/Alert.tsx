@@ -31,7 +31,7 @@ const Alert = ({ active, children, positive = true }: AlertProps) => {
 
       <div
         className={`fixed left-1/2 top-0
-          w-[200px] p-4 rounded-lg shadow-md z-50
+          w-[225px] p-4 rounded-lg shadow-md z-50
           ${positive ? 
             "bg-green-100 border-green-300 text-green-700" : 
             "bg-red-100 border-red-300 text-red-700"
