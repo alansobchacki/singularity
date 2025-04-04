@@ -44,7 +44,13 @@ const LoginPage = () => {
         <div className="absolute left-1/2 opacity-0 transform -translate-x-1/2 text-5xl animate-floatUp">
           {emoji}
         </div>
-        <Image className="mb-4" width={600} height={600} alt="" src={"/misc/woman.png"} />
+        <Image 
+          className="mb-4" 
+          width={600} 
+          height={600} 
+          alt="A woman smiling while she uses her smartphone" 
+          src={"/misc/woman.png"} 
+        />
       </div>
 
       <div className="w-[90%] flex sm:w-1/2 max-sm:rounded-lg bg-white max-sm:mt-5 flex-col justify-center items-center p-10 shadow-lg">
