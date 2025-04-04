@@ -21,7 +21,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [authState, setAuthState] = useAtom(authStateAtom);
+  const [, setAuthState] = useAtom(authStateAtom);
   const { data: currentUserData } = useGetCurrentUserDetails();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

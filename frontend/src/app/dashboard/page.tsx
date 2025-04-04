@@ -33,7 +33,7 @@ const HomePage = () => {
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
   const isContentLiked = (contentId: string) =>
     userLikedContent?.includes(contentId);
-  const { scores, makeGuess, hasGuessedPost, guessedRight } = useBotDetectionGame();
+  const { makeGuess, hasGuessedPost, guessedRight } = useBotDetectionGame();
   const [guessed, setGuessed] = useState(false);
 
   const createContentSchema = Yup.object({
@@ -228,12 +228,12 @@ const HomePage = () => {
                 <>
                   <p>
                     Like many popular social media platforms, this space is filled with bots.
-                    Here's the challenge: <b> Can you tell if the users below are real people?</b>
+                    Here&apos;s the challenge: <b> Can you tell if the users below are real people?</b>
                   </p>
                   <br />
                   <p>
-                    Press the 🤖 button if you think they're AI, 
-                    or the 🧑 button if they're human.
+                    Press the 🤖 button if you think they&apos;re AI, 
+                    or the 🧑 button if they&apos;re human.
                   </p>
                   <br />
                   <p>
@@ -254,12 +254,12 @@ const HomePage = () => {
                   </p>
                   <br />
                   <p>
-                    But here's the challenge: 
+                    But here&apos;s the challenge: 
                     <b> Can you create content that feels convincingly human?</b>
                   </p>
                   <br />
                   <p>
-                    Let's see if your posts stand out from the AI-generated ones. Have fun! 
+                    Let&apos;s see if your posts stand out from the AI-generated ones. Have fun! 
                   </p>
                 </>
               )}
@@ -269,7 +269,7 @@ const HomePage = () => {
 
             <p className="text-gray-500 text-center">
               Likes and comments are disabled for this post to protect the
-              author's ego.
+              author&apos;s ego.
             </p>
           </div>
 
@@ -341,7 +341,7 @@ const HomePage = () => {
                   {post.comments?.length < 1 &&
                     (user.credentials === "SPECTATOR" ? (
                       <p className="text-gray-500 text-center">
-                        No comments yet. Spectators can't like or create comments.
+                        No comments yet. Spectators can&apos;t like or create comments.
                       </p>
                     ) : (
                       <p className="text-gray-500 text-center">
@@ -352,7 +352,7 @@ const HomePage = () => {
 
                   {post.comments?.length > 0 && user.credentials === "SPECTATOR" && (
                     <p className="text-gray-500 text-center">
-                      Spectators can't like or create comments.
+                      Spectators can&apos;t like or create comments.
                     </p>
                   )}
 
