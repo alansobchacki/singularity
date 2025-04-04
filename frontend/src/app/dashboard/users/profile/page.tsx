@@ -7,6 +7,8 @@ import { useGetUserDetails } from "../../../../hooks/userService/useGetUserDetai
 import { useGetAllFollowers } from "../../../../hooks/followService/useGetAllFollowers";
 import { useGetUserPosts } from "../../../../hooks/postService/useGetUserPosts";
 import { useGetIsFollowing } from "../../../../hooks/followService/useGetIsFollowing";
+import { Comment } from "../../../../interfaces/comment/Comment";
+import Post from "../../../../interfaces/post/Post";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import LoadingSpinner from "../../../../components/LoadingSpinner";
 import Link from "next/link";
@@ -54,7 +56,7 @@ const UserProfilePage = () => {
             <LoadingSpinner />
           ) : posts?.length > 0 ? (
             <div className="flex flex-col gap-4">
-              {posts.map((post: any) => (
+              {posts.map((post: Post) => (
                 <div key={post.id} className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md">
                   <div className="flex items-center gap-2">
                     <Image
@@ -78,7 +80,7 @@ const UserProfilePage = () => {
 
                   {post.comments?.length > 0 && (
                     <div className="flex flex-col mt-5 pl-4 border-l gap-5">
-                      {post.comments.map((comment: any) => (
+                      {post.comments.map((comment: Comment) => (
                         <div key={comment.id} className="mt-1">
                           <div className="flex items-center gap-4 mb-2">
                             <Image
@@ -109,13 +111,13 @@ const UserProfilePage = () => {
               ))}
             </div>
           ) : (
-            <p className="text-black">{user?.name} still hasn't made any posts.</p>
+            <p className="text-black">{user?.name} still hasn&apos;t made any posts.</p>
           )
         ) : currentUser?.credentials === "SPECTATOR" ? (
-          <p className="text-black">This is where you would see a user's post history. Spectators can't create posts.</p>
+          <p className="text-black">This is where you would see a user&apos;s post history. Remember: Spectators can&apos;t create posts.</p>
         ) : (
           <p className="text-black">
-            {user?.name}'s post history is private. You can view this user's posts if they accept your follow request.
+            {user?.name}&apos;s post history is private. You can view this user&apos;s posts if they accept your follow request.
           </p>
         )}
       </div>

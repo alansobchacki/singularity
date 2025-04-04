@@ -10,6 +10,8 @@ import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreatePost } from "../../hooks/postService/useCreatePost";
 import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeContent";
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
+import { Comment } from "../../interfaces/comment/Comment";
+import Post from "../../interfaces/post/Post";
 import useBotDetectionGame from "../../hooks/utility/useBotDetectionGame";
 import TextField from "@mui/material/TextField";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
@@ -275,7 +277,7 @@ const HomePage = () => {
 
           <div id="posts-container" className="flex flex-col gap-10">
             {timelineData?.length > 0 ? (
-              timelineData.map((post: any, index: number) => (
+              timelineData.map((post: Post, index: number) => (
                 <div
                   key={index}
                   className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md"
@@ -317,13 +319,21 @@ const HomePage = () => {
                             <Button 
                               size={42} 
                               content={"🤖"}
-                              onClick={() => handleBotGuess(post.author.id, post.author.userType, 'BOT')}
+                              onClick={() => {
+                                if (post.author.userType === 'REGULAR' || post.author.userType === 'BOT') {
+                                  handleBotGuess(post.author.id, post.author.userType, 'BOT');
+                                }
+                              }}
                               disabled={guessed}
                             />
                             <Button 
                               size={42} 
                               content={"🧑"}
-                              onClick={() => handleBotGuess(post.author.id, post.author.userType, 'REGULAR')}
+                              onClick={() => {
+                                if (post.author.userType === 'REGULAR' || post.author.userType === 'BOT') {
+                                  handleBotGuess(post.author.id, post.author.userType, 'REGULAR');
+                                }
+                              }}
                               disabled={guessed}
                             />
                           </>
@@ -469,7 +479,7 @@ const HomePage = () => {
                   {post.comments?.length > 0 && (
                     <div className="flex flex-col mt-5 pl-4 border-l gap-5">
                       {post.comments.map(
-                        (comment: any, commentIndex: number) => (
+                        (comment: Comment, commentIndex: number) => (
                           <div key={commentIndex} className="mt-1">
                             <div className="flex items-center gap-4 mb-2">
                               <Image

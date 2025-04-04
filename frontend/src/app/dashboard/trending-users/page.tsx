@@ -6,6 +6,7 @@ import { hydratedAuthStateAtom } from "../../../state/authState";
 import { useGetAllUsers } from "../../../hooks/userService/useGetAllUsers";
 import { useCreateFollowRequest } from "../../../hooks/followService/useCreateFollowRequest";
 import { useGetFollowingRequests } from "../../../hooks/followService/useGetAllFollowingRequests";
+import { User } from "../../../interfaces/user/User";
 import Button from "../../../components/Button";
 import Alert from "../../../components/Alert";
 import Image from "next/image";
@@ -61,7 +62,7 @@ const TrendingUsersPage = () => {
       <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
         {user.credentials === "SPECTATOR" ? (
           <h1 className="text-black text-center">
-            You can't follow anyone since you're an spectator 😔
+            You can&apos;t follow anyone since you&apos;re an spectator 😔
           </h1>
         ) : (
           <h1 className="text-black text-center">
@@ -77,10 +78,10 @@ const TrendingUsersPage = () => {
         {usersData?.length > 0 &&
           usersData
             .filter(
-              (trendingUser: any) =>
+              (trendingUser: User) =>
                 trendingUser.id !== user.id && trendingUser.name !== "Spectator"
             )
-            .map((trendingUser: any, index: number) => {
+            .map((trendingUser: User, index: number) => {
               const isFollowingRequested = userFollowingRequests?.some(
                 (request: { following: { id: string } }) =>
                   request.following.id === trendingUser.id

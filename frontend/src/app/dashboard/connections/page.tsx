@@ -5,6 +5,7 @@ import { hydratedAuthStateAtom } from "../../../state/authState";
 import { useGetFollowRequests } from "../../../hooks/followService/useGetAllFollowRequests";
 import { useGetAllFollowers } from "../../../hooks/followService/useGetAllFollowers";
 import { useUpdateFollowRequest } from "../../../hooks/followService/useUpdateFollowRequest";
+import { Follow } from "../../../interfaces/follow/Follow";
 import Button from "../../../components/Button";
 import Image from "next/image";
 import Link from "next/link";
@@ -36,7 +37,7 @@ const FollowsPage = () => {
     >
       <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
         {followRequests?.length > 0 ? (
-          followRequests.map((followRequest: any, index: number) => (
+          followRequests.map((followRequest: Follow, index: number) => (
             <div key={index}>
               <p className="text-black mb-5">
                 You have {followRequests.length} new follow requests! 🥳
@@ -91,7 +92,7 @@ const FollowsPage = () => {
         )}
 
         {followers?.length > 0 &&
-          followers.map((follower: any, index: number) => (
+          followers.map((follower: Follow, index: number) => (
             <div
               key={index}
               className="flex items-center p-2 bg-white rounded-md my-1 mt-5 gap-2"

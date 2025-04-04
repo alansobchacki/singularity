@@ -2,17 +2,20 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../config/axios";
 import axios from "axios";
 import CreatePostRequest from "../../interfaces/post/CreatePostRequest";
+import Post from "../../interfaces/post/Post";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
-const createPost = async (data: CreatePostRequest): Promise<any> => {
+const createPost = async (data: CreatePostRequest): Promise<Post> => {
   try {
-    const response = await api.post(`/api/v1/posts`, data);
+    const response = await api.post<Post>(`/api/v1/posts`, data);
 
     if (response.status === 201) return response.data;
-  } catch (err) {
-    if (axios.isAxiosError(err) && err.response?.status)
-      throw new Error(err.response.data?.message);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || unexpectedErrorText;
+      throw new Error(errorMessage);
+    }
   }
 
   throw new Error(unexpectedErrorText);
@@ -21,22 +24,18 @@ const createPost = async (data: CreatePostRequest): Promise<any> => {
 export const useCreatePost = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<Post, Error, CreatePostRequest>({
     mutationFn: createPost,
     onSuccess: (newPost) => {
-      try {
-        queryClient.invalidateQueries({
-          queryKey: ["posts", newPost.postId],
-        });
-        queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      queryClient.invalidateQueries({
+        queryKey: ["posts", newPost.id],
+      });
+      queryClient.invalidateQueries({ queryKey: ["timeline"] });
 
-        queryClient.setQueryData(["posts", newPost.postId], (oldData: any) => {
-          if (!oldData) return [newPost];
-          return [...oldData, newPost];
-        });
-      } catch (err) {
-        console.error(unexpectedErrorText);
-      }
+      queryClient.setQueryData<Post[]>(["posts", newPost.id], (oldData) => {
+        if (!oldData) return [newPost];
+        return [...oldData, newPost];
+      });
     },
   });
 };

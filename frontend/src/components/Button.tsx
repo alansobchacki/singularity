@@ -1,10 +1,12 @@
+import { ReactNode } from 'react';
+
 interface ButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   size: number;
-  content?: any;
-  children?: any;
-  type?: any;
+  content?: ReactNode;
+  children?: ReactNode;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 const Button = ({ onClick, disabled, size, content }: ButtonProps) => {

@@ -2,17 +2,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../config/axios";
 import axios from "axios";
 import CreateCommentRequest from "../../interfaces/comment/CreateCommentRequest";
+import { Comment } from "../../interfaces/comment/Comment";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
-const createComment = async (data: CreateCommentRequest): Promise<any> => {
+const createComment = async (data: CreateCommentRequest): Promise<Comment> => {
   try {
-    const response = await api.post(`/api/v1/comment`, data);
-
+    const response = await api.post<Comment>(`/api/v1/comment`, data);
     if (response.status === 201) return response.data;
-  } catch (err) {
-    if (axios.isAxiosError(err) && err.response?.status)
-      throw new Error(err.response.data?.message);
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
   }
 
   throw new Error(unexpectedErrorText);
@@ -21,25 +22,19 @@ const createComment = async (data: CreateCommentRequest): Promise<any> => {
 export const useCreateComment = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<Comment, Error, CreateCommentRequest>({
     mutationFn: createComment,
     onSuccess: (newComment) => {
-      try {
-        queryClient.invalidateQueries({
-          queryKey: ["comments", newComment.postId],
-        });
-        queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      queryClient.invalidateQueries({
+        queryKey: ["comments", newComment.post.id],
+      });
 
-        queryClient.setQueryData(
-          ["comments", newComment.postId],
-          (oldData: any) => {
-            if (!oldData) return [newComment];
-            return [...oldData, newComment];
-          }
-        );
-      } catch (err) {
-        console.error(unexpectedErrorText);
-      }
+      queryClient.invalidateQueries({ queryKey: ["timeline"] });
+
+      queryClient.setQueryData<Comment[]>(
+        ["comments", newComment.post.id],
+        (oldData) => (oldData ? [...oldData, newComment] : [newComment])
+      );
     },
   });
 };

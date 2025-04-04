@@ -1,9 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { api } from "../../config/axios";
 import axios from "axios";
 import CreateUserRequest from "../../interfaces/user/CreateUserRequest";
-import User from "../../interfaces/user/CreateUserResponse";
+import { User } from "../../interfaces/user/User";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
@@ -21,8 +20,6 @@ const createUser = async (data: CreateUserRequest): Promise<User> => {
 };
 
 export const useCreateUser = () => {
-  const router = useRouter();
-
   const mutation = useMutation<User, Error, CreateUserRequest>({
     mutationFn: createUser,
   });

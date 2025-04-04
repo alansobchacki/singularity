@@ -137,7 +137,7 @@ const LoginPage = () => {
           </button>
 
           <p className="text-center text-gray-600">
-            Don&apos;t have an account?
+            Don&apos;t have an account?{" "}
             <Link className="text-blue-500 cursor-pointer" href="/signup">
               Create one
             </Link>

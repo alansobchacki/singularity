@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../config/axios";
 import axios from "axios";
+import Post from "../../interfaces/post/Post";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
-const getUserPosts = async (id: string): Promise<any> => {
+const getUserPosts = async (id: string): Promise<Post[]> => {
   try {
     const response = await api.get(`/api/v1/posts/${id}`);
 

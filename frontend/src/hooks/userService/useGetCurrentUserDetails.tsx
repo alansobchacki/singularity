@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../config/axios";
 import axios from "axios";
+import { User } from "../../interfaces/user/User";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
-const getCurrentUserDetails = async (): Promise<any> => {
+const getCurrentUserDetails = async (): Promise<User> => {
   try {
     const response = await api.get("/api/v1/users/self");
 

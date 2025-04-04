@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { UserType } from "../../interfaces/user/User";
+
+type GuessType = 'REGULAR' | 'BOT';
 
 const useBotDetectionGame = () => {
   const [scores, setScores] = useState({ correct: 0, total: 0 });
@@ -13,7 +16,7 @@ const useBotDetectionGame = () => {
     if (savedGuesses) setGuessedPosts(JSON.parse(savedGuesses));
   }, []);
 
-  const makeGuess = (authorId: string, userType: 'BOT' | 'REGULAR', guess: 'BOT' | 'REGULAR') => {
+  const makeGuess = (authorId: string, userType: UserType, guess: GuessType) => {
     const isCorrect = userType === guess;
     setGuessedRight(isCorrect);
 
