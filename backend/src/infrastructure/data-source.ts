@@ -12,6 +12,7 @@ export const dataSourceOptions: DataSourceOptions = {
   database: process.env.DB_DATABASE,
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/infrastructure/migrations/*.js'],
+  ssl: process.env.DB_SSL_ACTIVE === 'true' ? { rejectUnauthorized: false } : false,
   logging: false,
   migrationsRun: true,
 };
