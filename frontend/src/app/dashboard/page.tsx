@@ -34,7 +34,7 @@ const HomePage = () => {
   const [isCreatingPost, setIsCreatingPost] = useState(false);
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
   const isContentLiked = (contentId: string) =>
-    userLikedContent?.includes(contentId);
+    userLikedContent?.some((like) => like.post?.id === contentId || like.comment?.id === contentId);  
   const { makeGuess, hasGuessedPost, guessedRight } = useBotDetectionGame();
   const [guessed, setGuessed] = useState(false);
 
@@ -276,7 +276,7 @@ const HomePage = () => {
           </div>
 
           <div id="posts-container" className="flex flex-col gap-10">
-            {timelineData?.length > 0 ? (
+            {Array.isArray(timelineData) && timelineData?.length > 0 ? (
               timelineData.map((post: Post, index: number) => (
                 <div
                   key={index}

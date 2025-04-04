@@ -1,4 +1,5 @@
 import { User } from "../user/User";
+import { Comment } from "../comment/Comment";
 import Post from "../post/Post";
 
 export default interface Like {

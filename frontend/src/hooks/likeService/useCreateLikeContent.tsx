@@ -2,12 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../config/axios";
 import axios from "axios";
 import CreateLikeContentRequest from "../../interfaces/like/CreateLikeContentRequest";
+import Like from "../../interfaces/like/Like";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
 const createLikeContent = async (
   data: CreateLikeContentRequest
-): Promise<any> => {
+): Promise<Like> => {
   try {
     const response = await api.post("/api/v1/likes", data);
 
@@ -26,19 +27,14 @@ export const useCreateLikeContent = () => {
   return useMutation({
     mutationFn: createLikeContent,
     onSuccess: (newLike) => {
-      try {
-        console.log("COMMENT IS BEING LIKED");
-        queryClient.invalidateQueries({ queryKey: ["like", newLike.likeId] });
-        queryClient.invalidateQueries({ queryKey: ["timeline"] });
-        queryClient.invalidateQueries({ queryKey: ["likes"] });
+      queryClient.invalidateQueries({ queryKey: ["like", newLike.id] });
+      queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      queryClient.invalidateQueries({ queryKey: ["likes"] });
 
-        queryClient.setQueryData(["like", newLike.likeId], (oldData: any) => {
-          if (!oldData) return [newLike];
-          return [...oldData, newLike];
-        });
-      } catch (err) {
-        console.error(unexpectedErrorText);
-      }
+      queryClient.setQueryData<Like[]>(["like", newLike.id], (oldData) => {
+        if (!oldData) return [newLike];
+        return [...oldData, newLike];
+      });
     },
   });
 };

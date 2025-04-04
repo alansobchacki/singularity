@@ -2,10 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../config/axios";
 import axios from "axios";
 import CreateFollowRequest from "../../interfaces/follow/CreateFollowRequest";
+import { Follow } from "../../interfaces/follow/Follow";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
-const createFollowRequest = async (data: CreateFollowRequest): Promise<any> => {
+const createFollowRequest = async (data: CreateFollowRequest): Promise<Follow> => {
   try {
     const response = await api.post(`/api/v1/follow`, data);
 
@@ -21,15 +22,10 @@ const createFollowRequest = async (data: CreateFollowRequest): Promise<any> => {
 export const useCreateFollowRequest = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<CreateFollowRequest, Error, any>({
+  return useMutation<Follow, Error, CreateFollowRequest>({
     mutationFn: createFollowRequest,
     onSuccess: () => {
-      try {
-        queryClient.invalidateQueries({ queryKey: ["following-requests"] });
-      } catch (err) {
-        throw new Error(unexpectedErrorText);
-      }
+      queryClient.invalidateQueries({ queryKey: ["following-requests"] });
     },
   });
-  return mutation;
 };

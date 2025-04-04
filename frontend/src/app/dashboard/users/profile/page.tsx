@@ -35,7 +35,7 @@ const UserProfilePage = () => {
               className="border-4 border-blue-500 rounded-full"
               width={80}
               height={80}
-              src={user?.profilePicture ?? "/default-avatar.png"}
+              src={user?.profilePicture || ""}
               alt={`${user?.name}'s avatar`}
             />
             <div className="flex flex-col">
@@ -54,7 +54,7 @@ const UserProfilePage = () => {
         {(!isLoadingFollowing && isFollowing) || user?.id === currentUser?.id ? (
           isLoadingPosts ? (
             <LoadingSpinner />
-          ) : posts?.length > 0 ? (
+          ) : Array.isArray(posts) && posts?.length > 0 ? (
             <div className="flex flex-col gap-4">
               {posts.map((post: Post) => (
                 <div key={post.id} className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md">

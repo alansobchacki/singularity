@@ -75,7 +75,7 @@ const TrendingUsersPage = () => {
         id="trending-users-container"
         className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md gap-5"
       >
-        {usersData?.length > 0 &&
+        {Array.isArray(usersData) && usersData?.length > 0 &&
           usersData
             .filter(
               (trendingUser: User) =>

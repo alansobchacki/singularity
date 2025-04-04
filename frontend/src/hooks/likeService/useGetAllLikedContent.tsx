@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../config/axios";
 import axios from "axios";
+import Like from "../../interfaces/like/Like";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
-const getAllLikedContent = async (): Promise<any> => {
+const getAllLikedContent = async (): Promise<Like[]> => {
   try {
     const response = await api.get("/api/v1/likes");
 

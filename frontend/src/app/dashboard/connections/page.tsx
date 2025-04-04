@@ -36,7 +36,7 @@ const FollowsPage = () => {
       className="flex flex-col w-full justify-center items-center gap-6"
     >
       <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
-        {followRequests?.length > 0 ? (
+        {Array.isArray(followRequests) && followRequests?.length > 0 ? (
           followRequests.map((followRequest: Follow, index: number) => (
             <div key={index}>
               <p className="text-black mb-5">
@@ -85,14 +85,14 @@ const FollowsPage = () => {
       </div>
 
       <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
-        {followers?.length > 0 ? (
+        {Array.isArray(followers) && followers?.length > 0 ? (
           <p className="text-black">You have {followers?.length} followers!</p>
         ) : (
           <p className="text-black">You have no followers 😔</p>
         )}
 
-        {followers?.length > 0 &&
-          followers.map((follower: Follow, index: number) => (
+        {Array.isArray(followers) && followers.length > 0 &&
+          followers.map((follow: Follow, index: number) => (
             <div
               key={index}
               className="flex items-center p-2 bg-white rounded-md my-1 mt-5 gap-2"
@@ -101,17 +101,18 @@ const FollowsPage = () => {
                 className="rounded-full"
                 width={42}
                 height={42}
-                src={follower?.follower.profilePicture}
-                alt={`${follower?.follower.name}'s avatar`}
+                src={follow.follower?.profilePicture || "/default-avatar.png"}
+                alt={`${follow.follower?.name || "User"}'s avatar`}
               />
               <Link
-                href={`/dashboard/users/profile?id=${follower?.follower.id}`}
+                href={`/dashboard/users/profile?id=${follow.follower?.id}`}
                 className="font-semibold"
               >
-                <p className="text-black">{follower?.follower.name}</p>
+                <p className="text-black">{follow.follower?.name}</p>
               </Link>
             </div>
-          ))}
+          ))
+        }
       </div>
     </div>
   );
