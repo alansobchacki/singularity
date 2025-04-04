@@ -214,22 +214,6 @@ async function initializeDb() {
     }
   }
 
-  const users = await userRepo.find();
-
-  // find follow requests where the user is the 'following' and the status is 'PENDING'
-  for (const user of users) {
-    const followRequests = await followRepo.find({
-      where: { follower: user, status: 'PENDING' },
-      relations: ['follower', 'following'],
-    });
-
-    for (const followRequest of followRequests) {
-      followRequest.status = 'ACCEPTED';
-
-      await followRepo.save(followRequest); 
-    }
-  }
-
   console.log('All follow requests have been processed!');
   console.log('Database initialized successfully!');
 }
