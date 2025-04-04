@@ -205,7 +205,11 @@ async function initializeDb() {
     const follower = createdUsers[i];
     const following = createdUsers[createdUsers.length - i - 1];
     if (follower && following) {
-      const follow = followRepo.create({ follower, following });
+      const follow = followRepo.create({ 
+        follower, 
+        following, 
+        status: 'ACCEPTED'
+      });
       await followRepo.save(follow);
     }
   }
@@ -215,7 +219,7 @@ async function initializeDb() {
   // find follow requests where the user is the 'following' and the status is 'PENDING'
   for (const user of users) {
     const followRequests = await followRepo.find({
-      where: { following: user, status: 'PENDING' },
+      where: { follower: user, status: 'PENDING' },
       relations: ['follower', 'following'],
     });
 
