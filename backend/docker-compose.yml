@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: nest-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: nest-app
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "3800:3800"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      
+      # SECRETS
+      JWT_SECRET: ${JWT_SECRET}
+      PERSPECTIVE_API_KEY: ${PERSPECTIVE_API_KEY}
+      
+      # SQL DATABASE
+      DB_TYPE: ${DB_TYPE}
+      DB_HOST: db
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_ENTITIES: ${DB_ENTITIES}
+      DB_MIGRATIONS: ${DB_MIGRATIONS}
+
+      # ACCOUNT DETAILS
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      SPECTATOR_EMAIL: ${SPECTATOR_EMAIL}
+      REGULAR_PASSWORD: ${REGULAR_PASSWORD}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SPECTATOR_PASSWORD: ${SPECTATOR_PASSWORD}
+
+      # FRONTEND
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN}
+      AVATAR_BASE_URL: ${AVATAR_BASE_URL}
+
+volumes:
+  postgres_data:
