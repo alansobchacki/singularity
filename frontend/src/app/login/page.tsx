@@ -142,6 +142,10 @@ const LoginPage = () => {
               Create one
             </Link>
           </p>
+
+          <p className="text-center text-gray-600">
+            This app is hosted on free-tier services - you might experience a &quot;cold start&quot;
+          </p>
         </div>
       </div>
     </section>
