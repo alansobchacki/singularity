@@ -33,11 +33,12 @@ const HomePage = () => {
   const { mutate: createLikeContent } = useCreateLikeContent();
   const { mutate: deleteLikeContent } = useDeleteLikeContent();
   const [isCreatingPost, setIsCreatingPost] = useState(false);
-  const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
-  const isContentLiked = (contentId: string) =>
-    userLikedContent?.some((like) => like.post?.id === contentId || like.comment?.id === contentId);  
+  const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);  
   const { makeGuess, hasGuessedPost, guessedRight } = useBotDetectionGame();
   const [guessed, setGuessed] = useState(false);
+  const isContentLiked = (contentId: string) => {
+    return userLikedContent?.includes(contentId); 
+  };
 
   const createContentSchema = Yup.object({
     content: Yup.string()
