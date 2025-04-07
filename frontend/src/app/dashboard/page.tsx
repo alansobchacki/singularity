@@ -534,7 +534,12 @@ const HomePage = () => {
                   </div>
                 ))
               ) : (
-                <p>No posts available. Follow more people to see more stuff!</p>
+                <div className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md">
+                  <p className="text-black">
+                    No content available. Follow more people to see more stuff, 
+                    create a post, or enter as a spectator.
+                  </p>
+                </div>
               )}
               
             </div>
