@@ -56,7 +56,7 @@ const LoginPage = () => {
       <div className="w-[90%] flex sm:w-1/2 max-sm:rounded-lg bg-white max-sm:mt-5 flex-col justify-center items-center p-10 shadow-lg">
         <div className="w-full max-w-md space-y-6">
           <h2 className="text-2xl font-semibold text-gray-800 text-center">
-            Join us today
+            Sign in to create content
           </h2>
 
           <Formik
@@ -117,8 +117,15 @@ const LoginPage = () => {
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg transition disabled:bg-gray-400"
                   disabled={isSubmitting || !isValid || !dirty || status}
                 >
-                  {isSubmitting ? "Logging in..." : "Login"}
+                  {isSubmitting ? "Signing in..." : "Sign in"}
                 </button>
+
+                {isSubmitting && (
+                  <p className="mt-4 text-center text-xs text-gray-500 italic">
+                    Please note — Initial load times may be longer due to hosting 
+                    on free-tier infrastructure.
+                  </p>
+                )}
               </Form>
             )}
           </Formik>
@@ -129,22 +136,29 @@ const LoginPage = () => {
             <div className="w-32 h-px bg-gray-400" />
           </div>
 
+          <h3 className="text-xl font-semibold text-gray-800 text-center">
+            Guess whether users are AI or human
+          </h3>
+
           <button 
             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-3 rounded-lg transition"
             onClick={handleSpectatorLogin}
           >
-            {isSpectatorLoading? "Logging in..." : "Rate others as human or AI"}
+            {isSpectatorLoading ? "Entering..." : "Enter and rate users"}
           </button>
+
+          {isSpectatorLoading && (
+            <p className="mt-4 text-center text-xs text-gray-500 italic">
+              Please note — Initial load times may be longer due to hosting 
+              on free-tier infrastructure.
+            </p>
+          )}
 
           <p className="text-center text-gray-600">
             Don&apos;t have an account?{" "}
             <Link className="text-blue-500 cursor-pointer" href="/signup">
-              Create one
+              Sign up
             </Link>
-          </p>
-
-          <p className="mt-4 text-center text-xs text-gray-500 italic">
-            Please note — Initial load times may be longer due to hosting on free-tier infrastructure.
           </p>
         </div>
       </div>
