@@ -143,8 +143,8 @@ const LoginPage = () => {
             </Link>
           </p>
 
-          <p className="text-center text-gray-600">
-            This app is hosted on free-tier services - you might experience a &quot;cold start&quot;
+          <p className="mt-4 text-center text-xs text-gray-500 italic">
+            Please note — Initial load times may be longer due to hosting on free-tier infrastructure.
           </p>
         </div>
       </div>
