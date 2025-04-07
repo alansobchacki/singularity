@@ -15,6 +15,7 @@ import Post from "../../interfaces/post/Post";
 import useBotDetectionGame from "../../hooks/utility/useBotDetectionGame";
 import TextField from "@mui/material/TextField";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import CreateContentButton from "../../components/CreateContentButton";
 import Button from "../../components/Button";
 import Alert from "../../components/Alert";
@@ -84,12 +85,6 @@ const HomePage = () => {
         id="main-container"
         className="flex w-full justify-center items-center"
       >
-        {isLoading && (
-          <div className="fixed inset-0 flex items-center justify-center bg-[#353535] z-50">
-            <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        )}
-
         <div
           id="timeline-container"
           className="w-[90%] md:w-[75%] flex flex-col gap-5"
@@ -275,268 +270,275 @@ const HomePage = () => {
             </p>
           </div>
 
-          <div id="posts-container" className="flex flex-col gap-10">
-            {Array.isArray(timelineData) && timelineData?.length > 0 ? (
-              timelineData.map((post: Post, index: number) => (
-                <div
-                  key={index}
-                  className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md"
-                >
-                  <div className="flex justify-between gap-4">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        className="border-2 border-blue-600 rounded-full"
-                        width={42}
-                        height={42}
-                        src={post.author?.profilePicture}
-                        alt={`${post.author?.name}'s avatar`}
-                      />
-                      <p className="font-bold text-black mt-5 mb-5">
-                        <Link
-                          href={`/dashboard/users/profile?id=${post.author?.id}`}
-                        >
-                          {post.author?.name}
-                        </Link>
-                      </p>
+          {isLoading ? (
+            <div className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <div id="posts-container" className="flex flex-col gap-10">
+              {Array.isArray(timelineData) && timelineData?.length > 0 ? (
+                timelineData.map((post: Post, index: number) => (
+                  <div
+                    key={index}
+                    className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md"
+                  >
+                    <div className="flex justify-between gap-4">
+                      <div className="flex items-center gap-2">
+                        <Image
+                          className="border-2 border-blue-600 rounded-full"
+                          width={42}
+                          height={42}
+                          src={post.author?.profilePicture}
+                          alt={`${post.author?.name}'s avatar`}
+                        />
+                        <p className="font-bold text-black mt-5 mb-5">
+                          <Link
+                            href={`/dashboard/users/profile?id=${post.author?.id}`}
+                          >
+                            {post.author?.name}
+                          </Link>
+                        </p>
+                      </div>
+
+                      {user.credentials === "SPECTATOR" && guessed && (
+                        <Alert active={true} positive={!!guessedRight}>
+                          <p>{guessedRight ? "You guessed right! 🥳" : "You guessed wrong. 😔"}</p>
+                        </Alert>
+                      )}
+
+                      {user.credentials === "SPECTATOR" && (
+                        <div className="flex items-center gap-2">
+                          {hasGuessedPost(post.author.id) ? (
+                            post.author.userType === 'BOT' ? (
+                              <p className="text-black"><b>🤖</b></p>
+                            ) : (
+                              <p className="text-black"><b>🧑</b></p>
+                            )
+                          ) : (
+                            <>
+                              <Button 
+                                size={42} 
+                                content={"🤖"}
+                                onClick={() => {
+                                  if (post.author.userType === 'REGULAR' || post.author.userType === 'BOT') {
+                                    handleBotGuess(post.author.id, post.author.userType, 'BOT');
+                                  }
+                                }}
+                                disabled={guessed}
+                              />
+                              <Button 
+                                size={42} 
+                                content={"🧑"}
+                                onClick={() => {
+                                  if (post.author.userType === 'REGULAR' || post.author.userType === 'BOT') {
+                                    handleBotGuess(post.author.id, post.author.userType, 'REGULAR');
+                                  }
+                                }}
+                                disabled={guessed}
+                              />
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
 
-                    {user.credentials === "SPECTATOR" && guessed && (
-                      <Alert active={true} positive={!!guessedRight}>
-                        <p>{guessedRight ? "You guessed right! 🥳" : "You guessed wrong. 😔"}</p>
-                      </Alert>
+                    <p className="text-black mb-5">{post.content}</p>
+                    <div className="flex gap-2 mb-2">
+                      <ThumbUpIcon sx={{ color: "rgb(15, 119, 255)" }} />
+                      <p className="text-black">{post.likes?.length ?? 0}</p>
+                    </div>
+
+                    {post.comments?.length < 1 &&
+                      (user.credentials === "SPECTATOR" ? (
+                        <p className="text-gray-500 text-center">
+                          No comments yet. Spectators can&apos;t like or create comments.
+                        </p>
+                      ) : (
+                        <p className="text-gray-500 text-center">
+                          No comments yet. Be the first to comment!
+                        </p>
+                      ))
+                    }
+
+                    {post.comments?.length > 0 && user.credentials === "SPECTATOR" && (
+                      <p className="text-gray-500 text-center">
+                        Spectators can&apos;t like or create comments.
+                      </p>
                     )}
 
-                    {user.credentials === "SPECTATOR" && (
-                      <div className="flex items-center gap-2">
-                        {hasGuessedPost(post.author.id) ? (
-                          post.author.userType === 'BOT' ? (
-                            <p className="text-black"><b>🤖</b></p>
-                          ) : (
-                            <p className="text-black"><b>🧑</b></p>
+                    <span className="block border-t border-gray-300 my-2"></span>
+
+                    {activeCommentBox === post.id && (
+                      <div className="mt-4 w-full">
+                        <Formik
+                          initialValues={{ postId: post.id, content: "" }}
+                          validationSchema={createContentSchema}
+                          onSubmit={(
+                            values,
+                            { setSubmitting, resetForm, setStatus }
+                          ) => {
+                            const contentData = { ...values };
+
+                            createComment(contentData, {
+                              onSuccess: () => {
+                                setStatus({ message: "Comment created! 🥳", positive: true });
+
+                                setTimeout(() => {
+                                  resetForm();
+                                }, 3000);
+                                
+                                setTimeout(() => {
+                                  setActiveCommentBox(null);
+                                }, 3000);
+
+                                setTimeout(() => setStatus(null), 3000); 
+                              },
+                              onError: (error) => {
+                                setStatus({ message: error.message, positive: false });
+                                setTimeout(() => setStatus(null), 3000);
+                              },
+                              onSettled: () => {
+                                setSubmitting(false);
+                              },
+                            });
+                          }}
+                        >
+                          {({ isSubmitting, isValid, status }) => (
+                            <Form className="space-y-4">
+                              <div>
+                                {status && (
+                                  <Alert active={true} positive={status.positive}>
+                                    {status.message}
+                                  </Alert>
+                                )}
+                              </div>
+
+                              <Field
+                                as={TextField}
+                                label="What are your thoughts?"
+                                name="content"
+                                className="w-full p-2 border rounded-md bg-gray-100"
+                                multiline
+                                rows={3}
+                              />
+                              <ErrorMessage
+                                name="content"
+                                component="div"
+                                className="text-red-500 text-sm"
+                              />
+
+                              <Button
+                                size={150}
+                                content={"Create Comment"}
+                                type="submit"
+                                disabled={
+                                  isSubmitting ||
+                                  !isValid ||
+                                  status ||
+                                  user?.credentials === "SPECTATOR"
+                                }
+                              >
+                                {isSubmitting
+                                  ? "Creating Comment..."
+                                  : "Create Comment"}
+                              </Button>
+                            </Form>
+                          )}
+                        </Formik>
+                      </div>
+                    )}
+
+                    <div className="flex justify-center gap-5 mt-2">
+                      {isContentLiked(post.id) ? (
+                        <Button
+                          onClick={() => handleUnlikeContent(post.id, "post")}
+                          size={150}
+                          content={"Unlike this"}
+                          disabled={user?.credentials === "SPECTATOR"}
+                        />
+                      ) : (
+                        <Button
+                          onClick={() => handleLikeContent(post.id, "post")}
+                          size={150}
+                          content={"Like this"}
+                          disabled={user?.credentials === "SPECTATOR"}
+                        />
+                      )}
+                      <Button
+                        onClick={() =>
+                          setActiveCommentBox(
+                            activeCommentBox === post.id ? null : post.id
                           )
-                        ) : (
-                          <>
-                            <Button 
-                              size={42} 
-                              content={"🤖"}
-                              onClick={() => {
-                                if (post.author.userType === 'REGULAR' || post.author.userType === 'BOT') {
-                                  handleBotGuess(post.author.id, post.author.userType, 'BOT');
-                                }
-                              }}
-                              disabled={guessed}
-                            />
-                            <Button 
-                              size={42} 
-                              content={"🧑"}
-                              onClick={() => {
-                                if (post.author.userType === 'REGULAR' || post.author.userType === 'BOT') {
-                                  handleBotGuess(post.author.id, post.author.userType, 'REGULAR');
-                                }
-                              }}
-                              disabled={guessed}
-                            />
-                          </>
+                        }
+                        size={150}
+                        content={"Comment"}
+                        disabled={user?.credentials === "SPECTATOR"}
+                      />
+                    </div>
+
+                    {post.comments?.length > 0 && (
+                      <div className="flex flex-col mt-5 pl-4 border-l gap-5">
+                        {post.comments.map(
+                          (comment: Comment, commentIndex: number) => (
+                            <div key={commentIndex} className="mt-1">
+                              <div className="flex items-center gap-4 mb-2">
+                                <Image
+                                  className="border-2 border-blue-600 rounded-full"
+                                  width={42}
+                                  height={42}
+                                  src={comment.author?.profilePicture}
+                                  alt={`${comment.author?.name}'s avatar`}
+                                />
+                                <p className="font-bold text-black">
+                                  <Link
+                                    href={`/dashboard/users/profile?id=${comment.author?.id}`}
+                                  >
+                                    {comment.author?.name}
+                                  </Link>
+                                </p>
+                              </div>
+
+                              <p className="text-black mb-5">{comment.content}</p>
+
+                              <div className="flex gap-2 mb-2">
+                                <ThumbUpIcon
+                                  sx={{ color: "rgb(15, 119, 255)" }}
+                                />
+                                <p className="text-black">{comment.likes?.length ?? 0}</p>
+                              </div>
+
+                              {isContentLiked(comment.id) ? (
+                                <Button
+                                  onClick={() =>
+                                    handleUnlikeContent(comment.id, "comment")
+                                  }
+                                  size={150}
+                                  content={"Unlike this"}
+                                  disabled={user?.credentials === "SPECTATOR"}
+                                />
+                              ) : (
+                                <Button
+                                  onClick={() =>
+                                    handleLikeContent(comment.id, "comment")
+                                  }
+                                  size={150}
+                                  content={"Like this"}
+                                  disabled={user?.credentials === "SPECTATOR"}
+                                />
+                              )}
+                            </div>
+                          )
                         )}
                       </div>
                     )}
                   </div>
-
-                  <p className="text-black mb-5">{post.content}</p>
-                  <div className="flex gap-2 mb-2">
-                    <ThumbUpIcon sx={{ color: "rgb(15, 119, 255)" }} />
-                    <p className="text-black">{post.likes?.length ?? 0}</p>
-                  </div>
-
-                  {post.comments?.length < 1 &&
-                    (user.credentials === "SPECTATOR" ? (
-                      <p className="text-gray-500 text-center">
-                        No comments yet. Spectators can&apos;t like or create comments.
-                      </p>
-                    ) : (
-                      <p className="text-gray-500 text-center">
-                        No comments yet. Be the first to comment!
-                      </p>
-                    ))
-                  }
-
-                  {post.comments?.length > 0 && user.credentials === "SPECTATOR" && (
-                    <p className="text-gray-500 text-center">
-                      Spectators can&apos;t like or create comments.
-                    </p>
-                  )}
-
-                  <span className="block border-t border-gray-300 my-2"></span>
-
-                  {activeCommentBox === post.id && (
-                    <div className="mt-4 w-full">
-                      <Formik
-                        initialValues={{ postId: post.id, content: "" }}
-                        validationSchema={createContentSchema}
-                        onSubmit={(
-                          values,
-                          { setSubmitting, resetForm, setStatus }
-                        ) => {
-                          const contentData = { ...values };
-
-                          createComment(contentData, {
-                            onSuccess: () => {
-                              setStatus({ message: "Comment created! 🥳", positive: true });
-
-                              setTimeout(() => {
-                                resetForm();
-                              }, 3000);
-                              
-                              setTimeout(() => {
-                                setActiveCommentBox(null);
-                              }, 3000);
-
-                              setTimeout(() => setStatus(null), 3000); 
-                            },
-                            onError: (error) => {
-                              setStatus({ message: error.message, positive: false });
-                              setTimeout(() => setStatus(null), 3000);
-                            },
-                            onSettled: () => {
-                              setSubmitting(false);
-                            },
-                          });
-                        }}
-                      >
-                        {({ isSubmitting, isValid, status }) => (
-                          <Form className="space-y-4">
-                            <div>
-                              {status && (
-                                <Alert active={true} positive={status.positive}>
-                                  {status.message}
-                                </Alert>
-                              )}
-                            </div>
-
-                            <Field
-                              as={TextField}
-                              label="What are your thoughts?"
-                              name="content"
-                              className="w-full p-2 border rounded-md bg-gray-100"
-                              multiline
-                              rows={3}
-                            />
-                            <ErrorMessage
-                              name="content"
-                              component="div"
-                              className="text-red-500 text-sm"
-                            />
-
-                            <Button
-                              size={150}
-                              content={"Create Comment"}
-                              type="submit"
-                              disabled={
-                                isSubmitting ||
-                                !isValid ||
-                                status ||
-                                user?.credentials === "SPECTATOR"
-                              }
-                            >
-                              {isSubmitting
-                                ? "Creating Comment..."
-                                : "Create Comment"}
-                            </Button>
-                          </Form>
-                        )}
-                      </Formik>
-                    </div>
-                  )}
-
-                  <div className="flex justify-center gap-5 mt-2">
-                    {isContentLiked(post.id) ? (
-                      <Button
-                        onClick={() => handleUnlikeContent(post.id, "post")}
-                        size={150}
-                        content={"Unlike this"}
-                        disabled={user?.credentials === "SPECTATOR"}
-                      />
-                    ) : (
-                      <Button
-                        onClick={() => handleLikeContent(post.id, "post")}
-                        size={150}
-                        content={"Like this"}
-                        disabled={user?.credentials === "SPECTATOR"}
-                      />
-                    )}
-                    <Button
-                      onClick={() =>
-                        setActiveCommentBox(
-                          activeCommentBox === post.id ? null : post.id
-                        )
-                      }
-                      size={150}
-                      content={"Comment"}
-                      disabled={user?.credentials === "SPECTATOR"}
-                    />
-                  </div>
-
-                  {post.comments?.length > 0 && (
-                    <div className="flex flex-col mt-5 pl-4 border-l gap-5">
-                      {post.comments.map(
-                        (comment: Comment, commentIndex: number) => (
-                          <div key={commentIndex} className="mt-1">
-                            <div className="flex items-center gap-4 mb-2">
-                              <Image
-                                className="border-2 border-blue-600 rounded-full"
-                                width={42}
-                                height={42}
-                                src={comment.author?.profilePicture}
-                                alt={`${comment.author?.name}'s avatar`}
-                              />
-                              <p className="font-bold text-black">
-                                <Link
-                                  href={`/dashboard/users/profile?id=${comment.author?.id}`}
-                                >
-                                  {comment.author?.name}
-                                </Link>
-                              </p>
-                            </div>
-
-                            <p className="text-black mb-5">{comment.content}</p>
-
-                            <div className="flex gap-2 mb-2">
-                              <ThumbUpIcon
-                                sx={{ color: "rgb(15, 119, 255)" }}
-                              />
-                              <p className="text-black">{comment.likes?.length ?? 0}</p>
-                            </div>
-
-                            {isContentLiked(comment.id) ? (
-                              <Button
-                                onClick={() =>
-                                  handleUnlikeContent(comment.id, "comment")
-                                }
-                                size={150}
-                                content={"Unlike this"}
-                                disabled={user?.credentials === "SPECTATOR"}
-                              />
-                            ) : (
-                              <Button
-                                onClick={() =>
-                                  handleLikeContent(comment.id, "comment")
-                                }
-                                size={150}
-                                content={"Like this"}
-                                disabled={user?.credentials === "SPECTATOR"}
-                              />
-                            )}
-                          </div>
-                        )
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))
-            ) : (
-              <p>No posts available. Follow more people to see more stuff!</p>
-            )}
-          </div>
+                ))
+              ) : (
+                <p>No posts available. Follow more people to see more stuff!</p>
+              )}
+              
+            </div>
+          )}
         </div>
       </div>
     </ProtectedRoute>
