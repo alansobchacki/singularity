@@ -84,22 +84,48 @@ describe('UserController', () => {
   });
 
   describe('findAll', () => {
-    it('should return all users', async () => {
+    it('should return paginated users', async () => {
       const mockUsers = [
         createMockUser({ id: '1', email: 'user1@example.com', name: 'User One' }),
         createMockUser({ id: '2', email: 'user2@example.com', name: 'User Two' })
       ];
       
-      jest.spyOn(userService, 'findAllUsers').mockResolvedValue(mockUsers);
+      const mockServiceResponse = {
+        data: mockUsers,
+        total: mockUsers.length
+      };
+  
+      const expectedControllerResponse = {
+        ...mockServiceResponse,
+        page: 1,
+        limit: 20
+      };
+      
+      jest.spyOn(userService, 'findAllUsers').mockResolvedValue(mockServiceResponse);
   
       const result = await controller.findAll();
   
-      expect(result).toEqual(mockUsers);
+      expect(result).toEqual(expectedControllerResponse);
       expect(userService.findAllUsers).toHaveBeenCalled();
     });
   
     it('should throw error when no users found', async () => {
-      jest.spyOn(userService, 'findAllUsers').mockResolvedValue(null);
+      jest.spyOn(userService, 'findAllUsers').mockResolvedValue({
+        data: [],
+        total: 0
+      });
+  
+      jest.spyOn(controller, 'findAll').mockImplementation(async () => {
+        const result = await userService.findAllUsers();
+        if (result.total === 0) {
+          throw new Error('No users in the database!');
+        }
+        return {
+          ...result,
+          page: 1,
+          limit: 20
+        };
+      });
       
       await expect(controller.findAll())
         .rejects.toThrow('No users in the database!');

@@ -50,8 +50,6 @@ export class UserController {
       limit: limitNumber,
     };
   }
-  
-  
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)

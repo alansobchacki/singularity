@@ -18,6 +18,13 @@ require('dotenv').config();
 describe('UsersService', () => {
   let service: UserService;
   let mockUserRepository;
+  const mockQueryBuilder = {
+    orderBy: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    skip: jest.fn().mockReturnThis(),
+    take: jest.fn().mockReturnThis(),
+    getManyAndCount: jest.fn(),
+  };
 
   jest.mock('../../utils/toxicity-check', () => ({
     __esModule: true,
@@ -27,19 +34,13 @@ describe('UsersService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    const mockQueryBuilder = {
-      orderBy: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      getMany: jest.fn(),
-    };
-
     mockUserRepository = {
       checkToxicity: jest.fn(),
       create: jest.fn().mockImplementation((userData) => ({
         ...userData,
       })),
       save: jest.fn().mockImplementation(async (userData) => userData),
-      createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+      createQueryBuilder: jest.fn(() => mockQueryBuilder),
       findOneBy: jest.fn(),
       findOne: jest.fn(),
     };
@@ -131,40 +132,75 @@ describe('UsersService', () => {
   });
 
   describe('findAllUsers', () => {
-    it('should find all users in the database', async () => {
+    it('should find all users in the database with pagination', async () => {
       const users = [
         {
+          id: '1',
           email: 'chadwickboseman@email.com',
           name: 'Chadwick Boseman',
-          password: 'testtest',
-          userType: UserType.REGULAR,
+          bio: 'Actor',
+          profilePicture: 'avatar1.jpg',
         },
       ];
+  
+      const total = users.length;
 
-      mockUserRepository.createQueryBuilder().getMany.mockResolvedValue(users);
-
-      const result = await service.findAllUsers();
-
-      expect(result).toEqual(users);
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([users, total]);
+  
+      const result = await service.findAllUsers(1, 20);
+  
+      expect(result).toEqual({
+        data: users,
+        total: total
+      });
+  
       expect(mockUserRepository.createQueryBuilder).toHaveBeenCalledWith('authenticationUser');
-      expect(mockUserRepository.createQueryBuilder().orderBy).toHaveBeenCalled();
-      expect(mockUserRepository.createQueryBuilder().select).toHaveBeenCalled();
-      expect(mockUserRepository.createQueryBuilder().getMany).toHaveBeenCalled();
+      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('authenticationUser.createdAt', 'DESC');
+      expect(mockQueryBuilder.select).toHaveBeenCalledWith([
+        'authenticationUser.id',
+        'authenticationUser.name',
+        'authenticationUser.email',
+        'authenticationUser.bio',
+        'authenticationUser.profilePicture',
+      ]);
+      expect(mockQueryBuilder.skip).toHaveBeenCalledWith(0);
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(20);
+      expect(mockQueryBuilder.getManyAndCount).toHaveBeenCalled();
     });
-
-    it('should return an empty array if the database is empty', async () => {
-      mockUserRepository.createQueryBuilder().getMany.mockResolvedValue([]);
-
+  
+    it('should return paginated data with correct skip for page 2', async () => {
+      const emptyUsers = [];
+      const total = 0;
+  
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([emptyUsers, total]);
+  
+      const result = await service.findAllUsers(2, 10);
+  
+      expect(result).toEqual({
+        data: emptyUsers,
+        total: total
+      });
+      expect(mockQueryBuilder.skip).toHaveBeenCalledWith(10);
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(10);
+    });
+  
+    it('should use default pagination values when none are provided', async () => {
+      const emptyUsers = [];
+      const total = 0;
+  
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([emptyUsers, total]);
+  
       const result = await service.findAllUsers();
-
-      expect(result).toEqual([]);
-      expect(mockUserRepository.createQueryBuilder).toHaveBeenCalledWith('authenticationUser');
-      expect(mockUserRepository.createQueryBuilder().orderBy).toHaveBeenCalled();
-      expect(mockUserRepository.createQueryBuilder().select).toHaveBeenCalled();
-      expect(mockUserRepository.createQueryBuilder().getMany).toHaveBeenCalled();
+  
+      expect(result).toEqual({
+        data: emptyUsers,
+        total: total
+      });
+      expect(mockQueryBuilder.skip).toHaveBeenCalledWith(0);
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(20);
     });
   });
-
+  
   describe('create', () => {
     beforeEach(() => {
       (toxicityCheck.default as jest.Mock).mockClear();
