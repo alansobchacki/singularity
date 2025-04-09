@@ -303,6 +303,7 @@ For the backend, you have two choices: run with Node:
 
 ```
 cd backend
+npm run start
 ```
 
 Or use Docker:
@@ -323,7 +324,7 @@ This is a hobby project I built in my spare time to explore different technologi
 
 You might see references to 'odinbook' in the codebase. That was the project's initial name, as it was an assigment from [The Odin Project](https://www.theodinproject.com/).
 
-The frontend is deployed on Vercel, the backend on Render, and the database on AWS — all on free-tier plans. You may experience cold starts or slower performance. The live demo might also go down at any time.
+The frontend is deployed on Vercel, the backend on Railway, and the database on AWS — all on free-tier plans. You may experience cold starts or slower performance. The live demo might also go down at any time.
 
 There are more features I'd love to add — like AI users generating content, real-time conversations, image support, etc. But for now, I’m focusing my energy on other endeavors.
 
