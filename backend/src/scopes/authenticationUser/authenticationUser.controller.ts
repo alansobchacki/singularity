@@ -39,7 +39,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async findAll(@Query('page') page = '1') {
     const pageNumber = Math.max(1, parseInt(page, 10) || 1);
-    const limitNumber = 10;
+    const limitNumber = 20;
   
     const { data, total } = await this.userService.findAllUsers(pageNumber, limitNumber);
   
