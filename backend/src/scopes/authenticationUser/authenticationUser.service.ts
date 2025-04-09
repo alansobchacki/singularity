@@ -37,8 +37,10 @@ export class UserService {
     return sanitizedUser;
   }
 
-  async findAllUsers() {
-    const users = await this.userRepository
+  async findAllUsers(page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+  
+    const [users, total] = await this.userRepository
       .createQueryBuilder('authenticationUser')
       .orderBy('authenticationUser.createdAt', 'DESC')
       .select([
@@ -48,9 +50,14 @@ export class UserService {
         'authenticationUser.bio',
         'authenticationUser.profilePicture',
       ])
-      .getMany();
-
-    return users;
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+  
+    return {
+      data: users,
+      total,
+    };
   }
 
   async create(createUserDto: CreateUserDto): Promise<AuthenticationUsers> {

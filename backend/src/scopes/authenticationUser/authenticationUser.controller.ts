@@ -4,6 +4,7 @@ import {
   Body,
   Put,
   Param,
+  Query,
   Logger,
   Get,
   UseGuards,
@@ -36,15 +37,21 @@ export class UserController {
 
   @Get('all')
   @UseGuards(JwtAuthGuard)
-  async findAll() {
-    const users = await this.userService.findAllUsers();
-
-    if (!users) {
-      throw new Error('No users in the database!');
-    }
-
-    return users;
+  async findAll(@Query('page') page = '1') {
+    const pageNumber = Math.max(1, parseInt(page, 10) || 1);
+    const limitNumber = 10;
+  
+    const { data, total } = await this.userService.findAllUsers(pageNumber, limitNumber);
+  
+    return {
+      data,
+      total,
+      page: pageNumber,
+      limit: limitNumber,
+    };
   }
+  
+  
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
