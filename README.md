@@ -190,7 +190,7 @@ export const useLogin = () => {
 };
 ```
 
-A global state is set after a successfull login. The ```userId``` is often needed for other API queries, so saving it into a global state is needed to reduce API overload.
+A global state is set after a successful login. The ```userId``` is often needed for other API queries, so saving it into a global state is needed to reduce API overload.
 
 ## Responsiveness
 
