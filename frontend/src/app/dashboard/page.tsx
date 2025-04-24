@@ -8,6 +8,7 @@ import { useGetAllLikedContent } from "../../hooks/likeService/useGetAllLikedCon
 import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
 import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreatePost } from "../../hooks/postService/useCreatePost";
+import { useDeletePost } from "../../hooks/postService/useDeletePost";
 import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeContent";
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
 import { Comment } from "../../interfaces/comment/Comment";
@@ -15,6 +16,7 @@ import Post from "../../interfaces/post/Post";
 import useBotDetectionGame from "../../hooks/utility/useBotDetectionGame";
 import TextField from "@mui/material/TextField";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import DeleteIcon from "@mui/icons-material/Delete";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import CreateContentButton from "../../components/CreateContentButton";
 import Button from "../../components/Button";
@@ -30,14 +32,17 @@ const HomePage = () => {
   const { data: userLikedContent } = useGetAllLikedContent();
   const { mutate: createComment } = useCreateComment();
   const { mutate: createPost } = useCreatePost();
+  const { mutate: deletePost } = useDeletePost();
   const { mutate: createLikeContent } = useCreateLikeContent();
   const { mutate: deleteLikeContent } = useDeleteLikeContent();
   const [isCreatingPost, setIsCreatingPost] = useState(false);
-  const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);  
+  const [isDeletingContent, setIsDeletingContent] = useState(false);
+  const [activePost, setActivePost] = useState("");
+  const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
   const { makeGuess, hasGuessedPost, guessedRight } = useBotDetectionGame();
   const [guessed, setGuessed] = useState(false);
   const isContentLiked = (contentId: string) => {
-    return userLikedContent?.includes(contentId); 
+    return userLikedContent?.includes(contentId);
   };
 
   const createContentSchema = Yup.object({
@@ -49,6 +54,11 @@ const HomePage = () => {
 
   const handleCreatePost = () => {
     setIsCreatingPost(!isCreatingPost);
+  };
+
+  const handleDeletePost = (postId: string) => {
+    setIsDeletingContent(!isDeletingContent);
+    deletePost(postId);
   };
 
   const handleLikeContent = (contentId: string, type: "post" | "comment") => {
@@ -69,16 +79,20 @@ const HomePage = () => {
     deleteLikeContent(data);
   };
 
-  const handleBotGuess = (author: string, userType: 'BOT' | 'REGULAR', guess: 'BOT' | 'REGULAR') => {
+  const handleBotGuess = (
+    author: string,
+    userType: "BOT" | "REGULAR",
+    guess: "BOT" | "REGULAR"
+  ) => {
     makeGuess(author, userType, guess);
     setGuessed(true);
 
     const timer = setTimeout(() => {
       setGuessed(false);
     }, 3000);
-  
+
     return () => clearTimeout(timer);
-  }
+  };
 
   return (
     <ProtectedRoute>
@@ -128,20 +142,26 @@ const HomePage = () => {
 
                       createPost(contentData, {
                         onSuccess: () => {
-                          setStatus({ message: "Post created! 🥳", positive: true });
-  
+                          setStatus({
+                            message: "Post created! 🥳",
+                            positive: true,
+                          });
+
                           setTimeout(() => {
                             resetForm();
                           }, 3000);
-                          
+
                           setTimeout(() => {
                             setIsCreatingPost(false);
                           }, 3000);
-  
-                          setTimeout(() => setStatus(null), 3000); 
+
+                          setTimeout(() => setStatus(null), 3000);
                         },
                         onError: (error) => {
-                          setStatus({ message: error.message, positive: false });
+                          setStatus({
+                            message: error.message,
+                            positive: false,
+                          });
                           setTimeout(() => setStatus(null), 3000);
                         },
                         onSettled: () => {
@@ -218,46 +238,49 @@ const HomePage = () => {
               </p>
               <br />
               <p>
-                Much like a regular social media app, you are able to create posts, comments,
-                like content, follow users, and have followers.
+                Much like a regular social media app, you are able to create
+                posts, comments, like content, follow users, and have followers.
               </p>
               <br />
               {user?.credentials === "SPECTATOR" ? (
                 <>
                   <p>
-                    Like many popular social media platforms, this space is filled with bots.
-                    Here&apos;s the challenge: <b> Can you tell if the users below are real people?</b>
+                    Like many popular social media platforms, this space is
+                    filled with bots. Here&apos;s the challenge:{" "}
+                    <b> Can you tell if the users below are real people?</b>
                   </p>
                   <br />
                   <p>
-                    Press the 🤖 button if you think they&apos;re AI, 
-                    or the 🧑 button if they&apos;re human.
+                    Press the 🤖 button if you think they&apos;re AI, or the 🧑
+                    button if they&apos;re human.
                   </p>
                   <br />
                   <p>
-                    Sure, it might be easy since my app is fairly simple 
-                    — but what about on other more popular platforms?
+                    Sure, it might be easy since my app is fairly simple — but
+                    what about on other more popular platforms?
                   </p>
                   <br />
-                  <p>
-                    Anyway, give it a try and see for yourself. Have fun!
-                  </p>
+                  <p>Anyway, give it a try and see for yourself. Have fun!</p>
                 </>
               ) : (
                 <>
                   <p>
-                    As a regular user, your feed will only show you
-                    content that you made, and from users that you follow.
-                    Spectators will be able to view and rate your posts.
+                    As a regular user, your feed will only show you content that
+                    you made, and from users that you follow. Spectators will be
+                    able to view and rate your posts.
                   </p>
                   <br />
                   <p>
-                    But here&apos;s the challenge: 
-                    <b> Can you create content that feels convincingly human?</b>
+                    But here&apos;s the challenge:
+                    <b>
+                      {" "}
+                      Can you create content that feels convincingly human?
+                    </b>
                   </p>
                   <br />
                   <p>
-                    Let&apos;s see if your posts stand out from the AI-generated ones. Have fun! 
+                    Let&apos;s see if your posts stand out from the AI-generated
+                    ones. Have fun!
                   </p>
                 </>
               )}
@@ -303,36 +326,70 @@ const HomePage = () => {
 
                       {user.credentials === "SPECTATOR" && guessed && (
                         <Alert active={true} positive={!!guessedRight}>
-                          <p>{guessedRight ? "You guessed right! 🥳" : "You guessed wrong. 😔"}</p>
+                          <p>
+                            {guessedRight
+                              ? "You guessed right! 🥳"
+                              : "You guessed wrong. 😔"}
+                          </p>
                         </Alert>
+                      )}
+
+                      {user.id === post.author.id && (
+                        <div className="flex items-center gap-2 cursor-pointer hover:opacity-70">
+                          <DeleteIcon
+                            sx={{ color: "rgb(15, 119, 255)" }}
+                            onClick={() => {
+                              setActivePost(post.id);
+                              setIsDeletingContent(true);
+                            }}
+                          />
+                        </div>
                       )}
 
                       {user.credentials === "SPECTATOR" && (
                         <div className="flex items-center gap-2">
                           {hasGuessedPost(post.author.id) ? (
-                            post.author.userType === 'BOT' ? (
-                              <p className="text-black"><b>🤖</b></p>
+                            post.author.userType === "BOT" ? (
+                              <p className="text-black">
+                                <b>🤖</b>
+                              </p>
                             ) : (
-                              <p className="text-black"><b>🧑</b></p>
+                              <p className="text-black">
+                                <b>🧑</b>
+                              </p>
                             )
                           ) : (
                             <>
-                              <Button 
-                                size={42} 
+                              <Button
+                                size={42}
                                 content={"🤖"}
                                 onClick={() => {
-                                  if (post.author.userType === 'REGULAR' || post.author.userType === 'BOT') {
-                                    handleBotGuess(post.author.id, post.author.userType, 'BOT');
+                                  if (
+                                    post.author.userType === "REGULAR" ||
+                                    post.author.userType === "BOT"
+                                  ) {
+                                    handleBotGuess(
+                                      post.author.id,
+                                      post.author.userType,
+                                      "BOT"
+                                    );
                                   }
                                 }}
                                 disabled={guessed}
                               />
-                              <Button 
-                                size={42} 
+                              <Button
+                                size={42}
                                 content={"🧑"}
                                 onClick={() => {
-                                  if (post.author.userType === 'REGULAR' || post.author.userType === 'BOT') {
-                                    handleBotGuess(post.author.id, post.author.userType, 'REGULAR');
+                                  if (
+                                    post.author.userType === "REGULAR" ||
+                                    post.author.userType === "BOT"
+                                  ) {
+                                    handleBotGuess(
+                                      post.author.id,
+                                      post.author.userType,
+                                      "REGULAR"
+                                    );
                                   }
                                 }}
                                 disabled={guessed}
@@ -352,20 +409,21 @@ const HomePage = () => {
                     {post.comments?.length < 1 &&
                       (user.credentials === "SPECTATOR" ? (
                         <p className="text-gray-500 text-center">
-                          No comments yet. Spectators can&apos;t like or create comments.
+                          No comments yet. Spectators can&apos;t like or create
+                          comments.
                         </p>
                       ) : (
                         <p className="text-gray-500 text-center">
                           No comments yet. Be the first to comment!
                         </p>
-                      ))
-                    }
+                      ))}
 
-                    {post.comments?.length > 0 && user.credentials === "SPECTATOR" && (
-                      <p className="text-gray-500 text-center">
-                        Spectators can&apos;t like or create comments.
-                      </p>
-                    )}
+                    {post.comments?.length > 0 &&
+                      user.credentials === "SPECTATOR" && (
+                        <p className="text-gray-500 text-center">
+                          Spectators can&apos;t like or create comments.
+                        </p>
+                      )}
 
                     <span className="block border-t border-gray-300 my-2"></span>
 
@@ -382,20 +440,26 @@ const HomePage = () => {
 
                             createComment(contentData, {
                               onSuccess: () => {
-                                setStatus({ message: "Comment created! 🥳", positive: true });
+                                setStatus({
+                                  message: "Comment created! 🥳",
+                                  positive: true,
+                                });
 
                                 setTimeout(() => {
                                   resetForm();
                                 }, 3000);
-                                
+
                                 setTimeout(() => {
                                   setActiveCommentBox(null);
                                 }, 3000);
 
-                                setTimeout(() => setStatus(null), 3000); 
+                                setTimeout(() => setStatus(null), 3000);
                               },
                               onError: (error) => {
-                                setStatus({ message: error.message, positive: false });
+                                setStatus({
+                                  message: error.message,
+                                  positive: false,
+                                });
                                 setTimeout(() => setStatus(null), 3000);
                               },
                               onSettled: () => {
@@ -408,7 +472,10 @@ const HomePage = () => {
                             <Form className="space-y-4">
                               <div>
                                 {status && (
-                                  <Alert active={true} positive={status.positive}>
+                                  <Alert
+                                    active={true}
+                                    positive={status.positive}
+                                  >
                                     {status.message}
                                   </Alert>
                                 )}
@@ -499,13 +566,17 @@ const HomePage = () => {
                                 </p>
                               </div>
 
-                              <p className="text-black mb-5">{comment.content}</p>
+                              <p className="text-black mb-5">
+                                {comment.content}
+                              </p>
 
                               <div className="flex gap-2 mb-2">
                                 <ThumbUpIcon
                                   sx={{ color: "rgb(15, 119, 255)" }}
                                 />
-                                <p className="text-black">{comment.likes?.length ?? 0}</p>
+                                <p className="text-black">
+                                  {comment.likes?.length ?? 0}
+                                </p>
                               </div>
 
                               {isContentLiked(comment.id) ? (
@@ -537,15 +608,39 @@ const HomePage = () => {
               ) : (
                 <div className="flex flex-col border-b p-4 bg-gray-100 rounded-lg shadow-md">
                   <p className="text-black">
-                    No content available. Follow more people to see more stuff, 
+                    No content available. Follow more people to see more stuff,
                     create a post, or enter as a spectator.
                   </p>
                 </div>
               )}
-              
             </div>
           )}
         </div>
+
+        {isDeletingContent && (
+          <>
+            <div className="flex flex-col items-center justify-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 w-[250px] h-[250px] rounded-lg gap-2 z-10">
+              <p className="text-black text-center mb-4 p-[10px]">
+                Do you really wish to delete your post?
+              </p>
+              <Button
+                onClick={() => handleDeletePost(activePost)}
+                size={150}
+                content={"Yes"}
+              />
+              <Button
+                onClick={() => setIsDeletingContent(false)}
+                size={150}
+                content={"No"}
+              />
+            </div>
+
+            <div
+              className="fixed inset-0 bg-gray-500 bg-opacity-50 z-9"
+              onClick={() => setIsDeletingContent(false)}
+            />
+          </>
+        )}
       </div>
     </ProtectedRoute>
   );

@@ -1,5 +1,6 @@
 import {
   Controller,
+  HttpCode,
   Post,
   Body,
   Param,
@@ -48,6 +49,7 @@ export class PostController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   async removePost(@Param('id') id: string, @Request() req): Promise<void> {
     const userId = req.user?.userId;
     const userType = req.user?.userType;
