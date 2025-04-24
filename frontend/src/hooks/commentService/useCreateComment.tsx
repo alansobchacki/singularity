@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../config/axios";
+import { toast } from "react-toastify";
 import axios from "axios";
 import CreateCommentRequest from "../../interfaces/comment/CreateCommentRequest";
 import { Comment } from "../../interfaces/comment/Comment";
@@ -35,6 +36,11 @@ export const useCreateComment = () => {
         ["comments", newComment.post.id],
         (oldData) => (oldData ? [...oldData, newComment] : [newComment])
       );
+
+      toast.success("Comment created successfully! 🎉");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to create comment");
     },
   });
 };

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../config/axios";
+import { toast } from "react-toastify";
 import axios from "axios";
 import CreatePostRequest from "../../interfaces/post/CreatePostRequest";
 import Post from "../../interfaces/post/Post";
@@ -36,6 +37,11 @@ export const useCreatePost = () => {
         if (!oldData) return [newPost];
         return [...oldData, newPost];
       });
+
+      toast.success("Post created successfully! 🎉");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to delete post");
     },
   });
 };

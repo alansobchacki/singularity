@@ -1,12 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../config/axios";
+import { toast } from "react-toastify";
 import axios from "axios";
 import CreateFollowRequest from "../../interfaces/follow/CreateFollowRequest";
 import { Follow } from "../../interfaces/follow/Follow";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
-const createFollowRequest = async (data: CreateFollowRequest): Promise<Follow> => {
+const createFollowRequest = async (
+  data: CreateFollowRequest
+): Promise<Follow> => {
   try {
     const response = await api.post(`/api/v1/follow`, data);
 
@@ -26,6 +29,10 @@ export const useCreateFollowRequest = () => {
     mutationFn: createFollowRequest,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["following-requests"] });
+      toast.success("Follow request sent! 🥳");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Could not follow user");
     },
   });
 };

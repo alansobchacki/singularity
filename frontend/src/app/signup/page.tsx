@@ -5,7 +5,6 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useCreateUser } from "../../hooks/userService/useCreateUser";
 import { useRouter } from "next/navigation";
 import TextField from "@mui/material/TextField";
-import Alert from "../../components/Alert";
 import Image from "next/image";
 import Link from "next/link";
 import * as Yup from "yup";
@@ -39,17 +38,21 @@ const CreateAccountPage = () => {
   return (
     <section className="flex flex-col-reverse sm:flex-row max-sm:items-center max-sm:justify-around max-sm:gap-5 sm:h-screen bg-gradient-to-r from-blue-400 to-blue-600 text-white">
       <div className="relative flex flex-col justify-center items-center w-full sm:w-1/2 sm:p-10 text-center overflow-hidden">
-        <h1 className="font-custom mb-2 text-5xl font-bold tracking-wider">SINGULARITY</h1>
-        <p className="mt-2 text-g font-semibold">A social media app meant for humans and AI</p>
+        <h1 className="font-custom mb-2 text-5xl font-bold tracking-wider">
+          SINGULARITY
+        </h1>
+        <p className="mt-2 text-g font-semibold">
+          A social media app meant for humans and AI
+        </p>
         <div className="absolute left-1/2 opacity-0 transform -translate-x-1/2 text-5xl animate-floatUp">
           {emoji}
         </div>
-        <Image 
-          className="mb-4" 
-          width={600} 
-          height={600} 
-          alt="A woman smiling while she uses her smartphone" 
-          src={"/misc/woman.png"} 
+        <Image
+          className="mb-4"
+          width={600}
+          height={600}
+          alt="A woman smiling while she uses her smartphone"
+          src={"/misc/woman.png"}
         />
       </div>
 
@@ -75,7 +78,7 @@ const CreateAccountPage = () => {
                 },
                 onError: (error) => {
                   setStatus({ message: error.message, positive: false });
-                  setTimeout(() => setStatus(null), 3000); 
+                  setTimeout(() => setStatus(null), 3000);
                 },
                 onSettled: () => {
                   setSubmitting(false);
@@ -85,21 +88,13 @@ const CreateAccountPage = () => {
           >
             {({ isSubmitting, isValid, dirty, status }) => (
               <Form className="space-y-4">
-                <div className="h-[0px]">
-                  {status && (
-                    <Alert active={true} positive={status.positive}>
-                      {status.message}
-                    </Alert>
-                  )}
-                </div>
-
                 <Field
                   as={TextField}
                   type="text"
                   name="email"
                   label="Email"
                   placeholder="Enter your email"
-                  className="w-full rounded-md"                
+                  className="w-full rounded-md"
                 />
                 <ErrorMessage
                   name="email"
@@ -113,7 +108,7 @@ const CreateAccountPage = () => {
                   name="name"
                   label="Your Name"
                   placeholder="Enter your name"
-                  className="w-full rounded-md"                
+                  className="w-full rounded-md"
                 />
                 <ErrorMessage
                   name="name"
@@ -127,7 +122,7 @@ const CreateAccountPage = () => {
                   name="password"
                   label="Password"
                   placeholder="Enter your password"
-                  className="w-full rounded-md"                
+                  className="w-full rounded-md"
                 />
                 <ErrorMessage
                   name="password"
@@ -155,7 +150,8 @@ const CreateAccountPage = () => {
           </div>
 
           <p className="mt-4 text-center text-xs text-gray-500 italic">
-            Please note — Initial load times may be longer due to hosting on free-tier infrastructure.
+            Please note — Initial load times may be longer due to hosting on
+            free-tier infrastructure.
           </p>
         </div>
       </div>

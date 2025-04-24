@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../../config/axios";
+import { toast } from "react-toastify";
 import axios from "axios";
 import CreateUserRequest from "../../interfaces/user/CreateUserRequest";
 import { User } from "../../interfaces/user/User";
@@ -22,6 +23,12 @@ const createUser = async (data: CreateUserRequest): Promise<User> => {
 export const useCreateUser = () => {
   const mutation = useMutation<User, Error, CreateUserRequest>({
     mutationFn: createUser,
+    onSuccess: () => {
+      toast.success(`Account created successfully! 🎉`);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to create account");
+    },
   });
   return mutation;
 };

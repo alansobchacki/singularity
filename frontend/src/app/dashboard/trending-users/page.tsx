@@ -9,7 +9,6 @@ import { useGetFollowingRequests } from "../../../hooks/followService/useGetAllF
 import { User } from "../../../interfaces/user/User";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import Button from "../../../components/Button";
-import Alert from "../../../components/Alert";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -21,34 +20,9 @@ const TrendingUsersPage = () => {
   const { data: userFollowingRequests } = useGetFollowingRequests();
   const { mutate: createFollowRequest } = useCreateFollowRequest();
   const [hasMore, setHasMore] = useState(true);
-  const [alertState, setAlertState] = useState<{
-    message: string;
-    positive: boolean;
-    show: boolean;
-  }>({ message: "", positive: true, show: false });
 
-  const handleFollowAction = (followingId: string, userName: string) => {
-    createFollowRequest(
-      { followerId: user.id, followingId },
-      {
-        onSuccess: () => {
-          setAlertState({
-            message: `Follow request sent to ${userName}!`,
-            positive: true,
-            show: true,
-          });
-          setTimeout(() => setAlertState((prev) => ({ ...prev, show: false })), 3000);
-        },
-        onError: (error) => {
-          setAlertState({
-            message: error.message || "Failed to send follow request",
-            positive: false,
-            show: true,
-          });
-          setTimeout(() => setAlertState((prev) => ({ ...prev, show: false })), 3000);
-        },
-      }
-    );
+  const handleFollowAction = (followingId: string) => {
+    createFollowRequest({ followerId: user.id, followingId });
   };
 
   useEffect(() => {
@@ -83,12 +57,6 @@ const TrendingUsersPage = () => {
 
   return (
     <div className="flex flex-col w-full justify-center items-center gap-6">
-      {alertState.show && (
-        <Alert active={true} positive={alertState.positive}>
-          {alertState.message}
-        </Alert>
-      )}
-
       <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
         {user.credentials === "SPECTATOR" ? (
           <h1 className="text-black text-center">
@@ -108,7 +76,10 @@ const TrendingUsersPage = () => {
               request.following.id === trendingUser.id
           );
 
-          const refProp = index === displayedUsers.length - 1 ? { ref: lastUserElementRef } : {};
+          const refProp =
+            index === displayedUsers.length - 1
+              ? { ref: lastUserElementRef }
+              : {};
 
           return (
             <div
@@ -133,21 +104,22 @@ const TrendingUsersPage = () => {
               </div>
 
               <Button
-                onClick={() => handleFollowAction(trendingUser?.id, trendingUser?.name)}
+                onClick={() => handleFollowAction(trendingUser?.id)}
                 size={150}
                 content={isFollowingRequested ? "Request Sent" : "Follow"}
-                disabled={isFollowingRequested || user?.credentials === "SPECTATOR"}
+                disabled={
+                  isFollowingRequested || user?.credentials === "SPECTATOR"
+                }
               />
             </div>
           );
         })}
-        
+
         {isLoading && (
           <div className="flex flex-col bg-gray-100 p-4 rounded-lg gap-5">
-            <LoadingSpinner/>
+            <LoadingSpinner />
           </div>
         )}
-
       </div>
     </div>
   );

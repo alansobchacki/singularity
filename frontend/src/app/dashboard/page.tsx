@@ -16,11 +16,11 @@ import Post from "../../interfaces/post/Post";
 import useBotDetectionGame from "../../hooks/utility/useBotDetectionGame";
 import TextField from "@mui/material/TextField";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import CreateContentButton from "../../components/CreateContentButton";
 import Button from "../../components/Button";
-import Alert from "../../components/Alert";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Link from "next/link";
 import Image from "next/image";
@@ -39,7 +39,7 @@ const HomePage = () => {
   const [isDeletingContent, setIsDeletingContent] = useState(false);
   const [activePost, setActivePost] = useState("");
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
-  const { makeGuess, hasGuessedPost, guessedRight } = useBotDetectionGame();
+  const { makeGuess, hasGuessedPost } = useBotDetectionGame();
   const [guessed, setGuessed] = useState(false);
   const isContentLiked = (contentId: string) => {
     return userLikedContent?.includes(contentId);
@@ -49,7 +49,7 @@ const HomePage = () => {
     content: Yup.string()
       .min(4, "Your content must have more than 4 characters")
       .max(255, "Your content must have less than 255 characters")
-      .required("You must write valid content"),
+      .required("You must write something to make a post"),
   });
 
   const handleCreatePost = () => {
@@ -134,35 +134,13 @@ const HomePage = () => {
                   <Formik
                     initialValues={{ authorId: user.id, content: "" }}
                     validationSchema={createContentSchema}
-                    onSubmit={(
-                      values,
-                      { setSubmitting, resetForm, setStatus }
-                    ) => {
+                    onSubmit={(values, { setSubmitting, resetForm }) => {
                       const contentData = { ...values };
 
                       createPost(contentData, {
                         onSuccess: () => {
-                          setStatus({
-                            message: "Post created! 🥳",
-                            positive: true,
-                          });
-
-                          setTimeout(() => {
-                            resetForm();
-                          }, 3000);
-
-                          setTimeout(() => {
-                            setIsCreatingPost(false);
-                          }, 3000);
-
-                          setTimeout(() => setStatus(null), 3000);
-                        },
-                        onError: (error) => {
-                          setStatus({
-                            message: error.message,
-                            positive: false,
-                          });
-                          setTimeout(() => setStatus(null), 3000);
+                          resetForm();
+                          setIsCreatingPost(false);
                         },
                         onSettled: () => {
                           setSubmitting(false);
@@ -170,15 +148,8 @@ const HomePage = () => {
                       });
                     }}
                   >
-                    {({ isSubmitting, isValid, status, values }) => (
+                    {({ isSubmitting, isValid, values }) => (
                       <Form className="space-y-4">
-                        <div>
-                          {status && (
-                            <Alert active={true} positive={status.positive}>
-                              {status.message}
-                            </Alert>
-                          )}
-                        </div>
                         <Field
                           as={TextField}
                           label="What are your thoughts?"
@@ -200,7 +171,6 @@ const HomePage = () => {
                           disabled={
                             isSubmitting ||
                             !isValid ||
-                            status ||
                             !values.content.trim() ||
                             user?.credentials === "SPECTATOR"
                           }
@@ -325,19 +295,14 @@ const HomePage = () => {
                         </p>
                       </div>
 
-                      {user.credentials === "SPECTATOR" && guessed && (
-                        <Alert active={true} positive={!!guessedRight}>
-                          <p>
-                            {guessedRight
-                              ? "You guessed right! 🥳"
-                              : "You guessed wrong. 😔"}
-                          </p>
-                        </Alert>
-                      )}
-
                       {user.id === post.author.id && (
-                        <div className="flex items-center gap-2 cursor-pointer hover:opacity-70">
+                        <div className="flex items-center gap-2">
+                          <EditIcon
+                            className="cursor-pointer hover:opacity-70"
+                            sx={{ color: "rgb(15, 119, 255)" }}
+                          />
                           <DeleteIcon
+                            className="cursor-pointer hover:opacity-70"
                             sx={{ color: "rgb(15, 119, 255)" }}
                             onClick={() => {
                               setActivePost(post.id);
@@ -433,35 +398,13 @@ const HomePage = () => {
                         <Formik
                           initialValues={{ postId: post.id, content: "" }}
                           validationSchema={createContentSchema}
-                          onSubmit={(
-                            values,
-                            { setSubmitting, resetForm, setStatus }
-                          ) => {
+                          onSubmit={(values, { setSubmitting, resetForm }) => {
                             const contentData = { ...values };
 
                             createComment(contentData, {
                               onSuccess: () => {
-                                setStatus({
-                                  message: "Comment created! 🥳",
-                                  positive: true,
-                                });
-
-                                setTimeout(() => {
-                                  resetForm();
-                                }, 3000);
-
-                                setTimeout(() => {
-                                  setActiveCommentBox(null);
-                                }, 3000);
-
-                                setTimeout(() => setStatus(null), 3000);
-                              },
-                              onError: (error) => {
-                                setStatus({
-                                  message: error.message,
-                                  positive: false,
-                                });
-                                setTimeout(() => setStatus(null), 3000);
+                                resetForm();
+                                setActiveCommentBox(null);
                               },
                               onSettled: () => {
                                 setSubmitting(false);
@@ -469,19 +412,8 @@ const HomePage = () => {
                             });
                           }}
                         >
-                          {({ isSubmitting, isValid, status }) => (
+                          {({ isSubmitting, isValid, values }) => (
                             <Form className="space-y-4">
-                              <div>
-                                {status && (
-                                  <Alert
-                                    active={true}
-                                    positive={status.positive}
-                                  >
-                                    {status.message}
-                                  </Alert>
-                                )}
-                              </div>
-
                               <Field
                                 as={TextField}
                                 label="What are your thoughts?"
@@ -503,7 +435,7 @@ const HomePage = () => {
                                 disabled={
                                   isSubmitting ||
                                   !isValid ||
-                                  status ||
+                                  !values.content.trim() ||
                                   user?.credentials === "SPECTATOR"
                                 }
                               >

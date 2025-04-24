@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { api } from "../../config/axios";
 import { authStateAtom } from "../../state/authState";
+import { toast } from "react-toastify";
 import axios from "axios";
 import LoginRequest from "../../interfaces/authentication/LoginRequest";
 import AuthToken from "../../interfaces/authentication/AuthToken";
@@ -41,8 +42,15 @@ export const useLogin = () => {
       const userType = decodedToken.userType;
 
       localStorage.setItem("accessToken", data.access_token);
-      setAuthState({ id: userId, credentials: userType, isAuthenticated: true });
+      setAuthState({
+        id: userId,
+        credentials: userType,
+        isAuthenticated: true,
+      });
       router.replace("/dashboard");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to login");
     },
   });
 };

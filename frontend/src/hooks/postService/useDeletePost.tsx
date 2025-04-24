@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../config/axios";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
@@ -26,6 +27,10 @@ export const useDeletePost = () => {
     mutationFn: deletePost,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      toast.success("Post deleted successfully! 🎉");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to delete post");
     },
   });
 };
