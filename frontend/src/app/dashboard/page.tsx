@@ -170,7 +170,7 @@ const HomePage = () => {
                       });
                     }}
                   >
-                    {({ isSubmitting, isValid, status }) => (
+                    {({ isSubmitting, isValid, status, values }) => (
                       <Form className="space-y-4">
                         <div>
                           {status && (
@@ -201,6 +201,7 @@ const HomePage = () => {
                             isSubmitting ||
                             !isValid ||
                             status ||
+                            !values.content.trim() ||
                             user?.credentials === "SPECTATOR"
                           }
                         >
