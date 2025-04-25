@@ -492,7 +492,7 @@ const HomePage = () => {
         {isEditingContent && (
           <>
             <div className="flex flex-col fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 w-[400px] h-[300px] rounded-lg gap-2 p-4 z-10">
-              <div className="flex items-between p-2">
+              <div className="flex justify-between p-2">
                 <h2 className="font-bold mb-2">Editing Content</h2>
                 <CloseIcon
                   className="cursor-pointer hover:opacity-70 hover:bg-gray-300 rounded-full p-1 transition"
