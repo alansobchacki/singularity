@@ -2,7 +2,7 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
-  BadRequestException
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
@@ -54,6 +54,10 @@ export class PostService {
 
     if (!post) throw new NotFoundException('Post not found');
 
+    const isToxic = await checkToxicity(updatePostDto.content);
+
+    if (isToxic) throw new BadRequestException('Your post is too toxic.');
+
     if (post.author.id === userId || userType === 'ADMIN') {
       if (updatePostDto.content) post.content = updatePostDto.content;
 
@@ -84,37 +88,37 @@ export class PostService {
     }
 
     const posts = await this.postRepository
-    .createQueryBuilder('post')
-    .leftJoinAndSelect('post.author', 'author')
-    .leftJoinAndSelect('post.comments', 'comment')
-    .leftJoinAndSelect('post.likes', 'postLike')
-    .leftJoinAndSelect('comment.author', 'commentAuthor')
-    .leftJoinAndSelect('comment.likes', 'commentLike')
-    .orderBy('post.createdAt', 'DESC')
-    .select([
-      'post.id',
-      'post.content',
-      'post.createdAt',
-      'post.updatedAt',
-      'author.id',
-      'author.name',
-      'author.profilePicture',
-      'author.userType',
-      'postLike.id',
-      'postLike.userId',
-      'comment.id',
-      'comment.content',
-      'comment.createdAt',
-      'commentAuthor.id',
-      'commentAuthor.name',
-      'commentAuthor.profilePicture',
-      'commentAuthor.userType',
-      'commentLike.id',
-      'commentLike.userId',
-    ])
-    .getMany();
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.author', 'author')
+      .leftJoinAndSelect('post.comments', 'comment')
+      .leftJoinAndSelect('post.likes', 'postLike')
+      .leftJoinAndSelect('comment.author', 'commentAuthor')
+      .leftJoinAndSelect('comment.likes', 'commentLike')
+      .orderBy('post.createdAt', 'DESC')
+      .select([
+        'post.id',
+        'post.content',
+        'post.createdAt',
+        'post.updatedAt',
+        'author.id',
+        'author.name',
+        'author.profilePicture',
+        'author.userType',
+        'postLike.id',
+        'postLike.userId',
+        'comment.id',
+        'comment.content',
+        'comment.createdAt',
+        'commentAuthor.id',
+        'commentAuthor.name',
+        'commentAuthor.profilePicture',
+        'commentAuthor.userType',
+        'commentLike.id',
+        'commentLike.userId',
+      ])
+      .getMany();
 
-  return posts;
+    return posts;
   }
 
   async findUserAndFollowedPosts(userId: string): Promise<Post[]> {
