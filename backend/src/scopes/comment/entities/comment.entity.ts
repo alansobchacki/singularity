@@ -35,7 +35,7 @@ export class Comment {
   @ManyToOne(() => AuthenticationUsers, (user) => user.id)
   author: AuthenticationUsers;
 
-  @ManyToOne(() => Post, (post) => post.comments)
+  @ManyToOne(() => Post, (post) => post.comments, { onDelete: 'CASCADE' })
   post: Post;
 
   @OneToMany(() => Like, (like) => like.comment, { cascade: true })
