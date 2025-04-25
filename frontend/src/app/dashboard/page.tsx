@@ -8,16 +8,19 @@ import { useGetAllLikedContent } from "../../hooks/likeService/useGetAllLikedCon
 import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
 import { useCreateComment } from "../../hooks/commentService/useCreateComment";
 import { useCreatePost } from "../../hooks/postService/useCreatePost";
+import { useEditPost } from "../../hooks/postService/useEditPost";
 import { useDeletePost } from "../../hooks/postService/useDeletePost";
 import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeContent";
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
 import { Comment } from "../../interfaces/comment/Comment";
+import { toast } from "react-toastify";
 import Post from "../../interfaces/post/Post";
 import useBotDetectionGame from "../../hooks/utility/useBotDetectionGame";
 import TextField from "@mui/material/TextField";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import CreateContentButton from "../../components/CreateContentButton";
 import Button from "../../components/Button";
@@ -32,10 +35,16 @@ const HomePage = () => {
   const { data: userLikedContent } = useGetAllLikedContent();
   const { mutate: createComment } = useCreateComment();
   const { mutate: createPost } = useCreatePost();
+  const { mutate: editPost } = useEditPost();
   const { mutate: deletePost } = useDeletePost();
   const { mutate: createLikeContent } = useCreateLikeContent();
   const { mutate: deleteLikeContent } = useDeleteLikeContent();
   const [isCreatingPost, setIsCreatingPost] = useState(false);
+  const [isEditingContent, setIsEditingContent] = useState(false);
+  const [editingPost, setEditingPost] = useState<{
+    id: string;
+    content: string;
+  } | null>(null);
   const [isDeletingContent, setIsDeletingContent] = useState(false);
   const [activePost, setActivePost] = useState("");
   const [activeCommentBox, setActiveCommentBox] = useState<string | null>(null);
@@ -300,6 +309,13 @@ const HomePage = () => {
                           <EditIcon
                             className="cursor-pointer hover:opacity-70"
                             sx={{ color: "rgb(15, 119, 255)" }}
+                            onClick={() => {
+                              setIsEditingContent(true);
+                              setEditingPost({
+                                id: post.id,
+                                content: post.content,
+                              });
+                            }}
                           />
                           <DeleteIcon
                             className="cursor-pointer hover:opacity-70"
@@ -549,6 +565,86 @@ const HomePage = () => {
             </div>
           )}
         </div>
+
+        {isEditingContent && (
+          <>
+            <div className="flex flex-col fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 w-[400px] h-[300px] rounded-lg gap-2 p-4 z-10">
+              <div className="flex items-between p-2">
+                <h2 className="font-bold mb-2">Editing Content</h2>
+                <CloseIcon
+                  className="cursor-pointer hover:opacity-70 hover:bg-gray-300 rounded-full p-1 transition"
+                  onClick={() => setIsEditingContent(false)}
+                />
+              </div>
+              <Formik
+                initialValues={{
+                  postId: editingPost?.id,
+                  content: editingPost?.content,
+                }}
+                validationSchema={createContentSchema}
+                onSubmit={(values, { setSubmitting, resetForm }) => {
+                  if (!values.postId || !values.content) {
+                    toast.error("Missing post ID or content");
+                    setSubmitting(false);
+                    return;
+                  }
+
+                  editPost(
+                    { postId: values.postId, content: values.content },
+                    {
+                      onSuccess: () => {
+                        resetForm();
+                        setIsEditingContent(false);
+                      },
+                      onSettled: () => {
+                        setSubmitting(false);
+                      },
+                    }
+                  );
+                }}
+              >
+                {({ isSubmitting, isValid, values }) => (
+                  <Form className="space-y-4">
+                    <Field
+                      as={TextField}
+                      label="Edit your post"
+                      name="content"
+                      className="w-full p-2 border rounded-md bg-gray-100"
+                      multiline
+                      rows={4}
+                    />
+                    <ErrorMessage
+                      name="content"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+
+                    <div className="flex justify-center">
+                      <Button
+                        size={150}
+                        content={"Edit Content"}
+                        type="submit"
+                        disabled={
+                          isSubmitting ||
+                          !isValid ||
+                          !values.content?.trim() ||
+                          user?.credentials === "SPECTATOR"
+                        }
+                      >
+                        {isSubmitting ? "Editing..." : "Edit Content"}
+                      </Button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+            </div>
+
+            <div
+              className="fixed inset-0 bg-gray-500 bg-opacity-50 z-9"
+              onClick={() => setIsEditingContent(false)}
+            />
+          </>
+        )}
 
         {isDeletingContent && (
           <>
