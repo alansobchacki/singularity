@@ -26,19 +26,28 @@ const TrendingUsersPage = () => {
   };
 
   useEffect(() => {
-    if (usersData?.data?.length) {
-      const newUsers = usersData.data.filter(
-        (trendingUser: User) =>
-          trendingUser.id !== user.id && trendingUser.name !== "Spectator"
-      );
+    if (!usersData || !usersData.users.length) return;
 
-      setDisplayedUsers((prev) => [...prev, ...newUsers]);
+    const { page: currentPage, limit, total } = usersData.pagination;
 
-      if (page * usersData.limit >= usersData.total) {
-        setHasMore(false);
+    if (currentPage * limit >= total) setHasMore(false);
+
+    setDisplayedUsers((prevUsers) => {
+      const usersMap = new Map(prevUsers.map((u) => [u.id, u]));
+
+      for (const newUser of usersData.users) {
+        if (
+          newUser.id !== user.id &&
+          newUser.name !== "Spectator" &&
+          !usersMap.has(newUser.id)
+        ) {
+          usersMap.set(newUser.id, newUser);
+        }
       }
-    }
-  }, [usersData, page, user.id]);
+
+      return Array.from(usersMap.values());
+    });
+  }, [usersData, user.id]);
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastUserElementRef = useCallback(

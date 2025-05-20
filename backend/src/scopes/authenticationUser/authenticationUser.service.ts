@@ -37,27 +37,32 @@ export class UserService {
     return sanitizedUser;
   }
 
-  async findAllUsers(page: number = 1, limit: number = 20) {
-    const skip = (page - 1) * limit;
-  
-    const [users, total] = await this.userRepository
-      .createQueryBuilder('authenticationUser')
-      .orderBy('authenticationUser.createdAt', 'DESC')
-      .select([
-        'authenticationUser.id',
-        'authenticationUser.name',
-        'authenticationUser.email',
-        'authenticationUser.bio',
-        'authenticationUser.profilePicture',
-      ])
-      .skip(skip)
-      .take(limit)
-      .getManyAndCount();
-  
-    return {
-      data: users,
-      total,
-    };
+async findAllUsers(page: number = 1, limit: number = 20) {
+  const skip = (page - 1) * limit;
+
+  const [users, total] = await this.userRepository
+    .createQueryBuilder('authenticationUser')
+    .orderBy('authenticationUser.createdAt', 'DESC')
+    .select([
+      'authenticationUser.id',
+      'authenticationUser.name',
+      'authenticationUser.email',
+      'authenticationUser.bio',
+      'authenticationUser.profilePicture',
+    ])
+    .skip(skip)
+    .take(limit)
+    .getManyAndCount();
+
+  return [
+      {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+      ...users,
+    ];
   }
 
   async create(createUserDto: CreateUserDto): Promise<AuthenticationUsers> {
