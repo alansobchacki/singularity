@@ -174,19 +174,20 @@ const HomePage = () => {
                           className="text-red-500 text-sm"
                         />
 
-                        <Button
-                          size={150}
-                          content={"Create Post"}
-                          type="submit"
-                          disabled={
-                            isSubmitting ||
-                            !isValid ||
-                            !values.content.trim() ||
-                            user?.credentials === "SPECTATOR"
-                          }
-                        >
-                          {isSubmitting ? "Creating Post..." : "Create Post"}
-                        </Button>
+                        {user?.credentials !== "SPECTATOR" && (
+                          <Button
+                            size={150}
+                            content={"Create Post"}
+                            type="submit"
+                            disabled={
+                              isSubmitting ||
+                              !isValid ||
+                              !values.content.trim()
+                            }
+                          >
+                            {isSubmitting ? "Creating Post..." : "Create Post"}
+                         </Button>
+                        )}
                       </Form>
                     )}
                   </Formik>
@@ -315,7 +316,7 @@ const HomePage = () => {
                       (user.credentials === "SPECTATOR" ? (
                         <p className="text-gray-500 text-center">
                           No comments yet. Spectators can&apos;t like or create
-                          comments.
+                          content.
                         </p>
                       ) : (
                         <p className="text-gray-500 text-center">
@@ -326,7 +327,7 @@ const HomePage = () => {
                     {post.comments?.length > 0 &&
                       user.credentials === "SPECTATOR" && (
                         <p className="text-gray-500 text-center">
-                          Spectators can&apos;t like or create comments.
+                          Spectators can&apos;t like or create content.
                         </p>
                       )}
 
@@ -388,33 +389,32 @@ const HomePage = () => {
                       </div>
                     )}
 
-                    <div className="flex justify-center gap-5 mt-2">
-                      {isContentLiked(post.id) ? (
+                    {user?.credentials !== "SPECTATOR" && (
+                      <div className="flex justify-center gap-5 mt-2">
+                        {isContentLiked(post.id) ? (
+                          <Button
+                            onClick={() => handleUnlikeContent(post.id, "post")}
+                            size={150}
+                            content={"Unlike this"}
+                          />
+                        ) : (
+                          <Button
+                            onClick={() => handleLikeContent(post.id, "post")}
+                            size={150}
+                            content={"Like this"}
+                          />
+                        )}
                         <Button
-                          onClick={() => handleUnlikeContent(post.id, "post")}
+                          onClick={() =>
+                            setActiveCommentBox(
+                              activeCommentBox === post.id ? null : post.id
+                            )
+                          }
                           size={150}
-                          content={"Unlike this"}
-                          disabled={user?.credentials === "SPECTATOR"}
+                          content={"Comment"}
                         />
-                      ) : (
-                        <Button
-                          onClick={() => handleLikeContent(post.id, "post")}
-                          size={150}
-                          content={"Like this"}
-                          disabled={user?.credentials === "SPECTATOR"}
-                        />
-                      )}
-                      <Button
-                        onClick={() =>
-                          setActiveCommentBox(
-                            activeCommentBox === post.id ? null : post.id
-                          )
-                        }
-                        size={150}
-                        content={"Comment"}
-                        disabled={user?.credentials === "SPECTATOR"}
-                      />
-                    </div>
+                      </div>
+                    )}
 
                     {post.comments?.length > 0 && (
                       <div className="flex flex-col mt-5 pl-4 border-l gap-5">
@@ -451,24 +451,28 @@ const HomePage = () => {
                                 </p>
                               </div>
 
-                              {isContentLiked(comment.id) ? (
-                                <Button
-                                  onClick={() =>
-                                    handleUnlikeContent(comment.id, "comment")
-                                  }
-                                  size={150}
-                                  content={"Unlike this"}
-                                  disabled={user?.credentials === "SPECTATOR"}
-                                />
-                              ) : (
-                                <Button
-                                  onClick={() =>
-                                    handleLikeContent(comment.id, "comment")
-                                  }
-                                  size={150}
-                                  content={"Like this"}
-                                  disabled={user?.credentials === "SPECTATOR"}
-                                />
+                              {user?.credentials !== "SPECTATOR" && (
+                                <>
+                                  {isContentLiked(comment.id) ? (
+                                    <Button
+                                      onClick={() =>
+                                        handleUnlikeContent(comment.id, "comment")
+                                      }
+                                      size={150}
+                                      content={"Unlike this"}
+                                      disabled={user?.credentials === "SPECTATOR"}
+                                    />
+                                  ) : (
+                                    <Button
+                                      onClick={() =>
+                                        handleLikeContent(comment.id, "comment")
+                                      }
+                                      size={150}
+                                      content={"Like this"}
+                                      disabled={user?.credentials === "SPECTATOR"}
+                                    />
+                                  )}
+                                </>
                               )}
                             </div>
                           )
