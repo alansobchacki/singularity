@@ -305,7 +305,7 @@ const HomePage = () => {
                       )}
                     </div>
 
-                    <p className="text-black mb-5">{post.content}</p>
+                    <p className="text-black mb-5 break-words">{post.content}</p>
                     <div className="flex gap-2 mb-2">
                       <ThumbUpIcon sx={{ color: "rgb(15, 119, 255)" }} />
                       <p className="text-black">{post.likes?.length ?? 0}</p>
@@ -438,7 +438,7 @@ const HomePage = () => {
                                 </p>
                               </div>
 
-                              <p className="text-black mb-5">
+                              <p className="text-black mb-5 break-words">
                                 {comment.content}
                               </p>
 
