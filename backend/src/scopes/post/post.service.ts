@@ -118,6 +118,12 @@ export class PostService {
       ])
       .getMany();
 
+    for (const post of posts) {
+      post.comments.sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+    }
+
     return posts;
   }
 
@@ -168,6 +174,12 @@ export class PostService {
         'commentLike.userId',
       ])
       .getMany();
+
+    for (const post of posts) {
+      post.comments.sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+    }
 
     return posts;
   }
