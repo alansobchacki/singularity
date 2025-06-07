@@ -40,7 +40,6 @@ export class UserService {
     }
 
     await this.redisCacheService.set(cacheKey, JSON.stringify(user), 3600);
-
     return user;
   }
 
@@ -103,6 +102,7 @@ export class UserService {
       throw new Error('User not found');
     }
 
+    await this.redisCacheService.del(`user:${id}`);
     return await this.userRepository.save(user);
   }
 }
