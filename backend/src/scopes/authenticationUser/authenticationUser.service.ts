@@ -5,6 +5,7 @@ import { AuthenticationUsers } from './entities/authenticationUser.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUserByEmailDto } from './dto/find-user-by-email.dto';
+import { RedisCacheService } from '../../infrastructure/caching/redis-cache.service';
 import checkToxicity from '../../utils/toxicity-check';
 import * as bcrypt from 'bcrypt';
 
@@ -13,6 +14,7 @@ export class UserService {
   constructor(
     @InjectRepository(AuthenticationUsers)
     private readonly userRepository: Repository<AuthenticationUsers>,
+    private readonly redisCacheService: RedisCacheService,
   ) {}
 
   async findByEmail(findUserByEmailDto: FindUserByEmailDto): Promise<AuthenticationUsers> {
@@ -22,6 +24,13 @@ export class UserService {
   }
 
   async findById(id: string): Promise<AuthenticationUsers> {
+    const cacheKey = `user:${id}`;
+
+    const cachedUser = await this.redisCacheService.get(cacheKey);
+    if (cachedUser) {
+      return JSON.parse(cachedUser) as AuthenticationUsers;
+    }
+
     const user = await this.userRepository.findOne({
       where: { id },
     });
@@ -29,6 +38,8 @@ export class UserService {
     if (!user) {
       throw new Error('User not found');
     }
+
+    await this.redisCacheService.set(cacheKey, JSON.stringify(user), 3600);
 
     return user;
   }

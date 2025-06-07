@@ -10,7 +10,7 @@ import { CommentModule } from './scopes/comment/comment.module';
 import { FollowModule } from './scopes/follow/follow.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
 import { APP_GUARD } from '@nestjs/core';
-import { CacheModule } from '@nestjs/cache-manager';
+import { RedisCacheModule } from './infrastructure/caching/redis-cache-module';
 
 @Module({
   imports: [
@@ -25,7 +25,7 @@ import { CacheModule } from '@nestjs/cache-manager';
       ttl: 60000,
       limit: 100,
     }]),
-    CacheModule.register()
+    RedisCacheModule,
   ],
   controllers: [AppController],
   providers: [
