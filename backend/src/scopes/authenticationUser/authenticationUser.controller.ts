@@ -9,7 +9,9 @@ import {
   Get,
   UseGuards,
   Request,
+  UseInterceptors
 } from '@nestjs/common';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { UserService } from './authenticationUser.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -46,10 +48,14 @@ export class UserController {
     return result;
   }
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(6000) // seconds
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async getProfile(@Param('id') id: string) {
+    console.time('getProfile');
     const user = await this.userService.findById(id);
+    console.timeEnd('getProfile');
 
     if (!user) {
       throw new Error('User not found');

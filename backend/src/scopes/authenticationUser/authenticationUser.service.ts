@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthenticationUsers } from './entities/authenticationUser.entity';
@@ -15,15 +15,13 @@ export class UserService {
     private readonly userRepository: Repository<AuthenticationUsers>,
   ) {}
 
-  async findByEmail(
-    findUserByEmailDto: FindUserByEmailDto,
-  ): Promise<AuthenticationUsers> {
+  async findByEmail(findUserByEmailDto: FindUserByEmailDto): Promise<AuthenticationUsers> {
     return await this.userRepository.findOneBy({
       email: findUserByEmailDto.email,
     });
   }
 
-  async findById(id: string): Promise<any> {
+  async findById(id: string): Promise<AuthenticationUsers> {
     const user = await this.userRepository.findOne({
       where: { id },
     });
@@ -32,29 +30,27 @@ export class UserService {
       throw new Error('User not found');
     }
 
-    const { password, createdAt, updatedAt, ...sanitizedUser } = user;
-
-    return sanitizedUser;
+    return user;
   }
 
-async findAllUsers(page: number = 1, limit: number = 20) {
-  const skip = (page - 1) * limit;
+  async findAllUsers(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
 
-  const [users, total] = await this.userRepository
-    .createQueryBuilder('authenticationUser')
-    .orderBy('authenticationUser.createdAt', 'DESC')
-    .select([
-      'authenticationUser.id',
-      'authenticationUser.name',
-      'authenticationUser.email',
-      'authenticationUser.bio',
-      'authenticationUser.profilePicture',
-    ])
-    .skip(skip)
-    .take(limit)
-    .getManyAndCount();
+    const [users, total] = await this.userRepository
+      .createQueryBuilder('authenticationUser')
+      .orderBy('authenticationUser.createdAt', 'DESC')
+      .select([
+        'authenticationUser.id',
+        'authenticationUser.name',
+        'authenticationUser.email',
+        'authenticationUser.bio',
+        'authenticationUser.profilePicture',
+      ])
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
 
-  return [
+    return [
       {
         page,
         limit,
@@ -86,10 +82,7 @@ async findAllUsers(page: number = 1, limit: number = 20) {
     return await this.userRepository.save(user);
   }
 
-  async update(
-    id: string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<AuthenticationUsers> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<AuthenticationUsers> {
     const user = await this.userRepository.preload({
       id,
       ...updateUserDto,
