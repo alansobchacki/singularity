@@ -11,8 +11,8 @@ import FeedIcon from "@mui/icons-material/Feed";
 import GroupIcon from "@mui/icons-material/Group";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import LogoutIcon from "@mui/icons-material/Logout";
-import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Link from "next/link";
 
@@ -29,8 +29,8 @@ export default function DashboardLayout({
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('authState');
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("authState");
     queryClient.clear();
 
     setAuthState({ id: "", credentials: "", isAuthenticated: false });
@@ -50,28 +50,39 @@ export default function DashboardLayout({
         >
           <button
             id="close-mobile-menu-button"
-            onClick={() => setIsMobileMenuOpen(false)} 
+            onClick={() => setIsMobileMenuOpen(false)}
             className="fixed top-4 right-4 z-20 p-2 bg-blue-500 text-white rounded-lg md:hidden"
           >
             <CloseIcon />
           </button>
           <ul className="flex flex-col gap-4 pl-[20px]">
-          <h1 className="font-custom mb-2 text-3xl font-bold text-black tracking-wider">SINGULARITY</h1>
+            <h1 className="font-custom mb-2 text-3xl font-bold text-black tracking-wider">
+              SINGULARITY
+            </h1>
             <div className="flex gap-2">
               <FeedIcon className="text-black" />
-              <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link
+                href="/dashboard"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
                 <li className="font-semibold text-black">Timeline</li>
               </Link>
             </div>
             <div className="flex gap-2">
               <GroupIcon className="text-black" />
-              <Link href="/dashboard/connections" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link
+                href="/dashboard/connections"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
                 <li className="font-semibold text-black">Connections</li>
               </Link>
             </div>
             <div className="flex gap-2">
               <TrendingUpIcon className="text-black" />
-              <Link href="/dashboard/trending-users" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link
+                href="/dashboard/trending-users"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
                 <li className="font-semibold text-black">Trending Users</li>
               </Link>
             </div>
@@ -82,9 +93,9 @@ export default function DashboardLayout({
               <LogoutIcon className="text-black" />
               <button
                 className="font-semibold text-black"
-                onClick={() => { 
-                  setIsMobileMenuOpen(false)
-                  setIsLoggingOut(true)
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsLoggingOut(true);
                 }}
               >
                 Logout
@@ -95,7 +106,7 @@ export default function DashboardLayout({
 
         <button
           id="hamburger-menu-button"
-          onClick={() => setIsMobileMenuOpen(true)} 
+          onClick={() => setIsMobileMenuOpen(true)}
           className="fixed top-4 right-4 z-20 p-2 bg-blue-500 text-white rounded-lg md:hidden"
         >
           <MenuIcon />
@@ -103,7 +114,9 @@ export default function DashboardLayout({
 
         <aside className="hidden md:flex flex-col justify-between w-64 bg-gradient-to-t from-blue-500 to-blue-400 text-white p-4 sticky top-0 h-screen sm:hidden">
           <div>
-            <h1 className="font-custom mb-4 text-2xl font-bold tracking-wider pl-[20px]">SINGULARITY</h1>
+            <h1 className="font-custom mb-4 text-2xl font-bold tracking-wider pl-[20px]">
+              SINGULARITY
+            </h1>
             <ul className="flex flex-col gap-2 pl-[20px]">
               <Link
                 href={`/dashboard/users/profile?id=${currentUserData?.id}`}
@@ -116,7 +129,7 @@ export default function DashboardLayout({
                 <FeedIcon />
                 <li className="font-semibold">Timeline</li>
               </Link>
-              
+
               <Link className="flex gap-2" href="/dashboard/connections">
                 <GroupIcon />
                 <li className="font-semibold">Connections</li>
@@ -131,7 +144,6 @@ export default function DashboardLayout({
 
           <div className="pl-[20px]">
             <div className="flex gap-2">
-              
               <button
                 className="flex gap-2 font-semibold"
                 onClick={() => setIsLoggingOut(true)}
@@ -152,7 +164,11 @@ export default function DashboardLayout({
             <div className="flex flex-col items-center justify-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 w-[250px] h-[250px] rounded-lg gap-2 z-10">
               <p className="text-black mb-6">Do you really wish to logout?</p>
               <Button onClick={handleLogout} size={150} content={"Yes"} />
-              <Button onClick={() => setIsLoggingOut(false)} size={150} content={"No"} />
+              <Button
+                onClick={() => setIsLoggingOut(false)}
+                size={150}
+                content={"No"}
+              />
             </div>
 
             <div

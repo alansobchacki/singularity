@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useAtomValue } from "jotai";
 import { hydratedAuthStateAtom } from "../../state/authState";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import Greetings from "../../components/Greetings";
 import { useGetAllLikedContent } from "../../hooks/likeService/useGetAllLikedContent";
 import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
 import { useCreateComment } from "../../hooks/commentService/useCreateComment";
@@ -15,6 +14,7 @@ import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeConte
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
 import { Comment } from "../../interfaces/comment/Comment";
 import { toast } from "react-toastify";
+import Greetings from "../../components/Greetings";
 import Post from "../../interfaces/post/Post";
 import useBotDetectionGame from "../../hooks/utility/useBotDetectionGame";
 import TextField from "@mui/material/TextField";
@@ -180,13 +180,11 @@ const HomePage = () => {
                             content={"Create Post"}
                             type="submit"
                             disabled={
-                              isSubmitting ||
-                              !isValid ||
-                              !values.content.trim()
+                              isSubmitting || !isValid || !values.content.trim()
                             }
                           >
                             {isSubmitting ? "Creating Post..." : "Create Post"}
-                         </Button>
+                          </Button>
                         )}
                       </Form>
                     )}
@@ -306,7 +304,9 @@ const HomePage = () => {
                       )}
                     </div>
 
-                    <p className="text-black mb-5 break-words">{post.content}</p>
+                    <p className="text-black mb-5 break-words">
+                      {post.content}
+                    </p>
                     <div className="flex gap-2 mb-2">
                       <ThumbUpIcon sx={{ color: "rgb(15, 119, 255)" }} />
                       <p className="text-black">{post.likes?.length ?? 0}</p>
@@ -456,11 +456,16 @@ const HomePage = () => {
                                   {isContentLiked(comment.id) ? (
                                     <Button
                                       onClick={() =>
-                                        handleUnlikeContent(comment.id, "comment")
+                                        handleUnlikeContent(
+                                          comment.id,
+                                          "comment"
+                                        )
                                       }
                                       size={150}
                                       content={"Unlike this"}
-                                      disabled={user?.credentials === "SPECTATOR"}
+                                      disabled={
+                                        user?.credentials === "SPECTATOR"
+                                      }
                                     />
                                   ) : (
                                     <Button
@@ -469,7 +474,9 @@ const HomePage = () => {
                                       }
                                       size={150}
                                       content={"Like this"}
-                                      disabled={user?.credentials === "SPECTATOR"}
+                                      disabled={
+                                        user?.credentials === "SPECTATOR"
+                                      }
                                     />
                                   )}
                                 </>
