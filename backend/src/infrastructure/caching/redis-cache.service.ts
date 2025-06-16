@@ -19,4 +19,21 @@ export class RedisCacheService {
   async del(key: string): Promise<void> {
     await redisClient.del(key);
   }
+
+  async delPattern(pattern: string): Promise<void> {
+    let cursor = 0;
+    let keys: string[] = [];
+
+    do {
+      const reply = await redisClient.scan(cursor, {
+        MATCH: pattern,
+        COUNT: 100,
+      });
+
+      cursor = reply.cursor;
+      keys = reply.keys;
+
+      if (keys.length > 0) await redisClient.del(keys);
+    } while (cursor !== 0);
+  }
 }

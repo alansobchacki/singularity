@@ -17,7 +17,9 @@ export class UserService {
     private readonly redisCacheService: RedisCacheService,
   ) {}
 
-  async findByEmail(findUserByEmailDto: FindUserByEmailDto): Promise<AuthenticationUsers> {
+  async findByEmail(
+    findUserByEmailDto: FindUserByEmailDto,
+  ): Promise<AuthenticationUsers> {
     return await this.userRepository.findOneBy({
       email: findUserByEmailDto.email,
     });
@@ -45,6 +47,12 @@ export class UserService {
 
   async findAllUsers(page: number = 1, limit: number = 20) {
     const skip = (page - 1) * limit;
+    const cacheKey = `users:page:${page}`;
+
+    const cachedData = await this.redisCacheService.get(cacheKey);
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    }
 
     const [users, total] = await this.userRepository
       .createQueryBuilder('authenticationUser')
@@ -52,7 +60,6 @@ export class UserService {
       .select([
         'authenticationUser.id',
         'authenticationUser.name',
-        'authenticationUser.email',
         'authenticationUser.bio',
         'authenticationUser.profilePicture',
       ])
@@ -60,7 +67,7 @@ export class UserService {
       .take(limit)
       .getManyAndCount();
 
-    return [
+    const result = [
       {
         page,
         limit,
@@ -69,6 +76,9 @@ export class UserService {
       },
       ...users,
     ];
+
+    await this.redisCacheService.set(cacheKey, JSON.stringify(result), 604800);
+    return result;
   }
 
   async create(createUserDto: CreateUserDto): Promise<AuthenticationUsers> {
@@ -89,10 +99,14 @@ export class UserService {
       password: hashedPassword,
     });
 
+    await this.redisCacheService.delPattern(`users:page:*`);
     return await this.userRepository.save(user);
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<AuthenticationUsers> {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<AuthenticationUsers> {
     const user = await this.userRepository.preload({
       id,
       ...updateUserDto,
