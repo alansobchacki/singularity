@@ -148,11 +148,6 @@ const CreateAccountPage = () => {
               </button>
             </Link>
           </div>
-
-          <p className="mt-4 text-center text-xs text-gray-500 italic">
-            Please note — Initial load times may be longer due to hosting on
-            free-tier infrastructure.
-          </p>
         </div>
       </div>
     </section>
