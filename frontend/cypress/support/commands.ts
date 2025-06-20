@@ -12,13 +12,24 @@ Cypress.Commands.add("login", (username: string, password: string) => {
 
   cy.url().should("not.include", "/login");
   cy.contains(`Hello`).should("be.visible");
-  // cy.getCookie("accessToken").should("exist");
+});
+
+Cypress.Commands.add("spectatorLogin", () => {
+  cy.visit("/");
+
+  cy.get('[data-cy="spectator-login"]').click();
+
+  cy.wait(3000);
+
+  cy.url().should("not.include", "/login");
+  cy.contains(`Hello`).should("be.visible");
 });
 
 declare global {
   namespace Cypress {
     interface Chainable {
       login(email: string, password: string): Chainable<void>;
+      spectatorLogin(): Chainable<void>;
     }
   }
 }

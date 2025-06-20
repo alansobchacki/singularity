@@ -138,6 +138,7 @@ const LoginPage = () => {
 
           <button
             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-3 rounded-lg transition"
+            data-cy="spectator-login"
             onClick={handleSpectatorLogin}
           >
             {isSpectatorLoading ? "Entering..." : "Enter and rate users"}

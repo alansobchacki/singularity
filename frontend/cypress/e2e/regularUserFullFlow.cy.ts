@@ -1,4 +1,4 @@
-describe("Full user flow: signup → login → create post -> follow someone", () => {
+describe("Full regular user flow: signup → login → create post", () => {
   const testEmail = `testuser_${Date.now()}@example.com`;
   const testPassword = "Test1234!";
   const testName = `User ${Date.now()}`;
