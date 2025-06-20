@@ -133,7 +133,6 @@ const HomePage = () => {
                   onClick={handleCreatePost}
                   size={48}
                   state={isCreatingPost}
-                  data-cy="create-post-button"
                 />
                 <h1 className="text-black font-bold">
                   What are you thinking today? Create a new post!
@@ -168,6 +167,7 @@ const HomePage = () => {
                           className="w-full p-2 border rounded-md bg-gray-100"
                           multiline
                           rows={4}
+                          data-cy="post-content-input"
                         />
                         <ErrorMessage
                           name="content"

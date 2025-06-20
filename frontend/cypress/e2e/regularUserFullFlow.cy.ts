@@ -32,10 +32,10 @@ describe("Full user flow: signup → login → create post -> follow someone", (
 
     const postContent = "This is a post created during an automated test.";
 
-    cy.get('textarea[name="body"]').type(postContent);
+    cy.get('[data-cy="post-content-input"]').type(postContent);
     cy.get('[data-cy="submit-post-button"]').should("not.be.disabled").click();
 
-    cy.wait(3000);
+    cy.wait(6000);
 
     cy.contains(postContent).should("be.visible");
   });

@@ -24,6 +24,7 @@ const CreateContentButton = ({
         borderRadius: "50%",
         padding: "12px",
       }}
+      data-cy="create-post-button"
     >
       {state ? (
         <RemoveCircleIcon sx={{ fontSize: size }} />
