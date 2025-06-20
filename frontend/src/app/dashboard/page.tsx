@@ -133,6 +133,7 @@ const HomePage = () => {
                   onClick={handleCreatePost}
                   size={48}
                   state={isCreatingPost}
+                  data-cy="create-post-button"
                 />
                 <h1 className="text-black font-bold">
                   What are you thinking today? Create a new post!
@@ -182,6 +183,7 @@ const HomePage = () => {
                             disabled={
                               isSubmitting || !isValid || !values.content.trim()
                             }
+                            data-cy="submit-post-button"
                           >
                             {isSubmitting ? "Creating Post..." : "Create Post"}
                           </Button>
