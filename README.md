@@ -16,7 +16,7 @@ Key features:
 - [Backend](#backend)
 - [Frontend](#frontend)
 - [Installation](#installation)
-- [Additional Notes](#disclaimer)
+- [Additional Notes](#additional-notes)
 
 ---
 
@@ -195,9 +195,9 @@ I chose Next.js over React and other frontend frameworks due to:
 - Seamless deployment and performance tuning thanks to tight integration with Vercel.  
 - Automatic resizing, lazy loading, and modern formats improve load times and UX.
 
-## Global state management
+### Global state management
 
-I used Jotai as an alternative to Recoil (no longer maintained) to handle global state management.
+I used **Jotai** to handle global state management due to its minimalistic and flexible approach.
 
 ```ts
 export const useLogin = () => {
@@ -221,11 +221,40 @@ export const useLogin = () => {
 
 A global state is set after a successful login. The ```userId``` is often needed for other API queries, so saving it into a global state is needed to reduce API overload.
 
-## Responsiveness
+### Data Fetching
+
+The frontend uses **React Query (TanStack Query)** to manage asynchronous data fetching, caching, and updating. It simplifies API calls by handling loading states, caching, and refetching out of the box.
+
+Key benefits include:
+
+- Automatic caching and background updates for fresh data.
+- Declarative and consistent handling of loading, error, and success states.
+- Built-in support for query invalidation, pagination, and optimistic updates.
+
+This significantly reduces boilerplate compared to manual data fetching with `useEffect` and improves performance by preventing unnecessary network requests.
+
+### Responsiveness
 
 The app follows a desktop-first design methodology, but is also responsive on mobile devices:
 
-![odinbook-mobile](https://github.com/user-attachments/assets/56f3cea3-640f-4a6a-9b0a-4a5627db6cf4)
+![chrome_yM5SPvamEN](https://github.com/user-attachments/assets/384bf5f3-1ae4-45b4-95e1-69c85cad2b50)
+
+### End-to-End Testing
+
+End-to-end (E2E) tests are written using **Cypress** to ensure that critical user flows behave as expected in the browser.
+
+![msrdc_QThL6Emn9W](https://github.com/user-attachments/assets/36f25381-e6b3-439f-b237-a103dd1dadb0)
+
+These tests simulate real user interactions such as logging in, navigating pages, posting content, and interacting with other users. The goal is to catch regressions and verify that the app works from the user's perspective.
+
+To run E2E tests locally:
+
+```bash
+cd frontend
+npx cypress open
+```
+
+This will open the Cypress test runner. From there, you can run tests interactively.
 
 ---
 
@@ -348,7 +377,7 @@ Use whichever method you feel more comfortable with. The API will be accessible 
 
 ## Additional Notes
 
-This is a hobby project I built in my spare time to explore different technologies and experiment with full-stack development.
+This is a hobby project I built and maintain in my spare time to explore different technologies and experiment with full-stack development.
 
 The frontend is deployed on **Vercel**, the backend on **Railway**, and the database on **AWS RDS**, all running on free-tier plans. As a result, you may experience cold starts or occasional downtime when using the live demo.
 
@@ -370,7 +399,8 @@ Here are some features I plan to implement in future updates (in no particular o
 There are a few known areas that need improvement:
 
 - **Authentication** is currently handled via `localStorage`. Switching to **HttpOnly cookies** is a top priority to improve security.
-- **Timeline and comment rendering**: Posts and comments are currently rendered all at once. Comments should ideally load on demand, and the timeline should support pagination for better performance.
+- **Timeline and comment rendering**: Posts and comments are currently rendered all at once. Comments should ideally load on demand, and the timeline should support pagination for better performance. Ideally, it should also be refactored into separate `<Posts>` and `<Comments>` components to improve both performance and code readability.
+- **Better test coverage**: While the app includes unit and end-to-end tests, not all user flows and endpoints are fully covered. I focused on learning TDD by prioritizing critical paths. Expanding test coverage is a key area for future improvement.
 
 These limitations were conscious trade-offs made to prioritize functionality and learning goals during development. I plan to revisit and improve them over time.
 
