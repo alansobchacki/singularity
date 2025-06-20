@@ -35,84 +35,110 @@ const FollowsPage = () => {
       id="main-container"
       className="flex flex-col w-full justify-center items-center gap-6"
     >
+      {user.credentials !== "SPECTATOR" && (
+        <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
+          {Array.isArray(followRequests) && followRequests?.length > 0 ? (
+            followRequests.map((followRequest: Follow, index: number) => (
+              <div key={index}>
+                <p className="text-black mb-5">
+                  You have {followRequests.length} new follow requests! 🥳
+                </p>
+                <div className="flex justify-between">
+                  <div className="flex items-center gap-2">
+                    <Image
+                      className="rounded-full"
+                      width={42}
+                      height={42}
+                      src={followRequest?.follower.profilePicture}
+                      alt={`${followRequest?.follower.name}'s avatar`}
+                    />
+                    <Link
+                      href={`/dashboard/users/profile?id=${followRequest?.follower.id}`}
+                      className="font-semibold"
+                    >
+                      <p className="text-black">
+                        {followRequest?.follower.name}
+                      </p>
+                    </Link>
+                    <p className="text-black">wants to follow you.</p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() =>
+                        handleFollowAction(followRequest.id, "ACCEPTED")
+                      }
+                      size={150}
+                      content={"Accept"}
+                    />
+                    <Button
+                      onClick={() =>
+                        handleFollowAction(followRequest.id, "REJECTED")
+                      }
+                      size={150}
+                      content={"Reject"}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-black">You have no follow requests.</p>
+          )}
+        </div>
+      )}
+
       <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
-        {Array.isArray(followRequests) && followRequests?.length > 0 ? (
-          followRequests.map((followRequest: Follow, index: number) => (
-            <div key={index}>
-              <p className="text-black mb-5">
-                You have {followRequests.length} new follow requests! 🥳
+        {user.credentials === "SPECTATOR" ? (
+          <p className="text-black">
+            Spectators can&apos;t have followers 😔. If you want to build your
+            online presence,{" "}
+            <Link
+              href="/signup"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-black hover:text-black no-underline"
+            >
+              create an account
+            </Link>{" "}
+            today!
+          </p>
+        ) : (
+          <>
+            {Array.isArray(followers) && followers.length > 0 ? (
+              <p className="text-black">
+                You have {followers.length} followers!
               </p>
-              <div className="flex justify-between">
-                <div className="flex items-center gap-2">
+            ) : (
+              <p className="text-black">You have no followers 😔</p>
+            )}
+
+            {Array.isArray(followers) &&
+              followers.length > 0 &&
+              followers.map((follow: Follow, index: number) => (
+                <div
+                  key={index}
+                  className="flex items-center p-2 bg-white rounded-md my-1 mt-5 gap-2"
+                >
                   <Image
                     className="rounded-full"
                     width={42}
                     height={42}
-                    src={followRequest?.follower.profilePicture}
-                    alt={`${followRequest?.follower.name}'s avatar`}
+                    src={
+                      follow.follower?.profilePicture || "/default-avatar.png"
+                    }
+                    alt={`${follow.follower?.name || "User"}'s avatar`}
                   />
                   <Link
-                    href={`/dashboard/users/profile?id=${followRequest?.follower.id}`}
+                    href={`/dashboard/users/profile?id=${follow.follower?.id}`}
                     className="font-semibold"
                   >
-                    <p className="text-black">{followRequest?.follower.name}</p>
+                    <p className="text-black">{follow.follower?.name}</p>
                   </Link>
-                  <p className="text-black">wants to follow you.</p>
                 </div>
-
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() =>
-                      handleFollowAction(followRequest.id, "ACCEPTED")
-                    }
-                    size={150}
-                    content={"Accept"}
-                  />
-                  <Button
-                    onClick={() =>
-                      handleFollowAction(followRequest.id, "REJECTED")
-                    }
-                    size={150}
-                    content={"Reject"}
-                  />
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-black">You have no follow requests.</p>
+              ))}
+          </>
         )}
-      </div>
-
-      <div className="flex flex-col w-[75%] bg-gray-100 p-4 rounded-lg shadow-md">
-        {Array.isArray(followers) && followers?.length > 0 ? (
-          <p className="text-black">You have {followers?.length} followers!</p>
-        ) : (
-          <p className="text-black">You have no followers 😔</p>
-        )}
-
-        {Array.isArray(followers) && followers.length > 0 &&
-          followers.map((follow: Follow, index: number) => (
-            <div
-              key={index}
-              className="flex items-center p-2 bg-white rounded-md my-1 mt-5 gap-2"
-            >
-              <Image
-                className="rounded-full"
-                width={42}
-                height={42}
-                src={follow.follower?.profilePicture || "/default-avatar.png"}
-                alt={`${follow.follower?.name || "User"}'s avatar`}
-              />
-              <Link
-                href={`/dashboard/users/profile?id=${follow.follower?.id}`}
-                className="font-semibold"
-              >
-                <p className="text-black">{follow.follower?.name}</p>
-              </Link>
-            </div>
-          ))
-        }
       </div>
     </div>
   );
