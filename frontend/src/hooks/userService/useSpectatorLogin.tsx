@@ -40,7 +40,11 @@ export const useSpectatorLogin = () => {
       const userType = decodedToken.userType;
 
       localStorage.setItem("accessToken", data.access_token);
-      setAuthState({ id: userId, credentials: userType, isAuthenticated: true });
+      setAuthState({
+        id: userId,
+        credentials: userType,
+        isAuthenticated: true,
+      });
       router.replace("/dashboard");
     },
   });

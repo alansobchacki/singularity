@@ -17,7 +17,10 @@ export class AuthController {
     const spectatorEmail = process.env.SPECTATOR_EMAIL;
     const spectatorPassword = process.env.SPECTATOR_PASSWORD;
 
-    const user = await this.authService.validateUser(spectatorEmail, spectatorPassword);
+    const user = await this.authService.validateUser(
+      spectatorEmail,
+      spectatorPassword,
+    );
 
     if (!user) {
       throw new Error('Spectator login failed');
