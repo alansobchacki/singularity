@@ -6,7 +6,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUserByEmailDto } from './dto/find-user-by-email.dto';
 import { RedisCacheService } from '../../infrastructure/caching/redis-cache.service';
-import checkToxicity from '../../utils/toxicity-check';
+// Toxicity check disabled: Perspective API sunsets on 2026-12-31.
+// import checkToxicity from '../../utils/toxicity-check';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -82,9 +83,8 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<AuthenticationUsers> {
-    const isToxic = await checkToxicity(createUserDto.name);
-
-    if (isToxic) throw new BadRequestException('Your name is too toxic.');
+    // const isToxic = await checkToxicity(createUserDto.name);
+    // if (isToxic) throw new BadRequestException('Your name is too toxic.');
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(

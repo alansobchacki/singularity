@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { authStateAtom } from "../../state/authState";
+import { api } from "../../config/axios";
 import { useGetCurrentUserDetails } from "../../hooks/userService/useGetCurrentUserDetails";
 import { useQueryClient } from "@tanstack/react-query";
 import Button from "../../components/Button";
@@ -28,8 +29,8 @@ export default function DashboardLayout({
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
+  const handleLogout = async () => {
+    await api.post("/api/v1/auth/logout");
     localStorage.removeItem("authState");
     queryClient.clear();
 

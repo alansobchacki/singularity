@@ -11,7 +11,8 @@ import { Follow } from '../follow/entities/follow.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthenticationUsers } from '../authenticationUser/entities/authenticationUser.entity';
-import checkToxicity from '../../utils/toxicity-check';
+// Toxicity check disabled: Perspective API sunsets on 2026-12-31.
+// import checkToxicity from '../../utils/toxicity-check';
 
 @Injectable()
 export class PostService {
@@ -29,9 +30,9 @@ export class PostService {
 
     if (!author) throw new Error('User not found');
 
-    const isToxic = await checkToxicity(createPostDto.content);
+    // const isToxic = await checkToxicity(createPostDto.content);
 
-    if (isToxic) throw new BadRequestException('Your post is too toxic.');
+    // if (isToxic) throw new BadRequestException('Your post is too toxic.');
 
     const post = this.postRepository.create({
       content: createPostDto.content,
@@ -54,9 +55,9 @@ export class PostService {
 
     if (!post) throw new NotFoundException('Post not found');
 
-    const isToxic = await checkToxicity(updatePostDto.content);
+    // const isToxic = await checkToxicity(updatePostDto.content);
 
-    if (isToxic) throw new BadRequestException('Your post is too toxic.');
+    // if (isToxic) throw new BadRequestException('Your post is too toxic.');
 
     if (post.author.id === userId || userType === 'ADMIN') {
       if (updatePostDto.content) post.content = updatePostDto.content;

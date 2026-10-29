@@ -1,8 +1,17 @@
 import { NextConfig } from 'next';
 
 const prodDomain = process.env.NEXT_PUBLIC_AVATAR_DOMAIN;
+const apiUrl = process.env.API_URL || 'http://localhost:3800';
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: `${apiUrl}/api/v1/:path*`,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       ...(prodDomain

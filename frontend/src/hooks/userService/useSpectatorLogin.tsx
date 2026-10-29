@@ -1,18 +1,16 @@
-import { jwtDecode } from "jwt-decode";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { api } from "../../config/axios";
 import { authStateAtom } from "../../state/authState";
 import axios from "axios";
-import AuthToken from "../../interfaces/authentication/AuthToken";
-import DecodedToken from "../../interfaces/authentication/DecodedToken";
+import AuthUser from "../../interfaces/authentication/AuthUser";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
-const postSpectatorLogin = async (): Promise<AuthToken> => {
+const postSpectatorLogin = async (): Promise<AuthUser> => {
   try {
-    const response = await api.post<AuthToken>(`/api/v1/auth/spectator-login`);
+    const response = await api.post<AuthUser>(`/api/v1/auth/spectator-login`);
 
     if (response.status === 201) return response.data;
   } catch (error) {
@@ -32,17 +30,12 @@ export const useSpectatorLogin = () => {
   const [, setAuthState] = useAtom(authStateAtom);
   const router = useRouter();
 
-  const mutation = useMutation<AuthToken, Error, void>({
+  const mutation = useMutation<AuthUser, Error, void>({
     mutationFn: postSpectatorLogin,
-    onSuccess: (data) => {
-      const decodedToken: DecodedToken = jwtDecode(data.access_token);
-      const userId = decodedToken.sub;
-      const userType = decodedToken.userType;
-
-      localStorage.setItem("accessToken", data.access_token);
+    onSuccess: (user) => {
       setAuthState({
-        id: userId,
-        credentials: userType,
+        id: user.id,
+        credentials: user.userType,
         isAuthenticated: true,
       });
       router.replace("/dashboard");

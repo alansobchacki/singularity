@@ -1,6 +1,15 @@
-import { Controller, Get, Request, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Request,
+  Post,
+  UseGuards,
+  Res,
+  HttpCode,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
+import { authCookieName, authCookieOptions, authCookieMaxAge } from './constants';
 
 @Controller('/auth')
 export class AuthController {
@@ -8,12 +17,12 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  async login(@Request() req, @Res({ passthrough: true }) res: Response) {
+    return this.startSession(req.user, res);
   }
 
   @Post('spectator-login')
-  async spectatorLogin() {
+  async spectatorLogin(@Res({ passthrough: true }) res: Response) {
     const spectatorEmail = process.env.SPECTATOR_EMAIL;
     const spectatorPassword = process.env.SPECTATOR_PASSWORD;
 
@@ -26,6 +35,23 @@ export class AuthController {
       throw new Error('Spectator login failed');
     }
 
-    return this.authService.login(user);
+    return this.startSession(user, res);
+  }
+
+  @Post('logout')
+  @HttpCode(204)
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie(authCookieName, authCookieOptions);
+  }
+
+  private async startSession(user, res: Response) {
+    const { access_token } = await this.authService.login(user);
+
+    res.cookie(authCookieName, access_token, {
+      ...authCookieOptions,
+      maxAge: authCookieMaxAge,
+    });
+
+    return { id: user.id, userType: user.userType };
   }
 }
