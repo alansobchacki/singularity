@@ -2,183 +2,174 @@
 
 import { useState } from "react";
 import { useAtom } from "jotai";
-import { useRouter } from "next/navigation";
-import { authStateAtom } from "../../state/authState";
-import { api } from "../../config/axios";
-import { useGetCurrentUserDetails } from "../../hooks/userService/useGetCurrentUserDetails";
+import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import Button from "../../components/Button";
-import FeedIcon from "@mui/icons-material/Feed";
-import GroupIcon from "@mui/icons-material/Group";
+import Link from "next/link";
+import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
+import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import ProtectedRoute from "../../components/ProtectedRoute";
-import Link from "next/link";
+import { authStateAtom } from "../../state/authState";
+import { api } from "../../config/axios";
+import { useGetCurrentUserDetails } from "../../hooks/userService/useGetCurrentUserDetails";
+import Avatar from "../../components/Avatar";
+import Button from "../../components/Button";
+import Modal from "../../components/Modal";
+import ThemeToggle from "../../components/ThemeToggle";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [, setAuthState] = useAtom(authStateAtom);
-  const { data: currentUserData } = useGetCurrentUserDetails();
+const navItems = [
+  { href: "/dashboard", label: "Timeline", icon: FeedOutlinedIcon, membersOnly: false },
+  { href: "/dashboard/trending-users", label: "Trending users", icon: TrendingUpIcon, membersOnly: false },
+  { href: "/dashboard/connections", label: "Connections", icon: GroupOutlinedIcon, membersOnly: true },
+];
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [authState, setAuthState] = useAtom(authStateAtom);
+  const { data: currentUser } = useGetCurrentUserDetails(authState.isAuthenticated);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const queryClient = useQueryClient();
+  const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = async () => {
     await api.post("/api/v1/auth/logout");
-    localStorage.removeItem("authState");
     queryClient.clear();
-
     setAuthState({ id: "", credentials: "", isAuthenticated: false });
-
-    router.replace("/login");
+    setIsLoggingOut(false);
+    router.replace("/dashboard");
   };
 
-  return (
-    <ProtectedRoute>
-      <div className="flex min-h-screen">
-        <div
-          id="mobile-menu"
-          className={`fixed inset-0 bg-white z-50 flex flex-col justify-between p-6 gap-4
-            transition-transform duration-300 ease-in-out transform
-            ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
-          `}
-        >
-          <button
-            id="close-mobile-menu-button"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="fixed top-4 right-4 z-20 p-2 bg-blue-500 text-white rounded-lg md:hidden"
-          >
-            <CloseIcon />
-          </button>
-          <ul className="flex flex-col gap-4 pl-[20px]">
-            <h1 className="font-custom mb-2 text-3xl font-bold text-black tracking-wider">
-              SINGULARITY
-            </h1>
-            <div className="flex gap-2">
-              <FeedIcon className="text-black" />
-              <Link
-                href="/dashboard"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <li className="font-semibold text-black">Timeline</li>
-              </Link>
-            </div>
-            <div className="flex gap-2">
-              <GroupIcon className="text-black" />
-              <Link
-                href="/dashboard/connections"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <li className="font-semibold text-black">Connections</li>
-              </Link>
-            </div>
-            <div className="flex gap-2">
-              <TrendingUpIcon className="text-black" />
-              <Link
-                href="/dashboard/trending-users"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <li className="font-semibold text-black">Trending Users</li>
-              </Link>
-            </div>
-          </ul>
+  const sidebar = (
+    <div className="flex h-full flex-col justify-between gap-8">
+      <div className="flex flex-col gap-8">
+        <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+          <p className="font-custom text-2xl tracking-wider">SINGULARITY</p>
+        </Link>
 
-          <div className="pl-[20px]">
-            <div className="flex gap-2">
-              <LogoutIcon className="text-black" />
-              <button
-                className="font-semibold text-black"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setIsLoggingOut(true);
-                }}
+        <nav className="flex flex-col gap-1">
+          {navItems
+            .filter((item) => !item.membersOnly || authState.isAuthenticated)
+            .map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                  pathname === href
+                    ? "bg-white/20 text-white dark:bg-slate-800 dark:text-white"
+                    : "text-white hover:bg-white/10 dark:text-slate-300 dark:hover:bg-slate-800"
+                }`}
               >
-                Logout
-              </button>
-            </div>
+                <Icon fontSize="small" />
+                {label}
+              </Link>
+            ))}
+        </nav>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        {authState.isAuthenticated ? (
+          <Link
+            href={`/dashboard/users/profile?id=${authState.id}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10 dark:hover:bg-slate-800"
+          >
+            <Avatar src={currentUser?.profilePicture} name={currentUser?.name} size={32} />
+            <span className="truncate text-sm font-medium">{currentUser?.name}</span>
+          </Link>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <Link
+              href="/signup"
+              className="rounded-lg bg-white px-4 py-2 text-center text-sm font-medium text-blue-600 hover:bg-blue-50 dark:bg-emerald-500 dark:text-slate-950 dark:hover:bg-emerald-400"
+            >
+              Sign up
+            </Link>
+            <Link
+              href="/login"
+              className="rounded-lg border border-white/60 px-4 py-2 text-center text-sm font-medium text-white hover:bg-white/10 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+            >
+              Sign in
+            </Link>
+          </div>
+        )}
+
+        <div className="border-t border-white/20 pt-3 dark:border-slate-800">
+          <ThemeToggle />
+          {authState.isAuthenticated && (
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                setIsLoggingOut(true);
+              }}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white hover:bg-white/10 dark:text-slate-300 dark:hover:bg-slate-800"
+            >
+              <LogoutIcon fontSize="small" />
+              Log out
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex min-h-screen">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 p-5 bg-gradient-to-t from-blue-500 to-blue-400 text-white dark:bg-none dark:bg-slate-900 dark:text-slate-100 dark:border-r dark:border-slate-800 md:block">
+        {sidebar}
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-30 flex items-center justify-between bg-blue-500 px-4 py-3 text-white backdrop-blur dark:border-b dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-100 md:hidden">
+          <Link href="/dashboard" className="font-custom text-xl tracking-wider">
+            SINGULARITY
+          </Link>
+          <button
+            id="hamburger-menu-button"
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open menu"
+            className="rounded-lg p-2 hover:bg-white/10 dark:hover:bg-slate-800"
+          >
+            <MenuIcon />
+          </button>
+        </header>
+
+        <main className="flex-1 px-4 py-8 sm:px-6">{children}</main>
+      </div>
+
+      {isMobileMenuOpen && (
+        <div id="mobile-menu" className="fixed inset-0 z-40 md:hidden">
+          <div
+            className="absolute inset-0 bg-gray-950/50"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <div className="relative h-full w-72 p-5 bg-gradient-to-t from-blue-500 to-blue-400 text-white dark:bg-none dark:bg-slate-900 dark:text-slate-100">
+            <button
+              id="close-mobile-menu-button"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-label="Close menu"
+              className="absolute right-4 top-4 rounded-lg p-1 hover:bg-white/10 dark:hover:bg-slate-800"
+            >
+              <CloseIcon fontSize="small" />
+            </button>
+            {sidebar}
           </div>
         </div>
+      )}
 
-        <button
-          id="hamburger-menu-button"
-          onClick={() => setIsMobileMenuOpen(true)}
-          className="fixed top-4 right-4 z-20 p-2 bg-blue-500 text-white rounded-lg md:hidden"
-        >
-          <MenuIcon />
-        </button>
-
-        <aside className="hidden md:flex flex-col justify-between w-64 bg-gradient-to-t from-blue-500 to-blue-400 text-white p-4 sticky top-0 h-screen sm:hidden">
-          <div>
-            <h1 className="font-custom mb-4 text-2xl font-bold tracking-wider pl-[20px]">
-              SINGULARITY
-            </h1>
-            <ul className="flex flex-col gap-2 pl-[20px]">
-              <Link
-                href={`/dashboard/users/profile?id=${currentUserData?.id}`}
-                className="flex mb-4 font-semibold"
-              >
-                Hello, {currentUserData?.name}
-              </Link>
-
-              <Link className="flex gap-2" href="/dashboard">
-                <FeedIcon />
-                <li className="font-semibold">Timeline</li>
-              </Link>
-
-              <Link className="flex gap-2" href="/dashboard/connections">
-                <GroupIcon />
-                <li className="font-semibold">Connections</li>
-              </Link>
-
-              <Link className="flex gap-2" href="/dashboard/trending-users">
-                <TrendingUpIcon />
-                <li className="font-semibold">Trending Users</li>
-              </Link>
-            </ul>
+      {isLoggingOut && (
+        <Modal title="Do you really wish to logout?" onClose={() => setIsLoggingOut(false)}>
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={() => setIsLoggingOut(false)}>
+              No
+            </Button>
+            <Button onClick={handleLogout}>Yes</Button>
           </div>
-
-          <div className="pl-[20px]">
-            <div className="flex gap-2">
-              <button
-                className="flex gap-2 font-semibold"
-                onClick={() => setIsLoggingOut(true)}
-              >
-                <LogoutIcon />
-                Logout
-              </button>
-            </div>
-          </div>
-        </aside>
-
-        <main className="flex flex-col p-6 w-full items-center overflow-auto bg-gray-200">
-          {children}
-        </main>
-
-        {isLoggingOut && (
-          <>
-            <div className="flex flex-col items-center justify-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 w-[250px] h-[250px] rounded-lg gap-2 z-10">
-              <p className="text-black mb-6">Do you really wish to logout?</p>
-              <Button onClick={handleLogout} size={150} content={"Yes"} />
-              <Button
-                onClick={() => setIsLoggingOut(false)}
-                size={150}
-                content={"No"}
-              />
-            </div>
-
-            <div
-              className="fixed inset-0 bg-gray-500 bg-opacity-50 z-9"
-              onClick={() => setIsLoggingOut(false)}
-            />
-          </>
-        )}
-      </div>
-    </ProtectedRoute>
+        </Modal>
+      )}
+    </div>
   );
 }

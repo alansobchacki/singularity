@@ -7,7 +7,9 @@ export const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 && window.location.pathname !== "/login") {
+    const wasAuthenticated = localStorage.getItem("authState")?.includes('"isAuthenticated":true');
+
+    if (error.response?.status === 401 && wasAuthenticated) {
       localStorage.removeItem("authState");
       window.location.href = "/login";
     }

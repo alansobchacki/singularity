@@ -29,7 +29,7 @@ The backend is built using **Nest.js** and **PostgreSQL**, offering a modular, s
 | Framework | Nest.js          | Scalable Node.js framework for building APIs |
 | Database  | PostgreSQL       | Relational database for complex data models  |
 | ORM       | TypeORM          | Object-relational mapping                    |
-| Auth      | JWT, Bcrypt      | Token-based auth with hashed passwords       |
+| Auth      | JWT, Bcrypt      | JWT in httpOnly cookies, hashed passwords    |
 | Security  | CORS, Throttling | API protection and request limiting          |
 | AI        | Perspective API  | Detects toxicity in text                     |
 | Docs      | Swagger, Postman | API documentation                            |
@@ -41,6 +41,27 @@ I chose Nest.js over regular Node + Express due to:
 - Clean, scalable code organization using modules, controllers, and services.  
 - Out-of-the-box support for validation, dependency injection, guards, interceptors, and more.  
 - Full TypeScript support with strong typing and IntelliSense, making development safer and more efficient.
+
+### Authentication
+
+Users log in with email and password through Passport. On success, the API signs a JWT and sends it back in an `httpOnly` cookie, so the token is never exposed to JavaScript in the browser.
+
+```ts
+private async startSession(user, res: Response) {
+  const { access_token } = await this.authService.login(user);
+
+  res.cookie(authCookieName, access_token, {
+    ...authCookieOptions,
+    maxAge: authCookieMaxAge,
+  });
+
+  return { id: user.id, userType: user.userType };
+}
+```
+
+The cookie is `httpOnly`, `SameSite=Lax`, and `Secure` in production. Protected routes read the token from the cookie, and `POST /api/v1/auth/logout` clears it.
+
+The frontend never calls the API directly. Next.js forwards every `/api/v1/*` request to the backend, so the browser treats the cookie as first-party even when the frontend and API are hosted on different domains.
 
 ### Database schema
 
@@ -152,6 +173,8 @@ When running locally, access it at: ```http://localhost:3800/api```
 
 A Postman collection holding every endpoint is also available at ```backend/postman``` for ease of use.
 
+Both tools authenticate with the same cookie as the app: call the login endpoint first, and the cookie is sent automatically with every request after that.
+
 ### Caching
 
 To improve performance and reduce database load, the backend uses Redis as an in-memory cache for frequently accessed queries. Cached data is stored with expiration times (TTL - Time To Live) to ensure data freshness.
@@ -204,22 +227,17 @@ export const useLogin = () => {
   const [, setAuthState] = useAtom(authStateAtom);
   const router = useRouter();
 
-  return useMutation<AuthToken, Error, LoginRequest>({
+  return useMutation<AuthUser, Error, LoginRequest>({
     mutationFn: postLogin,
-    onSuccess: (data) => {
-      const decodedToken: DecodedToken = jwtDecode(data.access_token);
-      const userId = decodedToken.sub;
-      const userType = decodedToken.userType;
-
-      localStorage.setItem("accessToken", data.access_token);
-      setAuthState({ id: userId, credentials: userType, isAuthenticated: true });
+    onSuccess: (user) => {
+      setAuthState({ id: user.id, credentials: user.userType, isAuthenticated: true });
       router.replace("/dashboard");
     },
   });
 };
 ```
 
-A global state is set after a successful login. The ```userId``` is often needed for other API queries, so saving it into a global state is needed to reduce API overload.
+A global state is set after a successful login. The ```userId``` is often needed for other API queries, so saving it into a global state is needed to reduce API overload. The JWT itself lives in an `httpOnly` cookie and is never stored by the frontend. If the session expires, the next request returns a 401 and the user is sent back to the login page.
 
 ### Data Fetching
 
@@ -288,7 +306,7 @@ Create .env files in both the /frontend and /backend directories.
 For the frontend, create an .env file with these settings:
 
 ```
-NEXT_PUBLIC_API_URL=http://localhost:3800
+API_URL=http://localhost:3800
 NEXT_PUBLIC_AVATAR_DOMAIN=http://localhost:3000/avatars
 ```
 
@@ -398,7 +416,6 @@ Here are some features I plan to implement in future updates (in no particular o
 
 There are a few known areas that need improvement:
 
-- **Authentication** is currently handled via `localStorage`. Switching to **HttpOnly cookies** is a top priority to improve security.
 - **Timeline and comment rendering**: Posts and comments are currently rendered all at once. Comments should ideally load on demand, and the timeline should support pagination for better performance. Ideally, it should also be refactored into separate `<Posts>` and `<Comments>` components to improve both performance and code readability.
 - **Better test coverage**: While the app includes unit and end-to-end tests, not all user flows and endpoints are fully covered. I focused on learning TDD by prioritizing critical paths. Expanding test coverage is a key area for future improvement.
 

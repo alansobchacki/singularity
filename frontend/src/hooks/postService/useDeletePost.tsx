@@ -27,6 +27,7 @@ export const useDeletePost = () => {
     mutationFn: deletePost,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
       toast.success("Post deleted successfully! 🎉");
     },
     onError: (error) => {

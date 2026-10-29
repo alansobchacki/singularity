@@ -21,23 +21,6 @@ export class AuthController {
     return this.startSession(req.user, res);
   }
 
-  @Post('spectator-login')
-  async spectatorLogin(@Res({ passthrough: true }) res: Response) {
-    const spectatorEmail = process.env.SPECTATOR_EMAIL;
-    const spectatorPassword = process.env.SPECTATOR_PASSWORD;
-
-    const user = await this.authService.validateUser(
-      spectatorEmail,
-      spectatorPassword,
-    );
-
-    if (!user) {
-      throw new Error('Spectator login failed');
-    }
-
-    return this.startSession(user, res);
-  }
-
   @Post('logout')
   @HttpCode(204)
   logout(@Res({ passthrough: true }) res: Response) {

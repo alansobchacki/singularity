@@ -6,10 +6,12 @@ export default {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       fontFamily: {
         custom: ["OvercameDemoRegular", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "monospace"],
       },
       animation: {
         floatUp: "floatUp 6s ease-in-out infinite",

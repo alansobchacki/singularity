@@ -1,6 +1,7 @@
 describe("Homepage", () => {
-  it("loads the home page", () => {
+  it("redirects to the public timeline", () => {
     cy.visit("/");
-    cy.contains("Sign in to create content").should("be.visible");
+    cy.url().should("include", "/dashboard");
+    cy.contains("Full-stack software engineer").should("be.visible");
   });
 });

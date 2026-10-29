@@ -4,9 +4,7 @@ describe("Full regular user flow: signup → login → create post", () => {
   const testName = `User ${Date.now()}`;
 
   it("should signup a new user", () => {
-    cy.visit("/");
-
-    cy.contains("Sign up").click();
+    cy.visit("/signup");
 
     cy.url().should("include", "/signup");
     cy.get('input[name="email"]').type(testEmail);
@@ -28,7 +26,6 @@ describe("Full regular user flow: signup → login → create post", () => {
     cy.login(testEmail, testPassword);
 
     cy.visit("/dashboard");
-    cy.get('[data-cy="create-post-button"]').click();
 
     const postContent = "This is a post created during an automated test.";
 

@@ -15,7 +15,6 @@ import { CreateFollowDto } from './dto/create-follow.dto';
 import { UpdateFollowDto } from './dto/update-follow.dto';
 
 @Controller('follow')
-@UseGuards(JwtAuthGuard)
 export class FollowController {
   constructor(private readonly followService: FollowService) {}
 
@@ -25,16 +24,19 @@ export class FollowController {
   }
 
   @Get('requests')
+  @UseGuards(JwtAuthGuard)
   getAllFollowRequests(@Request() req) {
     return this.followService.getAllFollowRequests(req.user.userId);
   }
 
   @Get('following')
+  @UseGuards(JwtAuthGuard)
   getAllFollowingRequests(@Request() req) {
     return this.followService.getAllFollowingRequests(req.user.userId);
   }
 
   @Get('is-following')
+  @UseGuards(JwtAuthGuard)
   async isFollowingUser(
     @Request() req,
     @Query('followingId') followingId: string,
@@ -45,6 +47,7 @@ export class FollowController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   create(@Body() createFollowDto: CreateFollowDto, @Request() req) {
     createFollowDto.followerId = req.user?.userId;
 
@@ -52,6 +55,7 @@ export class FollowController {
   }
 
   @Put('requests/:id')
+  @UseGuards(JwtAuthGuard)
   updateFollowRequest(
     @Param('id') followId: string,
     @Body() updateFollowDto: UpdateFollowDto,

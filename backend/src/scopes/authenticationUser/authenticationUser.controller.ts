@@ -32,11 +32,11 @@ export class UserController {
       throw new Error('User not found');
     }
 
-    return user;
+    const { password, ...profile } = user;
+    return profile;
   }
 
   @Get('all')
-  @UseGuards(JwtAuthGuard)
   async findAll(@Query('page') page = '1') {
     const pageNumber = Math.max(1, parseInt(page, 10) || 1);
     const limitNumber = 20;
@@ -47,7 +47,6 @@ export class UserController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   async getProfile(@Param('id') id: string) {
     const user = await this.userService.findById(id);
 
@@ -55,7 +54,8 @@ export class UserController {
       throw new Error('User not found');
     }
 
-    return user;
+    const { password, email, ...profile } = user;
+    return profile;
   }
 
   @Post()

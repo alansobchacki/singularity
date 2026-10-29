@@ -34,6 +34,7 @@ export const useEditPost = () => {
     mutationFn: editPost,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
       toast.success("Post updated successfully! 🎉");
     },
     onError: (error) => {

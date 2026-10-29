@@ -3,9 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { PostService } from './post.service';
 import { Post } from './entities/post.entity';
-import { Follow } from '../follow/entities/follow.entity';
 import { AuthenticationUsers } from '../authenticationUser/entities/authenticationUser.entity';
-import { UnauthorizedException } from '@nestjs/common';
 
 const createMockQueryBuilder = (mockResults: any[] = []) => {
   return {
@@ -33,7 +31,6 @@ const createMockQueryBuilder = (mockResults: any[] = []) => {
 describe('PostService', () => {
   let service: PostService;
   let postRepository: Repository<Post>;
-  let followRepository: Repository<Follow>;
   let userRepository: Repository<AuthenticationUsers>;
 
   const mockUser: AuthenticationUsers = {
@@ -54,19 +51,10 @@ describe('PostService', () => {
     updatedAt: new Date(),
   };
 
-  const mockFollowedUser: AuthenticationUsers = {
+  const mockOtherUser: AuthenticationUsers = {
     ...mockUser,
     id: 'user-2',
-    name: 'Followed User'
-  };
-
-  const mockFollow: Follow = {
-    id: 'follow-1',
-    follower: mockUser,
-    following: mockFollowedUser,
-    status: 'ACCEPTED',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    name: 'Other User'
   };
 
   const mockUserPost: Post = {
@@ -79,10 +67,10 @@ describe('PostService', () => {
     updatedAt: new Date(),
   };
 
-  const mockFollowedUserPost: Post = {
+  const mockOtherUserPost: Post = {
     id: 'post-2',
-    content: 'Followed user post content',
-    author: mockFollowedUser,
+    content: 'Other user post content',
+    author: mockOtherUser,
     comments: [],
     likes: [],
     createdAt: new Date(),
@@ -104,13 +92,6 @@ describe('PostService', () => {
           },
         },
         {
-          provide: getRepositoryToken(Follow),
-          useValue: {
-            find: jest.fn().mockResolvedValue([mockFollow]),
-            createQueryBuilder: jest.fn(() => createMockQueryBuilder()),
-          },
-        },
-        {
           provide: getRepositoryToken(AuthenticationUsers),
           useValue: {
             findOne: jest.fn().mockResolvedValue(mockUser),
@@ -121,7 +102,6 @@ describe('PostService', () => {
 
     service = module.get<PostService>(PostService);
     postRepository = module.get<Repository<Post>>(getRepositoryToken(Post));
-    followRepository = module.get<Repository<Follow>>(getRepositoryToken(Follow));
     userRepository = module.get<Repository<AuthenticationUsers>>(getRepositoryToken(AuthenticationUsers));
   });
 
@@ -129,19 +109,17 @@ describe('PostService', () => {
     jest.clearAllMocks();
   });
 
-  describe('findUserAndFollowedPosts()', () => {
-    it('should return posts from user and followed users', async () => {
+  describe('findEveryPost()', () => {
+    it('should return posts from every user', async () => {
       const mockQueryBuilder = createMockQueryBuilder([
         mockUserPost,
-        mockFollowedUserPost
+        mockOtherUserPost
       ]);
-      
+
       jest.spyOn(postRepository, 'createQueryBuilder')
         .mockImplementation(() => mockQueryBuilder);
 
-      jest.spyOn(followRepository, 'find').mockResolvedValue([mockFollow]);
-
-      const result = await service.findUserAndFollowedPosts(mockUser.id);
+      const result = await service.findEveryPost();
 
       expect(result).toHaveLength(2);
       expect(result).toEqual(
@@ -150,42 +128,7 @@ describe('PostService', () => {
           expect.objectContaining({ id: 'post-2' })
         ])
       );
-
-      expect(followRepository.find).toHaveBeenCalledWith({
-        where: { 
-          follower: { id: mockUser.id },
-          status: 'ACCEPTED'
-        },
-        relations: ['following']
-      });
-
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith(
-        'post.author.id IN (:...userAndFollowedIds)',
-        { userAndFollowedIds: [mockUser.id, mockFollowedUser.id] }
-      );
-    });
-
-    it('should return only user posts when no follows exist', async () => {
-      const mockQueryBuilder = createMockQueryBuilder([mockUserPost]);
-      
-      jest.spyOn(postRepository, 'createQueryBuilder')
-        .mockImplementation(() => mockQueryBuilder);
-
-      jest.spyOn(followRepository, 'find').mockResolvedValue([]);
-
-      const result = await service.findUserAndFollowedPosts(mockUser.id);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('post-1');
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith(
-        'post.author.id IN (:...userAndFollowedIds)',
-        { userAndFollowedIds: [mockUser.id] }
-      );
-    });
-
-    it('should throw when user is not authenticated', async () => {
-      await expect(service.findUserAndFollowedPosts(''))
-        .rejects.toThrow(UnauthorizedException);
+      expect(mockQueryBuilder.where).not.toHaveBeenCalled();
     });
   });
 });

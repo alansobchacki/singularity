@@ -68,8 +68,9 @@ describe('UserController', () => {
   
       const mockRequest = { user: { userId: '1' } };
       const result = await controller.getCurrentUserProfile(mockRequest);
-  
-      expect(result).toEqual(mockUser);
+      const { password, ...profile } = mockUser;
+
+      expect(result).toEqual(profile);
       expect(userService.findById).toHaveBeenCalledWith('1');
     });
   
@@ -139,8 +140,9 @@ describe('UserController', () => {
       jest.spyOn(userService, 'findById').mockResolvedValue(mockUser);
   
       const result = await controller.getProfile('1');
+      const { password, email, ...profile } = mockUser;
   
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(profile);
       expect(userService.findById).toHaveBeenCalledWith('1');
     });
   
