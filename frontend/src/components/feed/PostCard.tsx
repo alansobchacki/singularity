@@ -15,6 +15,7 @@ import Post from "../../interfaces/post/Post";
 import Avatar from "../Avatar";
 import Button from "../Button";
 import Modal from "../Modal";
+import Skeleton from "../Skeleton";
 import ActionButton from "./ActionButton";
 import CommentForm from "./CommentForm";
 import EditPostModal from "./EditPostModal";
@@ -40,9 +41,31 @@ const formatDate = (date?: Date | string) =>
 
 const profileLink = (userId: string) => `/dashboard/users/profile?id=${userId}`;
 
+interface LikeButtonProps {
+  count: number;
+  liked: boolean;
+  loading: boolean;
+  disabled: boolean;
+  title?: string;
+  iconSize: number;
+  className?: string;
+  onClick: () => void;
+}
+
+const LikeButton = ({ count, liked, loading, iconSize, className = "", ...props }: LikeButtonProps) => {
+  if (loading) return <Skeleton className={`h-7 w-12 rounded-md ${className}`} />;
+
+  return (
+    <ActionButton active={liked} className={className} {...props}>
+      {liked ? <ThumbUpIcon sx={{ fontSize: iconSize }} /> : <ThumbUpOutlinedIcon sx={{ fontSize: iconSize }} />}
+      {count}
+    </ActionButton>
+  );
+};
+
 const PostCard = ({ post, guess }: PostCardProps) => {
   const user = useAtomValue(hydratedAuthStateAtom);
-  const { data: likedIds } = useGetAllLikedContent(user.isAuthenticated);
+  const { data: likedIds, isLoading: isLoadingLikes } = useGetAllLikedContent(user.isAuthenticated);
   const { mutate: likeContent } = useCreateLikeContent();
   const { mutate: unlikeContent } = useDeleteLikeContent();
   const { mutate: deletePost } = useDeletePost();
@@ -111,19 +134,15 @@ const PostCard = ({ post, guess }: PostCardProps) => {
       <p className="mt-3 whitespace-pre-wrap break-words leading-relaxed">{post.content}</p>
 
       <footer className="mt-4 flex items-center gap-1 border-t border-gray-300 pt-3 dark:border-slate-800">
-        <ActionButton
-          active={isLiked(post.id)}
+        <LikeButton
+          count={post.likes?.length ?? 0}
+          liked={isLiked(post.id)}
+          loading={isLoadingLikes}
           disabled={!user.isAuthenticated}
           title={memberOnlyTitle}
+          iconSize={18}
           onClick={() => toggleLike(post.id, "post")}
-        >
-          {isLiked(post.id) ? (
-            <ThumbUpIcon sx={{ fontSize: 18 }} />
-          ) : (
-            <ThumbUpOutlinedIcon sx={{ fontSize: 18 }} />
-          )}
-          {post.likes?.length ?? 0}
-        </ActionButton>
+        />
         <ActionButton
           active={isCommenting}
           disabled={!user.isAuthenticated}
@@ -149,20 +168,16 @@ const PostCard = ({ post, guess }: PostCardProps) => {
                 <span className="dark:font-mono text-xs text-muted">{formatDate(comment.createdAt)}</span>
               </div>
               <p className="mt-1 whitespace-pre-wrap break-words text-sm">{comment.content}</p>
-              <ActionButton
+              <LikeButton
                 className="mt-1 -ml-2"
-                active={isLiked(comment.id)}
+                count={comment.likes?.length ?? 0}
+                liked={isLiked(comment.id)}
+                loading={isLoadingLikes}
                 disabled={!user.isAuthenticated}
                 title={memberOnlyTitle}
+                iconSize={16}
                 onClick={() => toggleLike(comment.id, "comment")}
-              >
-                {isLiked(comment.id) ? (
-                  <ThumbUpIcon sx={{ fontSize: 16 }} />
-                ) : (
-                  <ThumbUpOutlinedIcon sx={{ fontSize: 16 }} />
-                )}
-                {comment.likes?.length ?? 0}
-              </ActionButton>
+              />
             </li>
           ))}
         </ul>

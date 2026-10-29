@@ -57,7 +57,11 @@ export class FollowService {
   async getAllFollowRequests(userId: string) {
     const followRequests = await this.followRepository.find({
       where: { following: { id: userId }, status: 'PENDING' },
-      relations: ['follower', 'following'],
+      relations: ['follower'],
+      select: {
+        id: true,
+        follower: { id: true, name: true, profilePicture: true },
+      },
     });
 
     return followRequests;

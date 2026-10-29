@@ -133,10 +133,10 @@ describe('PostController', () => {
   });
 
   describe('getTimeline()', () => {
-    it('should return every post', async () => {
-      const result = await controller.getTimeline();
+    it('should return the requested page of posts', async () => {
+      const result = await controller.getTimeline('2');
       expect(result).toEqual([mockPost]);
-      expect(postService.findEveryPost).toHaveBeenCalled();
+      expect(postService.findEveryPost).toHaveBeenCalledWith(2, 10);
     });
   });
 

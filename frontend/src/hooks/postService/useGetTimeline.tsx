@@ -1,13 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { api } from "../../config/axios";
 import axios from "axios";
-import Post from "../../interfaces/post/Post";
+import TimelinePage from "../../interfaces/post/TimelinePage";
 
 const unexpectedErrorText = "Unexpected error. Please try again.";
 
-const getTimeline = async (): Promise<Post[]> => {
+const getTimelinePage = async (page: number): Promise<TimelinePage> => {
   try {
-    const response = await api.get("/api/v1/posts/timeline");
+    const response = await api.get(`/api/v1/posts/timeline?page=${page}`);
 
     if (response.status === 200) return response.data;
   } catch (err) {
@@ -19,9 +19,11 @@ const getTimeline = async (): Promise<Post[]> => {
 };
 
 export const useGetTimeline = () => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["timeline"],
-    queryFn: getTimeline,
+    queryFn: ({ pageParam }) => getTimelinePage(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });

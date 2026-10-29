@@ -80,8 +80,11 @@ export class PostService {
     }
   }
 
-  async findEveryPost(): Promise<Post[]> {
-    const posts = await this.postRepository
+  async findEveryPost(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ posts: Post[]; nextPage: number | null }> {
+    const [posts, total] = await this.postRepository
       .createQueryBuilder('post')
       .leftJoinAndSelect('post.author', 'author')
       .leftJoinAndSelect('post.comments', 'comment')
@@ -110,7 +113,9 @@ export class PostService {
         'commentLike.id',
         'commentLike.userId',
       ])
-      .getMany();
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
 
     for (const post of posts) {
       post.comments.sort(
@@ -118,7 +123,7 @@ export class PostService {
       );
     }
 
-    return posts;
+    return { posts, nextPage: page * limit < total ? page + 1 : null };
   }
 
   async findUserPosts(userId: string): Promise<Post[]> {

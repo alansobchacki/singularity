@@ -7,6 +7,7 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { Throttle } from '@nestjs/throttler';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
 import { authCookieName, authCookieOptions, authCookieMaxAge } from './constants';
@@ -15,6 +16,7 @@ import { authCookieName, authCookieOptions, authCookieMaxAge } from './constants
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req, @Res({ passthrough: true }) res: Response) {

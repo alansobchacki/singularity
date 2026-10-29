@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
   UnauthorizedException,
+  Query,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -60,8 +61,10 @@ export class PostController {
   }
 
   @Get('timeline')
-  async getTimeline(): Promise<PostEntity[]> {
-    return this.postService.findEveryPost();
+  async getTimeline(@Query('page') page = '1') {
+    const pageNumber = Math.max(1, parseInt(page, 10) || 1);
+
+    return this.postService.findEveryPost(pageNumber, 10);
   }
 
   @Get(':userId')

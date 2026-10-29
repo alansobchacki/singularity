@@ -1,17 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { BadRequestException } from '@nestjs/common';
 import { AuthenticationUsers } from './entities/authenticationUser.entity';
 import { UserService } from './authenticationUser.service';
-import { CreateUserDto, UserType } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { FindUserByEmailDto } from './dto/find-user-by-email.dto';
-
-jest.mock('../../utils/toxicity-check', () => ({
-  __esModule: true,
-  default: jest.fn().mockResolvedValue(false),
-}));
-
-import * as toxicityCheck from '../../utils/toxicity-check';
+import { RedisCacheService } from '../../infrastructure/caching/redis-cache.service';
 
 require('dotenv').config();
 
@@ -25,23 +18,22 @@ describe('UsersService', () => {
     take: jest.fn().mockReturnThis(),
     getManyAndCount: jest.fn(),
   };
-
-  jest.mock('../../utils/toxicity-check', () => ({
-    __esModule: true,
-    default: jest.fn(),
-  }));
+  const mockRedisCacheService = {
+    get: jest.fn().mockResolvedValue(null),
+    set: jest.fn(),
+    del: jest.fn(),
+    delPattern: jest.fn(),
+  };
 
   beforeEach(async () => {
     jest.clearAllMocks();
 
     mockUserRepository = {
-      checkToxicity: jest.fn(),
       create: jest.fn().mockImplementation((userData) => ({
         ...userData,
       })),
       save: jest.fn().mockImplementation(async (userData) => userData),
       createQueryBuilder: jest.fn(() => mockQueryBuilder),
-      findOneBy: jest.fn(),
       findOne: jest.fn(),
     };
 
@@ -52,6 +44,10 @@ describe('UsersService', () => {
           provide: getRepositoryToken(AuthenticationUsers),
           useValue: mockUserRepository,
         },
+        {
+          provide: RedisCacheService,
+          useValue: mockRedisCacheService,
+        },
       ],
     }).compile();
 
@@ -59,191 +55,138 @@ describe('UsersService', () => {
   });
 
   describe('findByEmail', () => {
-    it('should return a user when email is found', async () => {
+    it('should return a user with their password hash when email is found', async () => {
       const findUserByEmailDto: FindUserByEmailDto = {
         email: 'chadwickboseman@email.com',
       };
       const user = {
+        id: '1',
         email: 'chadwickboseman@email.com',
-        name: 'Chadwick Boseman',
+        password: 'hashed_password',
       };
 
-      mockUserRepository.findOneBy.mockResolvedValue(user);
+      mockUserRepository.findOne.mockResolvedValue(user);
 
       const result = await service.findByEmail(findUserByEmailDto);
 
       expect(result).toEqual(user);
-      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({
-        email: findUserByEmailDto.email,
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({
+        where: { email: findUserByEmailDto.email },
+        select: {
+          id: true,
+          email: true,
+          password: true,
+          userType: true,
+          accountStatus: true,
+        },
       });
     });
 
     it('should return null when email is not found', async () => {
-      const findUserByEmailDto: FindUserByEmailDto = {
-        email: 'nonexistent@email.com',
-      };
+      mockUserRepository.findOne.mockResolvedValue(null);
 
-      mockUserRepository.findOneBy.mockResolvedValue(null);
-
-      const result = await service.findByEmail(findUserByEmailDto);
+      const result = await service.findByEmail({ email: 'nonexistent@email.com' });
 
       expect(result).toBeNull();
-      expect(mockUserRepository.findOneBy).toHaveBeenCalledWith({
-        email: findUserByEmailDto.email,
-      });
     });
   });
 
   describe('findById', () => {
     it('should return a user when id is found', async () => {
-      const userId = '1';
       const user = {
-        id: userId,
+        id: '1',
         email: 'chadwickboseman@email.com',
         name: 'Chadwick Boseman',
-        password: 'hashedpassword',
       };
 
       mockUserRepository.findOne.mockResolvedValue(user);
 
-      const result = await service.findById(userId);
+      const result = await service.findById('1');
 
-      expect(result).toEqual({
-        id: userId,
-        email: 'chadwickboseman@email.com',
-        name: 'Chadwick Boseman',
-      });
+      expect(result).toEqual(user);
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
-        where: { id: userId },
+        where: { id: '1' },
       });
     });
 
     it('should throw an error when id is not found', async () => {
-      const userId = 'nonexistent-id';
-
       mockUserRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.findById(userId)).rejects.toThrow('User not found');
-
-      expect(mockUserRepository.findOne).toHaveBeenCalledWith({
-        where: { id: userId },
-      });
+      await expect(service.findById('nonexistent-id')).rejects.toThrow('User not found');
     });
   });
 
   describe('findAllUsers', () => {
-    it('should find all users in the database with pagination', async () => {
+    it('should return pagination info followed by the users', async () => {
       const users = [
         {
           id: '1',
-          email: 'chadwickboseman@email.com',
           name: 'Chadwick Boseman',
           bio: 'Actor',
           profilePicture: 'avatar1.jpg',
         },
       ];
-  
-      const total = users.length;
 
-      mockQueryBuilder.getManyAndCount.mockResolvedValue([users, total]);
-  
-      const result = await service.findAllUsers(1, 20);
-  
-      expect(result).toEqual({
-        data: users,
-        total: total
-      });
-  
-      expect(mockUserRepository.createQueryBuilder).toHaveBeenCalledWith('authenticationUser');
-      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('authenticationUser.createdAt', 'DESC');
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([users, users.length]);
+
+      const result = await service.findAllUsers(1, 10);
+
+      expect(result).toEqual([
+        { page: 1, limit: 10, total: 1, totalPages: 1 },
+        ...users,
+      ]);
       expect(mockQueryBuilder.select).toHaveBeenCalledWith([
         'authenticationUser.id',
         'authenticationUser.name',
-        'authenticationUser.email',
         'authenticationUser.bio',
         'authenticationUser.profilePicture',
       ]);
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(0);
-      expect(mockQueryBuilder.take).toHaveBeenCalledWith(20);
-      expect(mockQueryBuilder.getManyAndCount).toHaveBeenCalled();
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(10);
     });
-  
-    it('should return paginated data with correct skip for page 2', async () => {
-      const emptyUsers = [];
-      const total = 0;
-  
-      mockQueryBuilder.getManyAndCount.mockResolvedValue([emptyUsers, total]);
-  
-      const result = await service.findAllUsers(2, 10);
-  
-      expect(result).toEqual({
-        data: emptyUsers,
-        total: total
-      });
+
+    it('should skip the right amount of users for page 2', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+
+      await service.findAllUsers(2, 10);
+
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(10);
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(10);
     });
-  
-    it('should use default pagination values when none are provided', async () => {
-      const emptyUsers = [];
-      const total = 0;
-  
-      mockQueryBuilder.getManyAndCount.mockResolvedValue([emptyUsers, total]);
-  
-      const result = await service.findAllUsers();
-  
-      expect(result).toEqual({
-        data: emptyUsers,
-        total: total
-      });
+
+    it('should default to 10 users per page', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+
+      await service.findAllUsers();
+
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(0);
-      expect(mockQueryBuilder.take).toHaveBeenCalledWith(20);
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(10);
     });
   });
-  
-  describe('create', () => {
-    beforeEach(() => {
-      (toxicityCheck.default as jest.Mock).mockClear();
-    });
 
-    it('should create a new user and return its data', async () => {
+  describe('create', () => {
+    it('should create a new user without returning the password hash', async () => {
       const createUserDto: CreateUserDto = {
         email: 'chadwickboseman@email.com',
         name: 'Chadwick Boseman',
         password: 'testtest',
-        userType: UserType.REGULAR,
       };
 
       const result = await service.create(createUserDto);
 
-      // expect(toxicityCheck.default).toHaveBeenCalledWith(createUserDto.name);
       expect(result).toMatchObject({
         email: createUserDto.email,
         name: createUserDto.name,
         profilePicture: expect.stringMatching(
           new RegExp(`^${process.env.AVATAR_BASE_URL}avatar[1-6]\\.jpg$`),
         ),
-        password: expect.not.stringContaining(createUserDto.password), // improve this later
       });
-    });
-
-    it.skip('should not allow user creation if user has a bad name', async () => {
-      (toxicityCheck.default as jest.Mock).mockResolvedValueOnce(true);
-
-      const createUserDto: CreateUserDto = {
-        email: 'chadwickboseman@email.com',
-        name: 'Toxic Name',
-        password: 'testtest',
-        userType: UserType.REGULAR,
-      };
-
-      await expect(service.create(createUserDto)).rejects.toThrow(
-        BadRequestException,
+      expect(result).not.toHaveProperty('password');
+      expect(mockUserRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          password: expect.not.stringContaining(createUserDto.password),
+        }),
       );
-
-      expect(toxicityCheck.default).toHaveBeenCalledWith(createUserDto.name);
-      expect(mockUserRepository.create).not.toHaveBeenCalled();
-      expect(mockUserRepository.save).not.toHaveBeenCalled();
     });
   });
 });

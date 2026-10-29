@@ -13,6 +13,7 @@ const createMockQueryBuilder = (mockResults: any[] = []) => {
     orderBy: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
     getMany: jest.fn().mockResolvedValue(mockResults),
+    getManyAndCount: jest.fn().mockResolvedValue([mockResults, mockResults.length]),
     getOne: jest.fn(),
     getRawOne: jest.fn(),
     getCount: jest.fn(),
@@ -110,7 +111,7 @@ describe('PostService', () => {
   });
 
   describe('findEveryPost()', () => {
-    it('should return posts from every user', async () => {
+    it('should return the first page of posts from every user', async () => {
       const mockQueryBuilder = createMockQueryBuilder([
         mockUserPost,
         mockOtherUserPost
@@ -119,16 +120,31 @@ describe('PostService', () => {
       jest.spyOn(postRepository, 'createQueryBuilder')
         .mockImplementation(() => mockQueryBuilder);
 
-      const result = await service.findEveryPost();
+      const { posts, nextPage } = await service.findEveryPost();
 
-      expect(result).toHaveLength(2);
-      expect(result).toEqual(
+      expect(posts).toHaveLength(2);
+      expect(nextPage).toBeNull();
+      expect(mockQueryBuilder.skip).toHaveBeenCalledWith(0);
+      expect(mockQueryBuilder.take).toHaveBeenCalledWith(10);
+      expect(posts).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ id: 'post-1' }),
           expect.objectContaining({ id: 'post-2' })
         ])
       );
       expect(mockQueryBuilder.where).not.toHaveBeenCalled();
+    });
+
+    it('should point to the next page when more posts exist', async () => {
+      const mockQueryBuilder = createMockQueryBuilder();
+      (mockQueryBuilder.getManyAndCount as jest.Mock).mockResolvedValue([[mockUserPost], 11]);
+
+      jest.spyOn(postRepository, 'createQueryBuilder')
+        .mockImplementation(() => mockQueryBuilder);
+
+      const { nextPage } = await service.findEveryPost(1, 10);
+
+      expect(nextPage).toBe(2);
     });
   });
 });

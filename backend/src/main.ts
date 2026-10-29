@@ -19,7 +19,7 @@ async function bootstrap() {
   });
   app.use(cookieParser());
   app.setGlobalPrefix('api/v1');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   setupSwagger(app);
 
   await app.listen(process.env.PORT ?? 3000);

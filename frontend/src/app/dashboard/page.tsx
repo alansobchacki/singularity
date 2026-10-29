@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useAtomValue } from "jotai";
 import { hydratedAuthStateAtom } from "../../state/authState";
 import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
@@ -10,12 +11,29 @@ import CreatePostForm from "../../components/feed/CreatePostForm";
 import JoinPrompt from "../../components/feed/JoinPrompt";
 import BotGameBanner from "../../components/feed/BotGameBanner";
 import PostCard from "../../components/feed/PostCard";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import PostCardSkeleton from "../../components/feed/PostCardSkeleton";
 
 const HomePage = () => {
   const user = useAtomValue(hydratedAuthStateAtom);
-  const { data: posts, isLoading } = useGetTimeline();
+  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useGetTimeline();
   const { scores, makeGuess, hasGuessedPost } = useBotDetectionGame();
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const posts = data?.pages.flatMap((page) => page.posts) ?? [];
+
+  useEffect(() => {
+    const node = loadMoreRef.current;
+    if (!node || !hasNextPage || isFetchingNextPage) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) fetchNextPage();
+      },
+      { rootMargin: "300px" }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const guessFor = (post: Post) =>
     user.isAuthenticated
@@ -38,12 +56,15 @@ const HomePage = () => {
         {!user.isAuthenticated && <BotGameBanner scores={scores} />}
 
         {isLoading ? (
-          <LoadingSpinner />
-        ) : posts?.length ? (
+          Array.from({ length: 3 }, (_, index) => <PostCardSkeleton key={index} />)
+        ) : posts.length ? (
           posts.map((post) => <PostCard key={post.id} post={post} guess={guessFor(post)} />)
         ) : (
           <p className="card text-muted">No posts yet.</p>
         )}
+
+        {isFetchingNextPage && <PostCardSkeleton />}
+        <div ref={loadMoreRef} />
       </section>
     </div>
   );

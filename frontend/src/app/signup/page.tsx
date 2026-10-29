@@ -40,7 +40,7 @@ const CreateAccountPage = () => {
         validationSchema={createUserSchema}
         onSubmit={(values, { setSubmitting }) => {
           createUser(
-            { ...values, userType: "REGULAR" },
+            values,
             {
               onSuccess: () => router.push("/login"),
               onSettled: () => setSubmitting(false),
