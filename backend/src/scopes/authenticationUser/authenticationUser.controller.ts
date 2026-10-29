@@ -8,7 +8,8 @@ import {
   Logger,
   Get,
   UseGuards,
-  Request
+  Request,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UserService } from './authenticationUser.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -36,10 +37,9 @@ export class UserController {
   }
 
   @Get('all')
-  @UseGuards(JwtAuthGuard)
   async findAll(@Query('page') page = '1') {
     const pageNumber = Math.max(1, parseInt(page, 10) || 1);
-    const limitNumber = 20;
+    const limitNumber = 10;
 
     const result = await this.userService.findAllUsers(pageNumber, limitNumber);
 
@@ -47,7 +47,6 @@ export class UserController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   async getProfile(@Param('id') id: string) {
     const user = await this.userService.findById(id);
 
@@ -55,7 +54,8 @@ export class UserController {
       throw new Error('User not found');
     }
 
-    return user;
+    const { email, ...profile } = user;
+    return profile;
   }
 
   @Post()
@@ -68,7 +68,15 @@ export class UserController {
 
   @Put(':id')
   @UseGuards(JwtAuthGuard)
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Request() req,
+  ) {
+    if (req.user.userId !== id && req.user.userType !== 'ADMIN') {
+      throw new ForbiddenException('You can only update your own profile');
+    }
+
     const updatedUser = await this.userService.update(id, updateUserDto);
     this.logger.log(`User updated successfully: ${id}`);
 

@@ -18,10 +18,11 @@ const getFollowingRequests = async (): Promise<Follow[]> => {
   throw new Error(unexpectedErrorText);
 };
 
-export const useGetFollowingRequests = () => {
+export const useGetFollowingRequests = (enabled = true) => {
   return useQuery<Follow[]>({
     queryKey: ["following-requests"],
     queryFn: getFollowingRequests,
+    enabled,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });

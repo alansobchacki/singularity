@@ -18,7 +18,7 @@ export class AuthenticationUsers {
   @Column({ name: 'EMAIL', unique: true })
   email: string;
 
-  @Column({ name: 'PASSWORD' })
+  @Column({ name: 'PASSWORD', select: false })
   password: string;
 
   @Column({ name: 'NAME' })

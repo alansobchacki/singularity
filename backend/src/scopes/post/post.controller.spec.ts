@@ -41,7 +41,6 @@ describe('PostController', () => {
             create: jest.fn().mockResolvedValue(mockPost),
             update: jest.fn().mockResolvedValue(mockPost),
             remove: jest.fn().mockResolvedValue(undefined),
-            findUserAndFollowedPosts: jest.fn().mockResolvedValue([mockPost]),
             findEveryPost: jest.fn().mockResolvedValue([mockPost]),
             findUserPosts: jest.fn().mockResolvedValue([mockPost]),
           },
@@ -134,21 +133,10 @@ describe('PostController', () => {
   });
 
   describe('getTimeline()', () => {
-    it('should return timeline for regular users', async () => {
-      const result = await controller.getTimeline({ user: mockUser });
+    it('should return the requested page of posts', async () => {
+      const result = await controller.getTimeline('2');
       expect(result).toEqual([mockPost]);
-      expect(postService.findUserAndFollowedPosts).toHaveBeenCalledWith(mockUser.userId);
-    });
-
-    it('should return all posts for admins', async () => {
-      const result = await controller.getTimeline({ user: mockAdminUser });
-      expect(result).toEqual([mockPost]);
-      expect(postService.findEveryPost).toHaveBeenCalledWith(mockAdminUser.userId);
-    });
-
-    it('should reject unauthenticated requests', async () => {
-      await expect(controller.getTimeline({ user: null }))
-        .rejects.toThrow(UnauthorizedException);
+      expect(postService.findEveryPost).toHaveBeenCalledWith(2, 10);
     });
   });
 

@@ -30,6 +30,7 @@ export const useDeleteLikeContent = () => {
     onSuccess: (contentId: string) => {
       queryClient.invalidateQueries({ queryKey: ["likes"] });
       queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
 
       queryClient.setQueryData<string[]>(["likes"], (oldData) => {
         if (!oldData) return [];

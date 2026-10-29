@@ -29,6 +29,7 @@ export const useCreateLikeContent = () => {
     onSuccess: (newLike) => {
       queryClient.invalidateQueries({ queryKey: ["like", newLike.id] });
       queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.invalidateQueries({ queryKey: ["likes"] });
 
       queryClient.setQueryData<Like[]>(["like", newLike.id], (oldData) => {

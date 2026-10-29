@@ -1,5 +1,6 @@
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
+import { authCookieName } from '../auth/constants';
 
 export default function setupSwagger(app: INestApplication): void {
   const swaggerConfig = new DocumentBuilder()
@@ -7,17 +8,7 @@ export default function setupSwagger(app: INestApplication): void {
     .setDescription('API description')
     .setVersion('1.0')
     .addServer('http://localhost:3800/documentation/api') // initially hardcoded - update with env values later
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
-      },
-      'JWT-auth',
-    )
+    .addCookieAuth(authCookieName)
     .build();
     
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);

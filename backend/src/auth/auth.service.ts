@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { UserService } from '../scopes/authenticationUser/authenticationUser.service';
 import { FindUserByEmailDto } from '../scopes/authenticationUser/dto/find-user-by-email.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -15,15 +15,15 @@ export class AuthService {
     const findUserByEmailDto: FindUserByEmailDto = { email };
     const user = await this.usersService.findByEmail(findUserByEmailDto);
 
-    if (!user) {
-      throw new Error('User not found');
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return null;
     }
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-      return { ...user, password: undefined };
+    if (user.accountStatus === 'SUSPENDED') {
+      throw new ForbiddenException('This account is suspended');
     }
 
-    return null;
+    return { ...user, password: undefined };
   }
 
   async login(user: any) {

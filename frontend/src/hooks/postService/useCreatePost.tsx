@@ -32,6 +32,7 @@ export const useCreatePost = () => {
         queryKey: ["posts", newPost.id],
       });
       queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
 
       queryClient.setQueryData<Post[]>(["posts", newPost.id], (oldData) => {
         if (!oldData) return [newPost];

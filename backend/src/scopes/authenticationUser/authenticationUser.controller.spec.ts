@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './authenticationUser.controller';
 import { UserService } from './authenticationUser.service';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
-import { CreateUserDto, UserType } from './dto/create-user.dto';
-import { ExecutionContext } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { AuthenticationUsers } from './entities/authenticationUser.entity';
 
 describe('UserController', () => {
@@ -68,7 +68,7 @@ describe('UserController', () => {
   
       const mockRequest = { user: { userId: '1' } };
       const result = await controller.getCurrentUserProfile(mockRequest);
-  
+
       expect(result).toEqual(mockUser);
       expect(userService.findById).toHaveBeenCalledWith('1');
     });
@@ -84,51 +84,15 @@ describe('UserController', () => {
   });
 
   describe('findAll', () => {
-    it('should return paginated users', async () => {
-      const mockUsers = [
-        createMockUser({ id: '1', email: 'user1@example.com', name: 'User One' }),
-        createMockUser({ id: '2', email: 'user2@example.com', name: 'User Two' })
-      ];
-      
-      const mockServiceResponse = {
-        data: mockUsers,
-        total: mockUsers.length
-      };
-  
-      const expectedControllerResponse = {
-        ...mockServiceResponse,
-        page: 1,
-        limit: 20
-      };
-      
+    it('should request 10 users per page', async () => {
+      const mockServiceResponse = [{ page: 2, limit: 10, total: 12, totalPages: 2 }];
+
       jest.spyOn(userService, 'findAllUsers').mockResolvedValue(mockServiceResponse);
-  
-      const result = await controller.findAll();
-  
-      expect(result).toEqual(expectedControllerResponse);
-      expect(userService.findAllUsers).toHaveBeenCalled();
-    });
-  
-    it('should throw error when no users found', async () => {
-      jest.spyOn(userService, 'findAllUsers').mockResolvedValue({
-        data: [],
-        total: 0
-      });
-  
-      jest.spyOn(controller, 'findAll').mockImplementation(async () => {
-        const result = await userService.findAllUsers();
-        if (result.total === 0) {
-          throw new Error('No users in the database!');
-        }
-        return {
-          ...result,
-          page: 1,
-          limit: 20
-        };
-      });
-      
-      await expect(controller.findAll())
-        .rejects.toThrow('No users in the database!');
+
+      const result = await controller.findAll('2');
+
+      expect(result).toEqual(mockServiceResponse);
+      expect(userService.findAllUsers).toHaveBeenCalledWith(2, 10);
     });
   });
 
@@ -139,8 +103,9 @@ describe('UserController', () => {
       jest.spyOn(userService, 'findById').mockResolvedValue(mockUser);
   
       const result = await controller.getProfile('1');
+      const { email, ...profile } = mockUser;
   
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(profile);
       expect(userService.findById).toHaveBeenCalledWith('1');
     });
   
@@ -158,7 +123,6 @@ describe('UserController', () => {
         email: 'new@example.com',
         name: 'New User',
         password: 'password',
-        userType: UserType.REGULAR,
       };
   
       const mockUser = createMockUser({
@@ -175,25 +139,23 @@ describe('UserController', () => {
     });
   });
 
-  describe('Protected Routes', () => {
-    it('should reject unauthenticated requests', async () => {
-      const module: TestingModule = await Test.createTestingModule({
-        controllers: [UserController],
-        providers: [
-          {
-            provide: UserService,
-            useValue: { findById: jest.fn() },
-          },
-        ],
-      })
-        .overrideGuard(JwtAuthGuard)
-        .useValue({ canActivate: () => false })
-        .compile();
+  describe('update', () => {
+    it('should let users update their own profile', async () => {
+      const mockUser = createMockUser({ bio: 'New bio' });
+      jest.spyOn(userService, 'update').mockResolvedValue(mockUser);
 
-      const unauthenticatedController = module.get<UserController>(UserController);
-      
-      await expect(unauthenticatedController.findAll())
-        .rejects.toThrow();
+      const result = await controller.update('1', { bio: 'New bio' }, { user: { userId: '1', userType: 'REGULAR' } });
+
+      expect(result).toEqual(mockUser);
+      expect(userService.update).toHaveBeenCalledWith('1', { bio: 'New bio' });
+    });
+
+    it("should reject updates to someone else's profile", async () => {
+      await expect(
+        controller.update('2', { bio: 'Hacked' }, { user: { userId: '1', userType: 'REGULAR' } }),
+      ).rejects.toThrow(ForbiddenException);
+
+      expect(userService.update).not.toHaveBeenCalled();
     });
   });
 });

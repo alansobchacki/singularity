@@ -1,55 +1,31 @@
 import {
   IsEmail,
   IsString,
-  IsEnum,
-  IsNotEmpty,
   IsOptional,
+  Length,
+  MaxLength,
 } from 'class-validator';
-
-export enum UserType {
-  REGULAR = 'REGULAR',
-  ADMIN = 'ADMIN',
-  SPECTATOR = 'SPECTATOR',
-}
-
-export enum AccountStatus {
-  ACTIVE = 'ACTIVE',
-  SUSPENDED = 'SUSPENDED',
-}
 
 export class CreateUserDto {
   @IsEmail()
+  @MaxLength(254)
   email: string;
 
   @IsString()
-  @IsNotEmpty()
+  @Length(8, 72)
   password: string;
 
   @IsString()
-  @IsNotEmpty()
+  @Length(4, 25)
   name: string;
 
-  @IsEnum(UserType, {
-    message: 'userType must be REGULAR, ADMIN, or SPECTATOR',
-  })
-  @IsNotEmpty()
-  userType: UserType;
-
   @IsOptional()
   @IsString()
-  profilePicture?: string;
-
-  @IsOptional()
-  @IsString()
+  @MaxLength(160)
   bio?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(100)
   location?: string;
-
-  @IsEnum(AccountStatus, {
-    message: 'accountStatus must be ACTIVE or SUSPENDED',
-  })
-  @IsOptional()
-  accountStatus?: AccountStatus;
 }

@@ -1,4 +1,3 @@
-import { jwtDecode } from "jwt-decode";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
@@ -7,14 +6,13 @@ import { authStateAtom } from "../../state/authState";
 import { toast } from "react-toastify";
 import axios from "axios";
 import LoginRequest from "../../interfaces/authentication/LoginRequest";
-import AuthToken from "../../interfaces/authentication/AuthToken";
-import DecodedToken from "../../interfaces/authentication/DecodedToken";
+import AuthUser from "../../interfaces/authentication/AuthUser";
 
 const unexpectedErrorText = "Wrong email or password. Please try again.";
 
-const postLogin = async (data: LoginRequest): Promise<AuthToken> => {
+const postLogin = async (data: LoginRequest): Promise<AuthUser> => {
   try {
-    const response = await api.post<AuthToken>(`/api/v1/auth/login`, data);
+    const response = await api.post<AuthUser>(`/api/v1/auth/login`, data);
 
     if (response.status === 201) return response.data;
   } catch (error) {
@@ -34,17 +32,12 @@ export const useLogin = () => {
   const [, setAuthState] = useAtom(authStateAtom);
   const router = useRouter();
 
-  return useMutation<AuthToken, Error, LoginRequest>({
+  return useMutation<AuthUser, Error, LoginRequest>({
     mutationFn: postLogin,
-    onSuccess: (data) => {
-      const decodedToken: DecodedToken = jwtDecode(data.access_token);
-      const userId = decodedToken.sub;
-      const userType = decodedToken.userType;
-
-      localStorage.setItem("accessToken", data.access_token);
+    onSuccess: (user) => {
       setAuthState({
-        id: userId,
-        credentials: userType,
+        id: user.id,
+        credentials: user.userType,
         isAuthenticated: true,
       });
       router.replace("/dashboard");

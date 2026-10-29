@@ -6,7 +6,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUserByEmailDto } from './dto/find-user-by-email.dto';
 import { RedisCacheService } from '../../infrastructure/caching/redis-cache.service';
-import checkToxicity from '../../utils/toxicity-check';
+// Toxicity check disabled: Perspective API sunsets on 2026-12-31.
+// import checkToxicity from '../../utils/toxicity-check';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -20,8 +21,15 @@ export class UserService {
   async findByEmail(
     findUserByEmailDto: FindUserByEmailDto,
   ): Promise<AuthenticationUsers> {
-    return await this.userRepository.findOneBy({
-      email: findUserByEmailDto.email,
+    return await this.userRepository.findOne({
+      where: { email: findUserByEmailDto.email },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        userType: true,
+        accountStatus: true,
+      },
     });
   }
 
@@ -45,9 +53,9 @@ export class UserService {
     return user;
   }
 
-  async findAllUsers(page: number = 1, limit: number = 20) {
+  async findAllUsers(page: number = 1, limit: number = 10) {
     const skip = (page - 1) * limit;
-    const cacheKey = `users:page:${page}`;
+    const cacheKey = `users:page:${page}:limit:${limit}`;
 
     const cachedData = await this.redisCacheService.get(cacheKey);
     if (cachedData) {
@@ -81,10 +89,11 @@ export class UserService {
     return result;
   }
 
-  async create(createUserDto: CreateUserDto): Promise<AuthenticationUsers> {
-    const isToxic = await checkToxicity(createUserDto.name);
-
-    if (isToxic) throw new BadRequestException('Your name is too toxic.');
+  async create(
+    createUserDto: CreateUserDto,
+  ): Promise<Omit<AuthenticationUsers, 'password'>> {
+    // const isToxic = await checkToxicity(createUserDto.name);
+    // if (isToxic) throw new BadRequestException('Your name is too toxic.');
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(
@@ -100,7 +109,9 @@ export class UserService {
     });
 
     await this.redisCacheService.delPattern(`users:page:*`);
-    return await this.userRepository.save(user);
+    const { password, ...savedUser } = await this.userRepository.save(user);
+
+    return savedUser;
   }
 
   async update(

@@ -17,10 +17,11 @@ const getAllLikedContent = async (): Promise<string[]> => {
   throw new Error(unexpectedErrorText);
 };
 
-export const useGetAllLikedContent = () => {
+export const useGetAllLikedContent = (enabled = true) => {
   return useQuery({
     queryKey: ["likes"],
     queryFn: getAllLikedContent,
+    enabled,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });

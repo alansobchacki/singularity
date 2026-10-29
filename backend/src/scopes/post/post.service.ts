@@ -7,19 +7,17 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Post } from './entities/post.entity';
-import { Follow } from '../follow/entities/follow.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthenticationUsers } from '../authenticationUser/entities/authenticationUser.entity';
-import checkToxicity from '../../utils/toxicity-check';
+// Toxicity check disabled: Perspective API sunsets on 2026-12-31.
+// import checkToxicity from '../../utils/toxicity-check';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
-    @InjectRepository(Follow)
-    private followRepository: Repository<Follow>,
     @InjectRepository(AuthenticationUsers)
     private readonly userRepository: Repository<AuthenticationUsers>,
   ) {}
@@ -29,9 +27,9 @@ export class PostService {
 
     if (!author) throw new Error('User not found');
 
-    const isToxic = await checkToxicity(createPostDto.content);
+    // const isToxic = await checkToxicity(createPostDto.content);
 
-    if (isToxic) throw new BadRequestException('Your post is too toxic.');
+    // if (isToxic) throw new BadRequestException('Your post is too toxic.');
 
     const post = this.postRepository.create({
       content: createPostDto.content,
@@ -54,9 +52,9 @@ export class PostService {
 
     if (!post) throw new NotFoundException('Post not found');
 
-    const isToxic = await checkToxicity(updatePostDto.content);
+    // const isToxic = await checkToxicity(updatePostDto.content);
 
-    if (isToxic) throw new BadRequestException('Your post is too toxic.');
+    // if (isToxic) throw new BadRequestException('Your post is too toxic.');
 
     if (post.author.id === userId || userType === 'ADMIN') {
       if (updatePostDto.content) post.content = updatePostDto.content;
@@ -82,12 +80,11 @@ export class PostService {
     }
   }
 
-  async findEveryPost(userId: string): Promise<Post[]> {
-    if (!userId) {
-      throw new UnauthorizedException('User not authenticated');
-    }
-
-    const posts = await this.postRepository
+  async findEveryPost(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ posts: Post[]; nextPage: number | null }> {
+    const [posts, total] = await this.postRepository
       .createQueryBuilder('post')
       .leftJoinAndSelect('post.author', 'author')
       .leftJoinAndSelect('post.comments', 'comment')
@@ -116,7 +113,9 @@ export class PostService {
         'commentLike.id',
         'commentLike.userId',
       ])
-      .getMany();
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
 
     for (const post of posts) {
       post.comments.sort(
@@ -124,64 +123,7 @@ export class PostService {
       );
     }
 
-    return posts;
-  }
-
-  async findUserAndFollowedPosts(userId: string): Promise<Post[]> {
-    if (!userId) {
-      throw new UnauthorizedException('User not authenticated');
-    }
-
-    const followedUsers = await this.followRepository.find({
-      where: { follower: { id: userId }, status: 'ACCEPTED' },
-      relations: ['following'],
-    });
-
-    const followedUserIds = followedUsers.map((follow) => follow.following.id);
-    const userAndFollowedIds = [userId, ...followedUserIds];
-
-    const posts = await this.postRepository
-      .createQueryBuilder('post')
-      .leftJoinAndSelect('post.author', 'author')
-      .leftJoinAndSelect('post.comments', 'comment')
-      .leftJoinAndSelect('post.likes', 'postLike')
-      .leftJoinAndSelect('comment.author', 'commentAuthor')
-      .leftJoinAndSelect('comment.likes', 'commentLike')
-      .where('post.author.id IN (:...userAndFollowedIds)', {
-        userAndFollowedIds,
-      })
-      .orderBy('post.createdAt', 'DESC')
-      .select([
-        'post.id',
-        'post.content',
-        'post.createdAt',
-        'post.updatedAt',
-        'author.id',
-        'author.name',
-        'author.profilePicture',
-
-        'postLike.id',
-        'postLike.userId',
-
-        'comment.id',
-        'comment.content',
-        'comment.createdAt',
-        'commentAuthor.id',
-        'commentAuthor.name',
-        'commentAuthor.profilePicture',
-
-        'commentLike.id',
-        'commentLike.userId',
-      ])
-      .getMany();
-
-    for (const post of posts) {
-      post.comments.sort(
-        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
-    }
-
-    return posts;
+    return { posts, nextPage: page * limit < total ? page + 1 : null };
   }
 
   async findUserPosts(userId: string): Promise<Post[]> {

@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import Providers from "../config/providers";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -15,9 +10,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Singularity",
-  description: "The social media app meant for humans and AI",
+  title: "Alan Sobchacki · Singularity",
+  description:
+    "Alan Sobchacki's personal website and social media app, where humans and AI share posts.",
 };
+
+const themeScript = `
+  try {
+    const stored = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.classList.toggle("dark", stored ? stored === "dark" : prefersDark);
+  } catch {}
+`;
 
 export default function RootLayout({
   children,
@@ -25,9 +29,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistMono.variable} antialiased`}
       >
         <Providers>{children}</Providers>
         <ToastContainer position="top-right" autoClose={3000} />

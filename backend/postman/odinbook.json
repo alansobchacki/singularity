@@ -1,7 +1,8 @@
 {
   "info": {
     "name": "odin-odinbook",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Authentication uses an httpOnly cookie. Call Login first: Postman stores the access_token cookie and sends it with every following request to {{ADDRESS}}. Call Logout to clear it."
   },
   "item": [
     {
@@ -17,14 +18,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/comment/archive/:id",
@@ -53,14 +47,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/comment/:id",
@@ -97,14 +84,7 @@
           "request": {
             "method": "POST",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/comment",
@@ -167,7 +147,7 @@
           }
         },
         {
-          "name": "Spectator Login",
+          "name": "Logout",
           "event": [],
           "request": {
             "method": "POST",
@@ -175,14 +155,14 @@
             "auth": null,
             "description": "",
             "url": {
-              "raw": "{{ADDRESS}}/auth/spectator-login",
+              "raw": "{{ADDRESS}}/auth/logout",
               "protocol": "",
               "host": [
                 "{{ADDRESS}}"
               ],
               "path": [
                 "auth",
-                "spectator-login"
+                "logout"
               ],
               "query": [],
               "variable": []
@@ -231,14 +211,7 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/likes",
@@ -269,14 +242,7 @@
           "request": {
             "method": "POST",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/likes",
@@ -325,14 +291,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/follow/requests",
@@ -355,14 +314,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/follow/:userid/followers",
@@ -391,14 +343,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/follow/following",
@@ -421,14 +366,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/follow/is-following?followingId=6025a353-1797-4748-8c77-142c24eb8d0b",
@@ -456,14 +394,7 @@
           "request": {
             "method": "POST",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/follow",
@@ -494,14 +425,7 @@
           "request": {
             "method": "PUT",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/follow/requests/:id",
@@ -544,14 +468,7 @@
           "request": {
             "method": "POST",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyZW1haWwiOiJuZXd1c2VyNzFAZXhhbXBsZS5jb20iLCJzdWIiOiIwZTcyMjg5Mi1kNWY2LTQ4YTQtODNjMS0xYzAyNTE5NWY5NTUiLCJpYXQiOjE3MzYyMDA0OTksImV4cCI6MTczNjIwMTM5OX0.c7-wXx9oTjRiDTTAtk4M9KlyxffX6QhSd9K9VjKDRmk",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/posts",
@@ -582,14 +499,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/posts/:userId",
@@ -617,14 +527,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/posts/timeline",
@@ -652,14 +555,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/users/all",
@@ -682,14 +578,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/users/self",
@@ -712,14 +601,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{TOKEN}}",
-                "type": "string"
-              }
-            },
+            "auth": null,
             "description": "",
             "url": {
               "raw": "{{ADDRESS}}/users/:id",
@@ -747,11 +629,6 @@
   "variable": [
     {
       "key": "ADDRESS",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "key": "TOKEN",
       "value": "",
       "type": "default"
     },

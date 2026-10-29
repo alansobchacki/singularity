@@ -18,10 +18,11 @@ const getCurrentUserDetails = async (): Promise<User> => {
   throw new Error(unexpectedErrorText);
 };
 
-export const useGetCurrentUserDetails = () => {
+export const useGetCurrentUserDetails = (enabled = true) => {
   return useQuery({
     queryKey: ["current-user"],
     queryFn: getCurrentUserDetails,
+    enabled,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });

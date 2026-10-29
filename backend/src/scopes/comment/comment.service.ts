@@ -4,7 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from './entities/comment.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import checkToxicity from '../../utils/toxicity-check';
+// Toxicity check disabled: Perspective API sunsets on 2026-12-31.
+// import checkToxicity from '../../utils/toxicity-check';
 
 @Injectable()
 export class CommentService {
@@ -18,9 +19,9 @@ export class CommentService {
 
     if (!userId) throw new Error('User not found');
 
-    const isToxic = await checkToxicity(content);
+    // const isToxic = await checkToxicity(content);
 
-    if (isToxic) throw new BadRequestException('Your comment is too toxic.');
+    // if (isToxic) throw new BadRequestException('Your comment is too toxic.');
 
     const comment = this.commentRepository.create({
       author: { id: userId },

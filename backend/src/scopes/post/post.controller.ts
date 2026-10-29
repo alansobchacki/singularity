@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
   UnauthorizedException,
+  Query,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -18,11 +19,11 @@ import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { Post as PostEntity } from './entities/post.entity';
 
 @Controller('posts')
-@UseGuards(JwtAuthGuard)
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async createPost(@Body() createPostDto: CreatePostDto, @Request() req) {
     const userId = req.user?.userId;
     const { authorId } = createPostDto;
@@ -37,6 +38,7 @@ export class PostController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async updatePost(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
@@ -49,6 +51,7 @@ export class PostController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   async removePost(@Param('id') id: string, @Request() req): Promise<void> {
     const userId = req.user?.userId;
@@ -58,18 +61,10 @@ export class PostController {
   }
 
   @Get('timeline')
-  async getTimeline(@Request() req): Promise<PostEntity[]> {
-    const userId = req.user?.userId;
+  async getTimeline(@Query('page') page = '1') {
+    const pageNumber = Math.max(1, parseInt(page, 10) || 1);
 
-    if (!userId) {
-      throw new UnauthorizedException('User not authenticated');
-    }
-
-    const userType = req.user?.userType;
-
-    return userType === 'REGULAR'
-      ? this.postService.findUserAndFollowedPosts(userId)
-      : this.postService.findEveryPost(userId);
+    return this.postService.findEveryPost(pageNumber, 10);
   }
 
   @Get(':userId')
