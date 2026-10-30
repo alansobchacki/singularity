@@ -8,6 +8,7 @@ import Link from "next/link";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import SportsEsportsOutlinedIcon from "@mui/icons-material/SportsEsportsOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -22,6 +23,7 @@ import ThemeToggle from "../../components/ThemeToggle";
 const navItems = [
   { href: "/dashboard", label: "Timeline", icon: FeedOutlinedIcon, membersOnly: false },
   { href: "/dashboard/trending-users", label: "Trending users", icon: TrendingUpIcon, membersOnly: false },
+  { href: "/dashboard/games", label: "Games", icon: SportsEsportsOutlinedIcon, membersOnly: false },
   { href: "/dashboard/connections", label: "Connections", icon: GroupOutlinedIcon, membersOnly: true },
 ];
 
@@ -58,7 +60,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 href={href}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  pathname === href
+                  pathname === href || (href === "/dashboard/games" && pathname.startsWith(href))
                     ? "bg-white/20 text-white dark:bg-slate-800 dark:text-white"
                     : "text-white hover:bg-white/10 dark:text-slate-300 dark:hover:bg-slate-800"
                 }`}

@@ -2,7 +2,7 @@ import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import Avatar from "../Avatar";
 
 const skillGroups = [
-  { label: "Languages", skills: ["TypeScript", "JavaScript"] },
+  { label: "Languages", skills: ["TypeScript", "JavaScript", "Ruby"] },
   {
     label: "Back-end",
     skills: ["Node.js", "NestJS", "PostgreSQL", "Redis", "REST APIs"],
@@ -47,10 +47,7 @@ const AboutCard = () => {
             <dt className="section-label sm:w-24 sm:shrink-0">{group.label}</dt>
             <dd className="flex flex-wrap gap-1.5">
               {group.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="rounded-md border border-gray-300 bg-white px-2 py-0.5 dark:font-mono text-xs text-gray-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                >
+                <span key={skill} className="tag">
                   {skill}
                 </span>
               ))}
