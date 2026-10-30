@@ -6,7 +6,6 @@ import { hydratedAuthStateAtom } from "../../state/authState";
 import { useGetTimeline } from "../../hooks/postService/useGetTimeline";
 import useBotDetectionGame from "../../hooks/utility/useBotDetectionGame";
 import Post from "../../interfaces/post/Post";
-import AboutCard from "../../components/feed/AboutCard";
 import CreatePostForm from "../../components/feed/CreatePostForm";
 import JoinPrompt from "../../components/feed/JoinPrompt";
 import BotGameBanner from "../../components/feed/BotGameBanner";
@@ -18,7 +17,9 @@ const HomePage = () => {
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useGetTimeline();
   const { scores, makeGuess, hasGuessedPost } = useBotDetectionGame();
   const loadMoreRef = useRef<HTMLDivElement>(null);
-  const posts = data?.pages.flatMap((page) => page.posts) ?? [];
+  const allPosts = data?.pages.flatMap((page) => page.posts) ?? [];
+  const pinnedPosts = allPosts.filter((post) => post.isPinned);
+  const posts = allPosts.filter((post) => !post.isPinned);
 
   useEffect(() => {
     const node = loadMoreRef.current;
@@ -46,7 +47,11 @@ const HomePage = () => {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-      <AboutCard />
+      {isLoading ? (
+        <PostCardSkeleton />
+      ) : (
+        pinnedPosts.map((post) => <PostCard key={post.id} post={post} guess={guessFor(post)} />)
+      )}
 
       {user.isAuthenticated ? <CreatePostForm authorId={user.id} /> : <JoinPrompt />}
 

@@ -21,10 +21,17 @@ class IO
 end
 
 # Minimal stand-in for the colorize gem, covering the colors the games use.
+# Chess is the only game using cyan, magenta, gray and the backgrounds, so those are softened for its board.
 class String
   {
-    red: 31, magenta: 35, cyan: 36, gray: 90,
-    on_green: 42, on_white: 47, on_light_yellow: 103, on_light_cyan: 106,
+    red: "31",
+    cyan: "38;2;125;211;252",
+    magenta: "38;2;240;171;252",
+    gray: "38;2;148;163;184",
+    on_white: "48;2;71;85;105",
+    on_light_yellow: "48;2;51;65;85",
+    on_light_cyan: "48;2;3;105;161",
+    on_green: "48;2;22;101;52",
   }.each do |name, code|
     define_method(name) { "\e[#{code}m#{self}\e[0m" }
   end

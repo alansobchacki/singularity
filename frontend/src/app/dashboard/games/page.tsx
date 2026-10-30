@@ -1,6 +1,7 @@
 import Link from "next/link";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import { games } from "../../../games/games";
+import GamePreview from "../../../components/games/GamePreview";
 
 const GamesPage = () => {
   return (
@@ -12,13 +13,17 @@ const GamesPage = () => {
           <li key={game.slug}>
             <Link
               href={`/dashboard/games/${game.slug}`}
-              className="card flex items-center justify-between gap-3 transition hover:-translate-y-0.5"
+              className="card flex h-full flex-col gap-3 transition hover:-translate-y-0.5"
             >
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">{game.title}</span>
-                <span className="tag">{game.language}</span>
+              <GamePreview slug={game.slug} />
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">{game.title}</span>
+                  <span className="tag">{game.language}</span>
+                </div>
+                <PlayArrowRoundedIcon className="text-blue-500 dark:text-emerald-400" />
               </div>
-              <PlayArrowRoundedIcon className="text-blue-500 dark:text-emerald-400" />
+              <p className="text-sm text-muted">{game.description}</p>
             </Link>
           </li>
         ))}

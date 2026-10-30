@@ -11,6 +11,7 @@ const createMockQueryBuilder = (mockResults: any[] = []) => {
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
     orderBy: jest.fn().mockReturnThis(),
+    addOrderBy: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
     getMany: jest.fn().mockResolvedValue(mockResults),
     getManyAndCount: jest.fn().mockResolvedValue([mockResults, mockResults.length]),
@@ -64,6 +65,9 @@ describe('PostService', () => {
     author: mockUser,
     comments: [],
     likes: [],
+    isPinned: false,
+    isDeleted: false,
+    editedBy: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -74,6 +78,9 @@ describe('PostService', () => {
     author: mockOtherUser,
     comments: [],
     likes: [],
+    isPinned: false,
+    isDeleted: false,
+    editedBy: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -145,6 +152,88 @@ describe('PostService', () => {
       const { nextPage } = await service.findEveryPost(1, 10);
 
       expect(nextPage).toBe(2);
+    });
+  });
+
+  describe('update()', () => {
+    it('should mark the post as edited by its author', async () => {
+      jest.spyOn(postRepository, 'findOne').mockResolvedValue({ ...mockUserPost });
+      jest.spyOn(postRepository, 'save').mockImplementation(async (post) => post as Post);
+
+      const result = await service.update({ content: 'New content' }, 'post-1', 'user-1', 'REGULAR');
+
+      expect(result.content).toBe('New content');
+      expect(result.editedBy).toBe('AUTHOR');
+    });
+
+    it('should mark the post as edited by the moderation when an admin edits it', async () => {
+      jest.spyOn(postRepository, 'findOne').mockResolvedValue({ ...mockOtherUserPost });
+      jest.spyOn(postRepository, 'save').mockImplementation(async (post) => post as Post);
+
+      const result = await service.update({ content: 'New content' }, 'post-2', 'user-1', 'ADMIN');
+
+      expect(result.editedBy).toBe('MODERATION');
+    });
+
+    it("should not let regular users edit someone else's post", async () => {
+      jest.spyOn(postRepository, 'findOne').mockResolvedValue({ ...mockOtherUserPost });
+
+      await expect(
+        service.update({ content: 'New content' }, 'post-2', 'user-1', 'REGULAR'),
+      ).rejects.toThrow('You can only edit your own posts');
+    });
+  });
+
+  describe('remove()', () => {
+    it('should delete the post when its author removes it', async () => {
+      jest.spyOn(postRepository, 'findOne').mockResolvedValue({ ...mockUserPost });
+
+      await service.remove('post-1', 'user-1', 'REGULAR');
+
+      expect(postRepository.delete).toHaveBeenCalledWith('post-1');
+    });
+
+    it('should only mark the post as deleted when an admin removes it', async () => {
+      jest.spyOn(postRepository, 'findOne').mockResolvedValue({ ...mockOtherUserPost });
+
+      await service.remove('post-2', 'user-1', 'ADMIN');
+
+      expect(postRepository.delete).not.toHaveBeenCalled();
+      expect(postRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'post-2', isDeleted: true }),
+      );
+    });
+  });
+
+  describe('pin()', () => {
+    it('should let admins pin a post', async () => {
+      jest.spyOn(postRepository, 'findOne').mockResolvedValue({ ...mockUserPost });
+      jest.spyOn(postRepository, 'save').mockImplementation(async (post) => post as Post);
+
+      const result = await service.pin('post-1', true, 'ADMIN');
+
+      expect(result.isPinned).toBe(true);
+    });
+
+    it('should not let regular users pin posts', async () => {
+      await expect(service.pin('post-1', true, 'REGULAR')).rejects.toThrow(
+        'Only admins can pin posts',
+      );
+    });
+  });
+
+  describe('deleted posts', () => {
+    it('should hide the content of posts deleted by the moderation', async () => {
+      const mockQueryBuilder = createMockQueryBuilder([
+        { ...mockOtherUserPost, isDeleted: true },
+      ]);
+
+      jest.spyOn(postRepository, 'createQueryBuilder')
+        .mockImplementation(() => mockQueryBuilder);
+
+      const { posts } = await service.findEveryPost();
+
+      expect(posts[0].content).toBe('');
     });
   });
 });

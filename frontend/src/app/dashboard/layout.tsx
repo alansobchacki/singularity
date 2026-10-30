@@ -9,6 +9,7 @@ import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import SportsEsportsOutlinedIcon from "@mui/icons-material/SportsEsportsOutlined";
+import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -69,6 +70,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {label}
               </Link>
             ))}
+          <a
+            href="https://www.redbubble.com/people/Ripper19/shop?ref=account-nav-dropdown"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10 dark:text-slate-300 dark:hover:bg-slate-800"
+          >
+            <StorefrontOutlinedIcon fontSize="small" />
+            Merch
+          </a>
         </nav>
       </div>
 

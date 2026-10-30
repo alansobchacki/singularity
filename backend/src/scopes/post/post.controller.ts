@@ -15,6 +15,7 @@ import {
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PinPostDto } from './dto/pin-post.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { Post as PostEntity } from './entities/post.entity';
 
@@ -48,6 +49,16 @@ export class PostController {
     const userType = req.user?.userType;
 
     return this.postService.update(updatePostDto, id, userId, userType);
+  }
+
+  @Put(':id/pin')
+  @UseGuards(JwtAuthGuard)
+  async pinPost(
+    @Param('id') id: string,
+    @Body() pinPostDto: PinPostDto,
+    @Request() req,
+  ): Promise<PostEntity> {
+    return this.postService.pin(id, pinPostDto.isPinned, req.user?.userType);
   }
 
   @Delete(':id')
