@@ -87,6 +87,23 @@ export class PostService {
     return this.postRepository.save(post);
   }
 
+  async setCommentsDisabled(
+    id: string,
+    commentsDisabled: boolean,
+    userId: string,
+    userType: string,
+  ): Promise<Post> {
+    const post = await this.findPostWithAuthor(id);
+
+    if (post.author.id !== userId && userType !== 'ADMIN') {
+      throw new UnauthorizedException('You can only change your own posts');
+    }
+
+    post.commentsDisabled = commentsDisabled;
+
+    return this.postRepository.save(post);
+  }
+
   async findEveryPost(
     page: number = 1,
     limit: number = 10,
@@ -140,6 +157,7 @@ export class PostService {
         'post.content',
         'post.isPinned',
         'post.isDeleted',
+        'post.commentsDisabled',
         'post.editedBy',
         'post.createdAt',
         'post.updatedAt',

@@ -16,6 +16,7 @@ import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PinPostDto } from './dto/pin-post.dto';
+import { ToggleCommentsDto } from './dto/toggle-comments.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { Post as PostEntity } from './entities/post.entity';
 
@@ -59,6 +60,21 @@ export class PostController {
     @Request() req,
   ): Promise<PostEntity> {
     return this.postService.pin(id, pinPostDto.isPinned, req.user?.userType);
+  }
+
+  @Put(':id/comments')
+  @UseGuards(JwtAuthGuard)
+  async toggleComments(
+    @Param('id') id: string,
+    @Body() toggleCommentsDto: ToggleCommentsDto,
+    @Request() req,
+  ): Promise<PostEntity> {
+    return this.postService.setCommentsDisabled(
+      id,
+      toggleCommentsDto.commentsDisabled,
+      req.user?.userId,
+      req.user?.userType,
+    );
   }
 
   @Delete(':id')

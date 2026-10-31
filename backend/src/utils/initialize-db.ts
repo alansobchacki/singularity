@@ -148,7 +148,12 @@ async function initializeDb() {
 
   console.log("Creating admin's pinned post...");
   await postRepo.save(
-    postRepo.create({ content: adminPinnedPost, author: adminUser, isPinned: true }),
+    postRepo.create({
+      content: adminPinnedPost,
+      author: adminUser,
+      isPinned: true,
+      commentsDisabled: true,
+    }),
   );
 
   // creates spectator

@@ -7,6 +7,7 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PushPinIcon from "@mui/icons-material/PushPin";
+import CommentsDisabledOutlinedIcon from "@mui/icons-material/CommentsDisabledOutlined";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import { hydratedAuthStateAtom } from "../../state/authState";
 import { useGetAllLikedContent } from "../../hooks/likeService/useGetAllLikedContent";
@@ -14,6 +15,7 @@ import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeConte
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
 import { useDeletePost } from "../../hooks/postService/useDeletePost";
 import { usePinPost } from "../../hooks/postService/usePinPost";
+import { useToggleComments } from "../../hooks/postService/useToggleComments";
 import Post from "../../interfaces/post/Post";
 import Avatar from "../Avatar";
 import Button from "../Button";
@@ -79,6 +81,7 @@ const PostCard = ({ post, guess }: PostCardProps) => {
   const { mutate: unlikeContent } = useDeleteLikeContent();
   const { mutate: deletePost } = useDeletePost();
   const { mutate: pinPost } = usePinPost();
+  const { mutate: toggleComments } = useToggleComments();
   const [isCommenting, setIsCommenting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -138,6 +141,13 @@ const PostCard = ({ post, guess }: PostCardProps) => {
 
           {canManage && (
             <>
+              <ActionButton
+                active={post.commentsDisabled}
+                onClick={() => toggleComments({ postId: post.id, commentsDisabled: !post.commentsDisabled })}
+                aria-label={post.commentsDisabled ? "Enable comments" : "Disable comments"}
+              >
+                <CommentsDisabledOutlinedIcon sx={{ fontSize: 18 }} />
+              </ActionButton>
               <ActionButton onClick={() => setIsEditing(true)} aria-label="Edit post">
                 <EditOutlinedIcon sx={{ fontSize: 18 }} />
               </ActionButton>
@@ -184,19 +194,21 @@ const PostCard = ({ post, guess }: PostCardProps) => {
             iconSize={18}
             onClick={() => toggleLike(post.id, "post")}
           />
-          <ActionButton
-            active={isCommenting}
-            disabled={!user.isAuthenticated}
-            title={memberOnlyTitle}
-            onClick={() => setIsCommenting(!isCommenting)}
-          >
-            <ChatBubbleOutlineIcon sx={{ fontSize: 18 }} />
-            {post.comments?.length ?? 0}
-          </ActionButton>
+          {!post.commentsDisabled && (
+            <ActionButton
+              active={isCommenting}
+              disabled={!user.isAuthenticated}
+              title={memberOnlyTitle}
+              onClick={() => setIsCommenting(!isCommenting)}
+            >
+              <ChatBubbleOutlineIcon sx={{ fontSize: 18 }} />
+              {post.comments?.length ?? 0}
+            </ActionButton>
+          )}
         </footer>
       )}
 
-      {isCommenting && <CommentForm postId={post.id} onDone={() => setIsCommenting(false)} />}
+      {isCommenting && !post.commentsDisabled && <CommentForm postId={post.id} onDone={() => setIsCommenting(false)} />}
 
       {post.comments?.length > 0 && (
         <ul className="mt-4 space-y-4 border-l-2 border-gray-300 pl-4 dark:border-slate-800">

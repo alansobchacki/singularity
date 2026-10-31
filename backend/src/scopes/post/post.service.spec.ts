@@ -67,6 +67,7 @@ describe('PostService', () => {
     likes: [],
     isPinned: false,
     isDeleted: false,
+    commentsDisabled: false,
     editedBy: null,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -80,6 +81,7 @@ describe('PostService', () => {
     likes: [],
     isPinned: false,
     isDeleted: false,
+    commentsDisabled: false,
     editedBy: null,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -219,6 +221,25 @@ describe('PostService', () => {
       await expect(service.pin('post-1', true, 'REGULAR')).rejects.toThrow(
         'Only admins can pin posts',
       );
+    });
+  });
+
+  describe('setCommentsDisabled()', () => {
+    it('should let the author disable comments', async () => {
+      jest.spyOn(postRepository, 'findOne').mockResolvedValue({ ...mockUserPost });
+      jest.spyOn(postRepository, 'save').mockImplementation(async (post) => post as Post);
+
+      const result = await service.setCommentsDisabled('post-1', true, 'user-1', 'REGULAR');
+
+      expect(result.commentsDisabled).toBe(true);
+    });
+
+    it("should not let regular users change someone else's post", async () => {
+      jest.spyOn(postRepository, 'findOne').mockResolvedValue({ ...mockOtherUserPost });
+
+      await expect(
+        service.setCommentsDisabled('post-2', true, 'user-1', 'REGULAR'),
+      ).rejects.toThrow('You can only change your own posts');
     });
   });
 

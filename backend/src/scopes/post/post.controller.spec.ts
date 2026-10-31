@@ -29,6 +29,7 @@ describe('PostController', () => {
     likes: [],
     isPinned: false,
     isDeleted: false,
+    commentsDisabled: false,
     editedBy: null,
     createdAt: new Date(),
     updatedAt: new Date()

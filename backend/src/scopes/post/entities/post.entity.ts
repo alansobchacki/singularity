@@ -34,6 +34,9 @@ export class Post {
   @Column({ name: 'DELETED', default: false })
   isDeleted: boolean;
 
+  @Column({ name: 'COMMENTS_DISABLED', default: false })
+  commentsDisabled: boolean;
+
   @Column({ name: 'EDITED_BY', type: 'varchar', nullable: true })
   editedBy: 'AUTHOR' | 'MODERATION' | null;
 

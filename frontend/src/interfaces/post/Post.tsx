@@ -10,6 +10,7 @@ export default interface Post {
   likes: Like[];
   isPinned: boolean;
   isDeleted: boolean;
+  commentsDisabled: boolean;
   editedBy: "AUTHOR" | "MODERATION" | null;
   createdAt?: Date;
   updatedAt?: Date;
