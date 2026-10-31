@@ -4,6 +4,7 @@ import { Follow } from '../scopes/follow/entities/follow.entity';
 import { dataSource } from '../infrastructure/data-source';
 import { AuthenticationUsers } from '../scopes/authenticationUser/entities/authenticationUser.entity';
 import * as bcrypt from 'bcrypt';
+import { adminBio, adminPinnedPost } from './admin-profile';
 
 config();
 
@@ -90,7 +91,7 @@ const mockUsers = [
 const admin = {
   name: 'Alan Sobchacki',
   email: `${process.env.ADMIN_EMAIL}`,
-  bio: 'Software Engineer | Web Developer',
+  bio: adminBio,
   location: 'Cabo Frio, RJ - Brazil',
 };
 
@@ -127,7 +128,7 @@ async function initializeDb() {
 
   // creates admin
   console.log("Creating admin account...");
-  await (async () => {
+  const adminUser = await (async () => {
     const hashedPassword = await bcrypt.hash(
       process.env.ADMIN_PASSWORD,
       saltRounds,
@@ -136,7 +137,7 @@ async function initializeDb() {
     const newUser = userRepo.create({
       ...admin,
       password: hashedPassword,
-      profilePicture: `${process.env.AVATAR_BASE_URL}adminavatar.jpg`,
+      profilePicture: `${process.env.AVATAR_BASE_URL}adminavatar.png`,
       userType: 'ADMIN',
       accountStatus: 'ACTIVE',
     });
@@ -144,6 +145,16 @@ async function initializeDb() {
     console.log("Admin account created!");
     return userRepo.save(newUser);
   })();
+
+  console.log("Creating admin's pinned post...");
+  await postRepo.save(
+    postRepo.create({
+      content: adminPinnedPost,
+      author: adminUser,
+      isPinned: true,
+      commentsDisabled: true,
+    }),
+  );
 
   // creates spectator
   console.log("Creating spectator account...");

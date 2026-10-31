@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CommentService } from './comment.service';
 import { Comment } from './entities/comment.entity';
+import { Post } from '../post/entities/post.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
@@ -17,6 +18,7 @@ import checkToxicity from '../../utils/toxicity-check';
 describe('CommentService', () => {
   let service: CommentService;
   let commentRepository: Repository<Comment>;
+  let postRepository: Repository<Post>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,11 +32,18 @@ describe('CommentService', () => {
             findOne: jest.fn(),
           },
         },
+        {
+          provide: getRepositoryToken(Post),
+          useValue: {
+            findOne: jest.fn().mockResolvedValue({ id: 'post-1', commentsDisabled: false }),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<CommentService>(CommentService);
     commentRepository = module.get<Repository<Comment>>(getRepositoryToken(Comment));
+    postRepository = module.get<Repository<Post>>(getRepositoryToken(Post));
   });
 
   afterEach(() => {
@@ -90,6 +99,21 @@ describe('CommentService', () => {
       };
 
       await expect(service.create(dto)).rejects.toThrow('User not found');
+    });
+
+    it('should reject comments on posts with comments disabled', async () => {
+      (postRepository.findOne as jest.Mock).mockResolvedValueOnce({
+        id: 'post-1',
+        commentsDisabled: true,
+      });
+      const dto: CreateCommentDto = {
+        userId: 'user-1',
+        postId: 'post-1',
+        content: 'Valid comment',
+      };
+
+      await expect(service.create(dto)).rejects.toThrow('Comments are disabled for this post');
+      expect(commentRepository.save).not.toHaveBeenCalled();
     });
   });
 

@@ -8,7 +8,10 @@ import Link from "next/link";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import SportsEsportsOutlinedIcon from "@mui/icons-material/SportsEsportsOutlined";
+import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { authStateAtom } from "../../state/authState";
@@ -22,6 +25,7 @@ import ThemeToggle from "../../components/ThemeToggle";
 const navItems = [
   { href: "/dashboard", label: "Timeline", icon: FeedOutlinedIcon, membersOnly: false },
   { href: "/dashboard/trending-users", label: "Trending users", icon: TrendingUpIcon, membersOnly: false },
+  { href: "/dashboard/games", label: "Games", icon: SportsEsportsOutlinedIcon, membersOnly: false },
   { href: "/dashboard/connections", label: "Connections", icon: GroupOutlinedIcon, membersOnly: true },
 ];
 
@@ -42,14 +46,46 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.replace("/dashboard");
   };
 
+  const profile = authState.isAuthenticated ? (
+    <Link
+      href={`/dashboard/users/profile?id=${authState.id}`}
+      onClick={() => setIsMobileMenuOpen(false)}
+      className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10 dark:hover:bg-slate-800"
+    >
+      <Avatar src={currentUser?.profilePicture} name={currentUser?.name} size={40} />
+      <span className="truncate font-semibold">{currentUser?.name}</span>
+    </Link>
+  ) : (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-3 px-3 py-2">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 ring-2 ring-blue-600 dark:bg-slate-800 dark:ring-1 dark:ring-slate-700">
+          <PersonOutlineIcon fontSize="small" />
+        </span>
+        <span className="font-semibold">Welcome, guest</span>
+      </div>
+      <div className="flex gap-2">
+        <Link
+          href="/signup"
+          className="flex-1 rounded-lg bg-white px-4 py-2 text-center text-sm font-medium text-blue-600 hover:bg-blue-50 dark:bg-emerald-500 dark:text-slate-950 dark:hover:bg-emerald-400"
+        >
+          Sign up
+        </Link>
+        <Link
+          href="/login"
+          className="flex-1 rounded-lg border border-white/60 px-4 py-2 text-center text-sm font-medium text-white hover:bg-white/10 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+        >
+          Sign in
+        </Link>
+      </div>
+    </div>
+  );
+
   const sidebar = (
     <div className="flex h-full flex-col justify-between gap-8">
-      <div className="flex flex-col gap-8">
-        <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-          <p className="font-custom text-2xl tracking-wider">SINGULARITY</p>
-        </Link>
+      <div className="flex flex-col gap-6">
+        {profile}
 
-        <nav className="flex flex-col gap-1">
+        <nav className="flex flex-col gap-1 border-t border-white/20 pt-6 dark:border-slate-800">
           {navItems
             .filter((item) => !item.membersOnly || authState.isAuthenticated)
             .map(({ href, label, icon: Icon }) => (
@@ -58,7 +94,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 href={href}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  pathname === href
+                  pathname === href || (href === "/dashboard/games" && pathname.startsWith(href))
                     ? "bg-white/20 text-white dark:bg-slate-800 dark:text-white"
                     : "text-white hover:bg-white/10 dark:text-slate-300 dark:hover:bg-slate-800"
                 }`}
@@ -67,51 +103,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {label}
               </Link>
             ))}
+          <a
+            href="https://www.redbubble.com/people/Ripper19/shop?ref=account-nav-dropdown"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10 dark:text-slate-300 dark:hover:bg-slate-800"
+          >
+            <StorefrontOutlinedIcon fontSize="small" />
+            Merch
+          </a>
         </nav>
       </div>
 
-      <div className="flex flex-col gap-3">
-        {authState.isAuthenticated ? (
-          <Link
-            href={`/dashboard/users/profile?id=${authState.id}`}
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10 dark:hover:bg-slate-800"
+      <div className="border-t border-white/20 pt-3 dark:border-slate-800">
+        <ThemeToggle />
+        {authState.isAuthenticated && (
+          <button
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              setIsLoggingOut(true);
+            }}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white hover:bg-white/10 dark:text-slate-300 dark:hover:bg-slate-800"
           >
-            <Avatar src={currentUser?.profilePicture} name={currentUser?.name} size={32} />
-            <span className="truncate text-sm font-medium">{currentUser?.name}</span>
-          </Link>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <Link
-              href="/signup"
-              className="rounded-lg bg-white px-4 py-2 text-center text-sm font-medium text-blue-600 hover:bg-blue-50 dark:bg-emerald-500 dark:text-slate-950 dark:hover:bg-emerald-400"
-            >
-              Sign up
-            </Link>
-            <Link
-              href="/login"
-              className="rounded-lg border border-white/60 px-4 py-2 text-center text-sm font-medium text-white hover:bg-white/10 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
-            >
-              Sign in
-            </Link>
-          </div>
+            <LogoutIcon fontSize="small" />
+            Log out
+          </button>
         )}
-
-        <div className="border-t border-white/20 pt-3 dark:border-slate-800">
-          <ThemeToggle />
-          {authState.isAuthenticated && (
-            <button
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                setIsLoggingOut(true);
-              }}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white hover:bg-white/10 dark:text-slate-300 dark:hover:bg-slate-800"
-            >
-              <LogoutIcon fontSize="small" />
-              Log out
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );
@@ -146,7 +163,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             className="absolute inset-0 bg-gray-950/50"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="relative h-full w-72 p-5 bg-gradient-to-t from-blue-500 to-blue-400 text-white dark:bg-none dark:bg-slate-900 dark:text-slate-100">
+          <div className="relative h-full w-72 p-5 pt-14 bg-gradient-to-t from-blue-500 to-blue-400 text-white dark:bg-none dark:bg-slate-900 dark:text-slate-100">
             <button
               id="close-mobile-menu-button"
               onClick={() => setIsMobileMenuOpen(false)}

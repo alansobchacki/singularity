@@ -1,7 +1,15 @@
-import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from './entities/comment.entity';
+import { Post } from '../post/entities/post.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 // Toxicity check disabled: Perspective API sunsets on 2026-12-31.
@@ -12,12 +20,22 @@ export class CommentService {
   constructor(
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
   ) {}
 
   async create(createCommentDto: CreateCommentDto): Promise<Comment> {
     const { userId, postId, content, image } = createCommentDto;
 
     if (!userId) throw new Error('User not found');
+
+    const post = await this.postRepository.findOne({ where: { id: postId, isDeleted: false } });
+
+    if (!post) throw new NotFoundException('Post not found');
+
+    if (post.commentsDisabled) {
+      throw new ForbiddenException('Comments are disabled for this post');
+    }
 
     // const isToxic = await checkToxicity(content);
 

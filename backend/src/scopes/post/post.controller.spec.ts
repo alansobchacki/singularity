@@ -27,6 +27,10 @@ describe('PostController', () => {
     author: { id: 'user-1' } as any,
     comments: [],
     likes: [],
+    isPinned: false,
+    isDeleted: false,
+    commentsDisabled: false,
+    editedBy: null,
     createdAt: new Date(),
     updatedAt: new Date()
   };
@@ -41,6 +45,7 @@ describe('PostController', () => {
             create: jest.fn().mockResolvedValue(mockPost),
             update: jest.fn().mockResolvedValue(mockPost),
             remove: jest.fn().mockResolvedValue(undefined),
+            pin: jest.fn().mockResolvedValue({ ...mockPost, isPinned: true }),
             findEveryPost: jest.fn().mockResolvedValue([mockPost]),
             findUserPosts: jest.fn().mockResolvedValue([mockPost]),
           },
@@ -129,6 +134,15 @@ describe('PostController', () => {
       expect(postService.remove).toHaveBeenCalledWith(
         'post-1', mockAdminUser.userId, mockAdminUser.userType
       );
+    });
+  });
+
+  describe('pinPost()', () => {
+    it("should pass the user's type to the service", async () => {
+      const req = { user: mockAdminUser };
+      await controller.pinPost('post-1', { isPinned: true }, req);
+
+      expect(postService.pin).toHaveBeenCalledWith('post-1', true, 'ADMIN');
     });
   });
 

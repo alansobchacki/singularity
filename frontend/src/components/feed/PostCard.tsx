@@ -6,11 +6,16 @@ import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import PushPinIcon from "@mui/icons-material/PushPin";
+import CommentsDisabledOutlinedIcon from "@mui/icons-material/CommentsDisabledOutlined";
+import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import { hydratedAuthStateAtom } from "../../state/authState";
 import { useGetAllLikedContent } from "../../hooks/likeService/useGetAllLikedContent";
 import { useCreateLikeContent } from "../../hooks/likeService/useCreateLikeContent";
 import { useDeleteLikeContent } from "../../hooks/likeService/useDeleteLikeContent";
 import { useDeletePost } from "../../hooks/postService/useDeletePost";
+import { usePinPost } from "../../hooks/postService/usePinPost";
+import { useToggleComments } from "../../hooks/postService/useToggleComments";
 import Post from "../../interfaces/post/Post";
 import Avatar from "../Avatar";
 import Button from "../Button";
@@ -19,6 +24,7 @@ import Skeleton from "../Skeleton";
 import ActionButton from "./ActionButton";
 import CommentForm from "./CommentForm";
 import EditPostModal from "./EditPostModal";
+import SkillTags from "./SkillTags";
 
 type Guess = "BOT" | "REGULAR";
 
@@ -40,6 +46,11 @@ const formatDate = (date?: Date | string) =>
     : "";
 
 const profileLink = (userId: string) => `/dashboard/users/profile?id=${userId}`;
+
+const editedLabels = {
+  AUTHOR: "Edited by the author",
+  MODERATION: "Edited by the moderation",
+};
 
 interface LikeButtonProps {
   count: number;
@@ -69,11 +80,15 @@ const PostCard = ({ post, guess }: PostCardProps) => {
   const { mutate: likeContent } = useCreateLikeContent();
   const { mutate: unlikeContent } = useDeleteLikeContent();
   const { mutate: deletePost } = useDeletePost();
+  const { mutate: pinPost } = usePinPost();
+  const { mutate: toggleComments } = useToggleComments();
   const [isCommenting, setIsCommenting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const isOwner = user.isAuthenticated && user.id === post.author?.id;
+  const isAdmin = user.isAuthenticated && user.credentials === "ADMIN";
+  const canManage = !post.isDeleted && (isOwner || isAdmin);
   const authorType = post.author?.userType;
   const canGuess = guess && (authorType === "BOT" || authorType === "REGULAR");
   const memberOnlyTitle = user.isAuthenticated ? undefined : "Sign in to interact";
@@ -99,62 +114,101 @@ const PostCard = ({ post, guess }: PostCardProps) => {
             <Link href={profileLink(post.author?.id)} className="font-semibold hover:underline">
               {post.author?.name}
             </Link>
-            <p className="dark:font-mono text-xs text-muted">{formatDate(post.createdAt)}</p>
+            <p className="dark:font-mono text-xs text-muted">
+              {formatDate(post.createdAt)}
+              {post.editedBy && !post.isDeleted && ` · ${editedLabels[post.editedBy]}`}
+            </p>
           </div>
         </div>
 
-        {isOwner && (
-          <div className="flex gap-1">
-            <ActionButton onClick={() => setIsEditing(true)} aria-label="Edit post">
-              <EditOutlinedIcon sx={{ fontSize: 18 }} />
-            </ActionButton>
-            <ActionButton onClick={() => setIsDeleting(true)} aria-label="Delete post">
-              <DeleteOutlineIcon sx={{ fontSize: 18 }} />
-            </ActionButton>
-          </div>
-        )}
-
-        {canGuess &&
-          (guess.hasGuessed ? (
-            <span className="rounded-full bg-gray-200 px-2.5 py-1 text-xs font-medium dark:bg-slate-800">
-              {authorType === "BOT" ? "🤖 Bot" : "🧑 Human"}
+        <div className="flex items-center gap-1">
+          {post.isPinned && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700 dark:bg-emerald-400/10 dark:text-emerald-400">
+              <PushPinOutlinedIcon sx={{ fontSize: 14 }} />
+              Pinned
             </span>
-          ) : (
-            <div className="flex gap-1">
-              <ActionButton onClick={() => guess.onGuess("BOT")} title="I think this is a bot">
-                🤖
+          )}
+
+          {isAdmin && !post.isDeleted && (
+            <ActionButton
+              active={post.isPinned}
+              onClick={() => pinPost({ postId: post.id, isPinned: !post.isPinned })}
+              aria-label={post.isPinned ? "Unpin post" : "Pin post"}
+            >
+              {post.isPinned ? <PushPinIcon sx={{ fontSize: 18 }} /> : <PushPinOutlinedIcon sx={{ fontSize: 18 }} />}
+            </ActionButton>
+          )}
+
+          {canManage && (
+            <>
+              <ActionButton
+                active={post.commentsDisabled}
+                onClick={() => toggleComments({ postId: post.id, commentsDisabled: !post.commentsDisabled })}
+                aria-label={post.commentsDisabled ? "Enable comments" : "Disable comments"}
+              >
+                <CommentsDisabledOutlinedIcon sx={{ fontSize: 18 }} />
               </ActionButton>
-              <ActionButton onClick={() => guess.onGuess("REGULAR")} title="I think this is a human">
-                🧑
+              <ActionButton onClick={() => setIsEditing(true)} aria-label="Edit post">
+                <EditOutlinedIcon sx={{ fontSize: 18 }} />
               </ActionButton>
-            </div>
-          ))}
+              <ActionButton onClick={() => setIsDeleting(true)} aria-label="Delete post">
+                <DeleteOutlineIcon sx={{ fontSize: 18 }} />
+              </ActionButton>
+            </>
+          )}
+
+          {canGuess &&
+            (guess.hasGuessed ? (
+              <span className="rounded-full bg-gray-200 px-2.5 py-1 text-xs font-medium dark:bg-slate-800">
+                {authorType === "BOT" ? "🤖 Bot" : "🧑 Human"}
+              </span>
+            ) : (
+              <div className="flex gap-1">
+                <ActionButton onClick={() => guess.onGuess("BOT")} title="I think this is a bot">
+                  🤖
+                </ActionButton>
+                <ActionButton onClick={() => guess.onGuess("REGULAR")} title="I think this is a human">
+                  🧑
+                </ActionButton>
+              </div>
+            ))}
+        </div>
       </header>
 
-      <p className="mt-3 whitespace-pre-wrap break-words leading-relaxed">{post.content}</p>
+      {post.isDeleted ? (
+        <p className="mt-3 italic text-muted">This post was deleted by the moderation</p>
+      ) : (
+        <p className="mt-3 whitespace-pre-wrap break-words leading-relaxed">{post.content}</p>
+      )}
 
-      <footer className="mt-4 flex items-center gap-1 border-t border-gray-300 pt-3 dark:border-slate-800">
-        <LikeButton
-          count={post.likes?.length ?? 0}
-          liked={isLiked(post.id)}
-          loading={isLoadingLikes}
-          disabled={!user.isAuthenticated}
-          title={memberOnlyTitle}
-          iconSize={18}
-          onClick={() => toggleLike(post.id, "post")}
-        />
-        <ActionButton
-          active={isCommenting}
-          disabled={!user.isAuthenticated}
-          title={memberOnlyTitle}
-          onClick={() => setIsCommenting(!isCommenting)}
-        >
-          <ChatBubbleOutlineIcon sx={{ fontSize: 18 }} />
-          {post.comments?.length ?? 0}
-        </ActionButton>
-      </footer>
+      {post.isPinned && post.author?.userType === "ADMIN" && !post.isDeleted && <SkillTags />}
 
-      {isCommenting && <CommentForm postId={post.id} onDone={() => setIsCommenting(false)} />}
+      {!post.isDeleted && (
+        <footer className="mt-4 flex items-center gap-1 border-t border-gray-300 pt-3 dark:border-slate-800">
+          <LikeButton
+            count={post.likes?.length ?? 0}
+            liked={isLiked(post.id)}
+            loading={isLoadingLikes}
+            disabled={!user.isAuthenticated}
+            title={memberOnlyTitle}
+            iconSize={18}
+            onClick={() => toggleLike(post.id, "post")}
+          />
+          {!post.commentsDisabled && (
+            <ActionButton
+              active={isCommenting}
+              disabled={!user.isAuthenticated}
+              title={memberOnlyTitle}
+              onClick={() => setIsCommenting(!isCommenting)}
+            >
+              <ChatBubbleOutlineIcon sx={{ fontSize: 18 }} />
+              {post.comments?.length ?? 0}
+            </ActionButton>
+          )}
+        </footer>
+      )}
+
+      {isCommenting && !post.commentsDisabled && <CommentForm postId={post.id} onDone={() => setIsCommenting(false)} />}
 
       {post.comments?.length > 0 && (
         <ul className="mt-4 space-y-4 border-l-2 border-gray-300 pl-4 dark:border-slate-800">
@@ -186,7 +240,9 @@ const PostCard = ({ post, guess }: PostCardProps) => {
       {isEditing && <EditPostModal post={post} onClose={() => setIsEditing(false)} />}
 
       {isDeleting && (
-        <Modal title="Do you really wish to delete your post?" onClose={() => setIsDeleting(false)}>
+        <Modal
+          title={isOwner ? "Do you really wish to delete your post?" : "Do you really wish to delete this post?"}
+           onClose={() => setIsDeleting(false)}>
           <div className="flex justify-end gap-2">
             <Button variant="secondary" onClick={() => setIsDeleting(false)}>
               No

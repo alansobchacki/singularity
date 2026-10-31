@@ -28,6 +28,18 @@ export class Post {
   @OneToMany(() => Like, (like) => like.post, { cascade: true })
   likes: Like[];
 
+  @Column({ name: 'PINNED', default: false })
+  isPinned: boolean;
+
+  @Column({ name: 'DELETED', default: false })
+  isDeleted: boolean;
+
+  @Column({ name: 'COMMENTS_DISABLED', default: false })
+  commentsDisabled: boolean;
+
+  @Column({ name: 'EDITED_BY', type: 'varchar', nullable: true })
+  editedBy: 'AUTHOR' | 'MODERATION' | null;
+
   @CreateDateColumn({ name: 'CREATED_AT' })
   createdAt: Date;
 
